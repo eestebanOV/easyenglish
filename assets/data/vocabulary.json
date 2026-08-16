@@ -1,0 +1,2731 @@
+{
+  "categories": [
+    {
+      "id": "phrases",
+      "name": "Everyday Phrases",
+      "nameEs": "Frases Cotidianas",
+      "icon": "💬",
+      "color": "#42A5F5",
+      "cards": [
+        {
+          "id": "p_1",
+          "wordEn": "How are you doing?",
+          "wordEs": "¿Cómo te va? / ¿Cómo estás?",
+          "pronunciation": "/haʊ ɑːr juː ˈduːɪŋ/",
+          "example": "Hey John! How are you doing today?",
+          "exampleEs": "¡Hola John! ¿Cómo te va hoy?"
+        },
+        {
+          "id": "p_2",
+          "wordEn": "I don't understand",
+          "wordEs": "No entiendo",
+          "pronunciation": "/aɪ doʊnt ˌʌndərˈstænd/",
+          "example": "I'm sorry, I don't understand what you mean.",
+          "exampleEs": "Lo siento, no entiendo lo que quieres decir."
+        },
+        {
+          "id": "p_3",
+          "wordEn": "Can you help me?",
+          "wordEs": "¿Puedes ayudarme?",
+          "pronunciation": "/kæn juː hɛlp miː/",
+          "example": "Excuse me, can you help me with this?",
+          "exampleEs": "Disculpe, ¿puede ayudarme con esto?"
+        },
+        {
+          "id": "p_4",
+          "wordEn": "How much is this?",
+          "wordEs": "¿Cuánto cuesta esto?",
+          "pronunciation": "/haʊ mʌtʃ ɪz ðɪs/",
+          "example": "Excuse me, how much is this shirt?",
+          "exampleEs": "Disculpe, ¿cuánto cuesta esta camisa?"
+        },
+        {
+          "id": "p_5",
+          "wordEn": "Where is the bathroom?",
+          "wordEs": "¿Dónde está el baño?",
+          "pronunciation": "/wɛr ɪz ðə ˈbæθruːm/",
+          "example": "Could you tell me where is the bathroom?",
+          "exampleEs": "¿Podría decirme dónde está el baño?"
+        },
+        {
+          "id": "p_6",
+          "wordEn": "Nice to meet you",
+          "wordEs": "Mucho gusto en conocerte",
+          "pronunciation": "/naɪs tuː miːt juː/",
+          "example": "Hello, nice to meet you, I'm Alex.",
+          "exampleEs": "Hola, mucho gusto en conocerte, soy Alex."
+        },
+        {
+          "id": "p_7",
+          "wordEn": "Have a good day",
+          "wordEs": "Que tengas un buen día",
+          "pronunciation": "/hæv ə ɡʊd deɪ/",
+          "example": "Goodbye, have a good day at work!",
+          "exampleEs": "¡Adiós, que tengas un buen día en el trabajo!"
+        },
+        {
+          "id": "p_8",
+          "wordEn": "Never mind",
+          "wordEs": "No importa / Olvídalo",
+          "pronunciation": "/ˈnɛvər maɪnd/",
+          "example": "Oh, never mind, I found my keys.",
+          "exampleEs": "Oh, no importa, encontré mis llaves."
+        },
+        {
+          "id": "p_9",
+          "wordEn": "I'm looking for...",
+          "wordEs": "Estoy buscando...",
+          "pronunciation": "/aɪm ˈlʊkɪŋ fɔːr/",
+          "example": "I'm looking for the train station.",
+          "exampleEs": "Estoy buscando la estación de trenes."
+        },
+        {
+          "id": "p_10",
+          "wordEn": "Could you repeat that?",
+          "wordEs": "¿Podrías repetir eso?",
+          "pronunciation": "/kʊd juː rɪˈpiːt ðæt/",
+          "example": "Could you repeat that more slowly, please?",
+          "exampleEs": "¿Podrías repetir eso más despacio, por favor?"
+        },
+        {
+          "id": "p_11",
+          "wordEn": "What do you think?",
+          "wordEs": "¿Qué opinas? / ¿Qué piensas?",
+          "pronunciation": "/wɒt duː juː θɪŋk/",
+          "example": "What do you think about this idea?",
+          "exampleEs": "¿Qué opinas sobre esta idea?"
+        },
+        {
+          "id": "p_12",
+          "wordEn": "It doesn't matter",
+          "wordEs": "No importa / Da igual",
+          "pronunciation": "/ɪt ˈdʌzənt ˈmætər/",
+          "example": "It doesn't matter, we can do it tomorrow.",
+          "exampleEs": "No importa, podemos hacerlo mañana."
+        },
+        {
+          "id": "p_13",
+          "wordEn": "See you later",
+          "wordEs": "Nos vemos luego / Hasta luego",
+          "pronunciation": "/siː juː ˈleɪtər/",
+          "example": "I have to go now. See you later!",
+          "exampleEs": "Tengo que irme ahora. ¡Hasta luego!"
+        },
+        {
+          "id": "p_14",
+          "wordEn": "I agree with you",
+          "wordEs": "Estoy de acuerdo contigo",
+          "pronunciation": "/aɪ əˈɡriː wɪð juː/",
+          "example": "I agree with you completely.",
+          "exampleEs": "Estoy completamente de acuerdo contigo."
+        },
+        {
+          "id": "p_15",
+          "wordEn": "Take care",
+          "wordEs": "Cuídate",
+          "pronunciation": "/teɪk kɛr/",
+          "example": "Goodbye, take care on your trip!",
+          "exampleEs": "¡Adiós, cuídate en tu viaje!"
+        },
+        {
+          "id": "p_16",
+          "wordEn": "As soon as possible",
+          "wordEs": "Tan pronto como sea posible",
+          "pronunciation": "/æz suːn æz ˈpɒsəbəl/",
+          "example": "Please call me back as soon as possible.",
+          "exampleEs": "Por favor llámame tan pronto como sea posible."
+        },
+        {
+          "id": "p_17",
+          "wordEn": "I have no idea",
+          "wordEs": "No tengo idea",
+          "pronunciation": "/aɪ hæv noʊ aɪˈdiːə/",
+          "example": "I have no idea where they went.",
+          "exampleEs": "No tengo idea de a dónde fueron."
+        },
+        {
+          "id": "p_18",
+          "wordEn": "Make yourself at home",
+          "wordEs": "Siéntete como en casa",
+          "pronunciation": "/meɪk jʊərˈsɛlf æt hoʊm/",
+          "example": "Come in and make yourself at home!",
+          "exampleEs": "¡Pasa y siéntete como en tu casa!"
+        },
+        {
+          "id": "p_19",
+          "wordEn": "What time is it?",
+          "wordEs": "¿Qué hora es?",
+          "pronunciation": "/wɒt taɪm ɪz ɪt/",
+          "example": "Excuse me, what time is it now?",
+          "exampleEs": "Disculpe, ¿qué hora es ahora?"
+        },
+        {
+          "id": "p_20",
+          "wordEn": "You're welcome",
+          "wordEs": "De nada / Con gusto",
+          "pronunciation": "/jʊr ˈwɛlkəm/",
+          "example": "Thank you for the coffee. - You're welcome!",
+          "exampleEs": "Gracias por el café. - ¡De nada!"
+        },
+        {
+          "id": "p_21",
+          "wordEn": "Excuse me",
+          "wordEs": "Disculpe / Con permiso",
+          "pronunciation": "/ɪkˈskjuːz miː/",
+          "example": "Excuse me, is this seat taken?",
+          "exampleEs": "Disculpe, ¿este asiento está ocupado?"
+        },
+        {
+          "id": "p_22",
+          "wordEn": "I'm sorry for being late",
+          "wordEs": "Siento llegar tarde",
+          "pronunciation": "/aɪm ˈsɒri fɔːr ˈbiːɪŋ leɪt/",
+          "example": "I'm sorry for being late, there was traffic.",
+          "exampleEs": "Siento llegar tarde, había tráfico."
+        },
+        {
+          "id": "p_23",
+          "wordEn": "No problem at all",
+          "wordEs": "No hay problema en absoluto",
+          "pronunciation": "/noʊ ˈprɒbləm æt ɔːl/",
+          "example": "Thanks for the help! - No problem at all.",
+          "exampleEs": "¡Gracias por la ayuda! - No hay problema en absoluto."
+        },
+        {
+          "id": "p_24",
+          "wordEn": "Long time no see",
+          "wordEs": "¡Cuánto tiempo sin verte!",
+          "pronunciation": "/lɒŋ taɪm noʊ siː/",
+          "example": "Hey Maria! Long time no see, how are you?",
+          "exampleEs": "¡Hola María! ¡Cuánto tiempo sin verte! ¿Cómo estás?"
+        },
+        {
+          "id": "p_25",
+          "wordEn": "What's up?",
+          "wordEs": "¿Qué tal? / ¿Qué pasa?",
+          "pronunciation": "/wɒts ʌp/",
+          "example": "Hey man, what's up?",
+          "exampleEs": "Hola amigo, ¿qué tal?"
+        },
+        {
+          "id": "p_26",
+          "wordEn": "I'm fine, thank you",
+          "wordEs": "Estoy bien, gracias",
+          "pronunciation": "/aɪm faɪn θæŋk juː/",
+          "example": "How are you? - I'm fine, thank you.",
+          "exampleEs": "¿Cómo estás? - Estoy bien, gracias."
+        },
+        {
+          "id": "p_27",
+          "wordEn": "Could you speak slower?",
+          "wordEs": "¿Podrías hablar más despacio?",
+          "pronunciation": "/kʊd juː spiːk ˈsloʊər/",
+          "example": "Could you speak slower, please? I'm learning.",
+          "exampleEs": "¿Podrías hablar más despacio, por favor? Estoy aprendiendo."
+        },
+        {
+          "id": "p_28",
+          "wordEn": "What does this mean?",
+          "wordEs": "¿Qué significa esto?",
+          "pronunciation": "/wɒt dʌz ðɪs miːn/",
+          "example": "What does this word mean in English?",
+          "exampleEs": "¿Qué significa esta palabra en inglés?"
+        },
+        {
+          "id": "p_29",
+          "wordEn": "How do you pronounce this?",
+          "wordEs": "¿Cómo se pronuncia esto?",
+          "pronunciation": "/haʊ duː juː prəˈnaʊns ðɪs/",
+          "example": "How do you pronounce this name?",
+          "exampleEs": "¿Cómo se pronuncia este nombre?"
+        },
+        {
+          "id": "p_30",
+          "wordEn": "I'm just looking",
+          "wordEs": "Solo estoy mirando",
+          "pronunciation": "/aɪm dʒʌst ˈlʊkɪŋ/",
+          "example": "Can I help you? - No thanks, I'm just looking.",
+          "exampleEs": "¿Puedo ayudarle? - No gracias, solo estoy mirando."
+        },
+        {
+          "id": "p_31",
+          "wordEn": "Can I have the check, please?",
+          "wordEs": "¿Me trae la cuenta, por favor?",
+          "pronunciation": "/kæn aɪ hæv ðə tʃɛk pliːz/",
+          "example": "Waiter, can I have the check, please?",
+          "exampleEs": "Camarero, ¿me trae la cuenta, por favor?"
+        },
+        {
+          "id": "p_32",
+          "wordEn": "Where can I find...?",
+          "wordEs": "¿Dónde puedo encontrar...?",
+          "pronunciation": "/wɛr kæn aɪ faɪnd/",
+          "example": "Where can I find an ATM around here?",
+          "exampleEs": "¿Dónde puedo encontrar un cajero automático por aquí?"
+        },
+        {
+          "id": "p_33",
+          "wordEn": "I would like to order...",
+          "wordEs": "Me gustaría ordenar...",
+          "pronunciation": "/aɪ wʊd laɪk tuː ˈɔːrdər/",
+          "example": "I would like to order the grilled chicken.",
+          "exampleEs": "Me gustaría ordenar el pollo a la parrilla."
+        },
+        {
+          "id": "p_34",
+          "wordEn": "Keep the change",
+          "wordEs": "Quédese con el cambio",
+          "pronunciation": "/kiːp ðə tʃeɪndʒ/",
+          "example": "Here is twenty dollars, keep the change.",
+          "exampleEs": "Aquí tiene veinte dólares, quédese con el cambio."
+        },
+        {
+          "id": "p_35",
+          "wordEn": "I'm in a hurry",
+          "wordEs": "Tengo prisa / Estoy apurado",
+          "pronunciation": "/aɪm ɪn ə ˈhɜːri/",
+          "example": "I must go now, I'm in a hurry.",
+          "exampleEs": "Debo irme ahora, tengo prisa."
+        },
+        {
+          "id": "p_36",
+          "wordEn": "Let me know",
+          "wordEs": "Avísame / Hazme saber",
+          "pronunciation": "/lɛt miː noʊ/",
+          "example": "Let me know when you arrive home safely.",
+          "exampleEs": "Avísame cuando llegues a casa a salvo."
+        },
+        {
+          "id": "p_37",
+          "wordEn": "It's up to you",
+          "wordEs": "Depende de ti / Tú decides",
+          "pronunciation": "/ɪts ʌp tuː juː/",
+          "example": "Where should we eat? - It's up to you!",
+          "exampleEs": "¿Dónde deberíamos comer? - ¡Tú decides!"
+        },
+        {
+          "id": "p_38",
+          "wordEn": "I'm not sure",
+          "wordEs": "No estoy seguro",
+          "pronunciation": "/aɪm nɒt ʃʊr/",
+          "example": "What time does it start? - I'm not sure.",
+          "exampleEs": "¿A qué hora empieza? - No estoy seguro."
+        },
+        {
+          "id": "p_39",
+          "wordEn": "That sounds great",
+          "wordEs": "Eso suena genial",
+          "pronunciation": "/ðæt saʊndz ɡreɪt/",
+          "example": "Let's go to the beach. - That sounds great!",
+          "exampleEs": "Vamos a la playa. - ¡Eso suena genial!"
+        },
+        {
+          "id": "p_40",
+          "wordEn": "Good luck!",
+          "wordEs": "¡Buena suerte!",
+          "pronunciation": "/ɡʊd lʌk/",
+          "example": "Good luck with your job interview today!",
+          "exampleEs": "¡Buena suerte con tu entrevista de trabajo hoy!"
+        },
+        {
+          "id": "p_41",
+          "wordEn": "Congratulations!",
+          "wordEs": "¡Felicitaciones!",
+          "pronunciation": "/kənˌɡrætʃʊˈleɪʃənz/",
+          "example": "Congratulations on your graduation!",
+          "exampleEs": "¡Felicitaciones por tu graduación!"
+        },
+        {
+          "id": "p_42",
+          "wordEn": "I'm proud of you",
+          "wordEs": "Estoy orgulloso de ti",
+          "pronunciation": "/aɪm praʊd əv juː/",
+          "example": "You worked hard, I'm proud of you.",
+          "exampleEs": "Trabajaste duro, estoy orgulloso de ti."
+        },
+        {
+          "id": "p_43",
+          "wordEn": "Don't worry about it",
+          "wordEs": "No te preocupes por eso",
+          "pronunciation": "/doʊnt ˈwɜːri əˈbaʊt ɪt/",
+          "example": "I forgot the book. - Don't worry about it.",
+          "exampleEs": "Olvidé el libro. - No te preocupes por eso."
+        },
+        {
+          "id": "p_44",
+          "wordEn": "By the way",
+          "wordEs": "Por cierto",
+          "pronunciation": "/baɪ ðə weɪ/",
+          "example": "By the way, did you call your mom today?",
+          "exampleEs": "Por cierto, ¿llamaste a tu mamá hoy?"
+        },
+        {
+          "id": "p_45",
+          "wordEn": "To be honest",
+          "wordEs": "Para ser honesto / A decir verdad",
+          "pronunciation": "/tuː biː ˈɒnɪst/",
+          "example": "To be honest, I don't really like sushi.",
+          "exampleEs": "Para ser honesto, realmente no me gusta el sushi."
+        },
+        {
+          "id": "p_46",
+          "wordEn": "In my opinion",
+          "wordEs": "En mi opinión",
+          "pronunciation": "/ɪn maɪ əˈpɪnjən/",
+          "example": "In my opinion, this is the best restaurant.",
+          "exampleEs": "En mi opinión, este es el mejor restaurante."
+        },
+        {
+          "id": "p_47",
+          "wordEn": "I'm looking forward to it",
+          "wordEs": "Tengo muchas ganas de que llegue",
+          "pronunciation": "/aɪm ˈlʊkɪŋ ˈfɔːrwərd tuː ɪt/",
+          "example": "We travel on Friday! I'm looking forward to it.",
+          "exampleEs": "¡Viajamos el viernes! Tengo muchas ganas."
+        },
+        {
+          "id": "p_48",
+          "wordEn": "Are you ready?",
+          "wordEs": "¿Estás listo?",
+          "pronunciation": "/ɑːr juː ˈrɛdi/",
+          "example": "Are you ready to leave now?",
+          "exampleEs": "¿Estás listo para salir ahora?"
+        },
+        {
+          "id": "p_49",
+          "wordEn": "Let's get started",
+          "wordEs": "Comencemos / Empecemos",
+          "pronunciation": "/lɛts ɡɛt ˈstɑːrtɪd/",
+          "example": "Welcome everyone, let's get started.",
+          "exampleEs": "Bienvenidos a todos, comencemos."
+        },
+        {
+          "id": "p_50",
+          "wordEn": "I'll be right back",
+          "wordEs": "Ya vuelvo / Vuelvo enseguida",
+          "pronunciation": "/aɪl biː raɪt bæk/",
+          "example": "Wait here, I'll be right back with water.",
+          "exampleEs": "Espera aquí, vuelvo enseguida con agua."
+        },
+        {
+          "id": "p_51",
+          "wordEn": "Take your time",
+          "wordEs": "Tómate tu tiempo",
+          "pronunciation": "/teɪk jʊər taɪm/",
+          "example": "There's no rush, take your time.",
+          "exampleEs": "No hay prisa, tómate tu tiempo."
+        },
+        {
+          "id": "p_52",
+          "wordEn": "What happened?",
+          "wordEs": "¿Qué pasó?",
+          "pronunciation": "/wɒt ˈhæpənd/",
+          "example": "Why are you upset? What happened?",
+          "exampleEs": "¿Por qué estás molesto? ¿Qué pasó?"
+        },
+        {
+          "id": "p_53",
+          "wordEn": "Are you kidding me?",
+          "wordEs": "¿Estás bromeando?",
+          "pronunciation": "/ɑːr juː ˈkɪdɪŋ miː/",
+          "example": "We missed the flight? Are you kidding me?",
+          "exampleEs": "¿Perdimos el vuelo? ¿Estás bromeando?"
+        },
+        {
+          "id": "p_54",
+          "wordEn": "That's awesome!",
+          "wordEs": "¡Eso es increíble / genial!",
+          "pronunciation": "/ðæts ˈɔːsəm/",
+          "example": "You won first place? That's awesome!",
+          "exampleEs": "¿Ganaste el primer lugar? ¡Eso es genial!"
+        },
+        {
+          "id": "p_55",
+          "wordEn": "I can't believe it",
+          "wordEs": "No puedo creerlo",
+          "pronunciation": "/aɪ kænt bɪˈliːv ɪt/",
+          "example": "I passed the test! I can't believe it.",
+          "exampleEs": "¡Aprobé el examen! No puedo creerlo."
+        },
+        {
+          "id": "p_56",
+          "wordEn": "Have fun!",
+          "wordEs": "¡Que te diviertas!",
+          "pronunciation": "/hæv fʌn/",
+          "example": "Enjoy the concert and have fun tonight!",
+          "exampleEs": "¡Disfruta del concierto y diviértete esta noche!"
+        },
+        {
+          "id": "p_57",
+          "wordEn": "Safe travels!",
+          "wordEs": "¡Buen viaje!",
+          "pronunciation": "/seɪf ˈtrævəlz/",
+          "example": "Have a safe flight and safe travels!",
+          "exampleEs": "¡Ten un buen vuelo y buen viaje!"
+        },
+        {
+          "id": "p_58",
+          "wordEn": "Feel better soon",
+          "wordEs": "Que te mejores pronto",
+          "pronunciation": "/fiːl ˈbɛtər suːn/",
+          "example": "I heard you are sick, feel better soon!",
+          "exampleEs": "Escuché que estás enfermo, ¡que te mejores pronto!"
+        },
+        {
+          "id": "p_59",
+          "wordEn": "I'm so glad to hear that",
+          "wordEs": "Me alegra mucho escuchar eso",
+          "pronunciation": "/aɪm soʊ ɡlæd tuː hɪr ðæt/",
+          "example": "You got the job? I'm so glad to hear that!",
+          "exampleEs": "¿Conseguiste el trabajo? ¡Me alegra mucho saberlo!"
+        },
+        {
+          "id": "p_60",
+          "wordEn": "Let me check",
+          "wordEs": "Déjame revisar",
+          "pronunciation": "/lɛt miː tʃɛk/",
+          "example": "Do we have milk? - Let me check the fridge.",
+          "exampleEs": "¿Tenemos leche? - Déjame revisar el refrigerador."
+        },
+        {
+          "id": "p_61",
+          "wordEn": "Can I try this on?",
+          "wordEs": "¿Puedo probarme esto?",
+          "pronunciation": "/kæn aɪ traɪ ðɪs ɒn/",
+          "example": "Excuse me, can I try this jacket on?",
+          "exampleEs": "Disculpe, ¿puedo probarme esta chaqueta?"
+        },
+        {
+          "id": "p_62",
+          "wordEn": "Where is the fitting room?",
+          "wordEs": "¿Dónde está el probador?",
+          "pronunciation": "/wɛr ɪz ðə ˈfɪtɪŋ ruːm/",
+          "example": "Where is the fitting room in this store?",
+          "exampleEs": "¿Dónde está el probador en esta tienda?"
+        },
+        {
+          "id": "p_63",
+          "wordEn": "Do you accept credit cards?",
+          "wordEs": "¿Aceptan tarjetas de crédito?",
+          "pronunciation": "/duː juː əkˈsɛpt ˈkrɛdɪt kɑːrdz/",
+          "example": "Do you accept credit cards here?",
+          "exampleEs": "¿Aceptan tarjetas de crédito aquí?"
+        },
+        {
+          "id": "p_64",
+          "wordEn": "I'm lost",
+          "wordEs": "Estoy perdido",
+          "pronunciation": "/aɪm lɒst/",
+          "example": "Can you help me? I'm lost in this city.",
+          "exampleEs": "¿Puede ayudarme? Estoy perdido en esta ciudad."
+        },
+        {
+          "id": "p_65",
+          "wordEn": "Call an ambulance!",
+          "wordEs": "¡Llama a una ambulancia!",
+          "pronunciation": "/kɔːl ən ˈæmbjələns/",
+          "example": "It's an emergency, call an ambulance now!",
+          "exampleEs": "¡Es una emergencia, llama a una ambulancia ya!"
+        },
+        {
+          "id": "p_66",
+          "wordEn": "Is everything okay?",
+          "wordEs": "¿Está todo bien?",
+          "pronunciation": "/ɪz ˈɛvriθɪŋ oʊˈkeɪ/",
+          "example": "You look worried, is everything okay?",
+          "exampleEs": "Te ves preocupado, ¿está todo bien?"
+        },
+        {
+          "id": "p_67",
+          "wordEn": "It's a piece of cake",
+          "wordEs": "Es pan comido / Es facilísimo",
+          "pronunciation": "/ɪts ə piːs əv keɪk/",
+          "example": "Don't worry about the quiz, it's a piece of cake.",
+          "exampleEs": "No te preocupes por el test, es pan comido."
+        },
+        {
+          "id": "p_68",
+          "wordEn": "Better late than never",
+          "wordEs": "Más vale tarde que nunca",
+          "pronunciation": "/ˈbɛtər leɪt ðæn ˈnɛvər/",
+          "example": "You finally arrived! Better late than never.",
+          "exampleEs": "¡Por fin llegaste! Más vale tarde que nunca."
+        },
+        {
+          "id": "p_69",
+          "wordEn": "So far, so good",
+          "wordEs": "Hasta ahora, todo bien",
+          "pronunciation": "/soʊ fɑːr soʊ ɡʊd/",
+          "example": "How is the new project? - So far, so good!",
+          "exampleEs": "¿Cómo va el nuevo proyecto? - ¡Hasta ahora, todo bien!"
+        },
+        {
+          "id": "p_70",
+          "wordEn": "Time flies",
+          "wordEs": "El tiempo vuela",
+          "pronunciation": "/taɪm flaɪz/",
+          "example": "It's already December? Time flies!",
+          "exampleEs": "¿Ya es diciembre? ¡El tiempo vuela!"
+        },
+        {
+          "id": "p_71",
+          "wordEn": "Break a leg!",
+          "wordEs": "¡Mucha mierda! / ¡Éxitos!",
+          "pronunciation": "/breɪk ə lɛɡ/",
+          "example": "Good luck on your show tonight, break a leg!",
+          "exampleEs": "¡Buena suerte en tu presentación, muchos éxitos!"
+        },
+        {
+          "id": "p_72",
+          "wordEn": "I'm exhausted",
+          "wordEs": "Estoy agotado / exhausto",
+          "pronunciation": "/aɪm ɪɡˈzɔːstɪd/",
+          "example": "I worked twelve hours today, I'm exhausted.",
+          "exampleEs": "Trabajé doce horas hoy, estoy agotado."
+        },
+        {
+          "id": "p_73",
+          "wordEn": "I'm starving",
+          "wordEs": "Me muero de hambre",
+          "pronunciation": "/aɪm ˈstɑːrvɪŋ/",
+          "example": "Let's find a restaurant, I'm starving.",
+          "exampleEs": "Busquemos un restaurante, me muero de hambre."
+        },
+        {
+          "id": "p_74",
+          "wordEn": "It's freezing outside",
+          "wordEs": "Hace un frío tremendo afuera",
+          "pronunciation": "/ɪts ˈfriːzɪŋ ˌaʊtˈsaɪd/",
+          "example": "Wear a heavy coat, it's freezing outside.",
+          "exampleEs": "Usa un abrigo grueso, hace un frío tremendo afuera."
+        },
+        {
+          "id": "p_75",
+          "wordEn": "It's boiling hot",
+          "wordEs": "Hace un calor insoportable",
+          "pronunciation": "/ɪts ˈbɔɪlɪŋ hɒt/",
+          "example": "Turn on the AC, it's boiling hot today.",
+          "exampleEs": "Enciende el aire acondicionado, hace un calor tremendo hoy."
+        },
+        {
+          "id": "p_76",
+          "wordEn": "What a relief!",
+          "wordEs": "¡Qué alivio!",
+          "pronunciation": "/wɒt ə rɪˈliːf/",
+          "example": "The test was canceled, what a relief!",
+          "exampleEs": "El examen se canceló, ¡qué alivio!"
+        },
+        {
+          "id": "p_77",
+          "wordEn": "Keep in touch",
+          "wordEs": "Mantengámonos en contacto",
+          "pronunciation": "/kiːp ɪn tʌtʃ/",
+          "example": "It was great seeing you, keep in touch!",
+          "exampleEs": "Fue genial verte, ¡mantengámonos en contacto!"
+        },
+        {
+          "id": "p_78",
+          "wordEn": "I'm on my way",
+          "wordEs": "Voy en camino",
+          "pronunciation": "/aɪm ɒn maɪ weɪ/",
+          "example": "Don't leave yet, I'm on my way now.",
+          "exampleEs": "No te vayas aún, voy en camino ahora."
+        },
+        {
+          "id": "p_79",
+          "wordEn": "What's going on?",
+          "wordEs": "¿Qué está pasando?",
+          "pronunciation": "/wɒts ˈɡoʊɪŋ ɒn/",
+          "example": "There is a crowd outside, what's going on?",
+          "exampleEs": "Hay una multitud afuera, ¿qué está pasando?"
+        },
+        {
+          "id": "p_80",
+          "wordEn": "I don't mind",
+          "wordEs": "No me molesta / No me importa",
+          "pronunciation": "/aɪ doʊnt maɪnd/",
+          "example": "Can I open the window? - Sure, I don't mind.",
+          "exampleEs": "¿Puedo abrir la ventana? - Claro, no me molesta."
+        },
+        {
+          "id": "p_81",
+          "wordEn": "Call me later",
+          "wordEs": "Llámame más tarde",
+          "pronunciation": "/kɔːl miː ˈleɪtər/",
+          "example": "I'm in a meeting, please call me later.",
+          "exampleEs": "Estoy en una reunión, llámame más tarde por favor."
+        },
+        {
+          "id": "p_82",
+          "wordEn": "Let's hang out",
+          "wordEs": "Salgamos a pasar el rato",
+          "pronunciation": "/lɛts hæŋ aʊt/",
+          "example": "Are you free this weekend? Let's hang out.",
+          "exampleEs": "¿Estás libre este fin de semana? Salgamos un rato."
+        },
+        {
+          "id": "p_83",
+          "wordEn": "I'll do my best",
+          "wordEs": "Haré lo mejor que pueda",
+          "pronunciation": "/aɪl duː maɪ bɛst/",
+          "example": "The test is hard, but I'll do my best.",
+          "exampleEs": "El examen es difícil, pero haré lo mejor que pueda."
+        },
+        {
+          "id": "p_84",
+          "wordEn": "Don't give up",
+          "wordEs": "No te rindas",
+          "pronunciation": "/doʊnt ɡɪv ʌp/",
+          "example": "Learning English takes time, don't give up!",
+          "exampleEs": "Aprender inglés toma tiempo, ¡no te rindas!"
+        },
+        {
+          "id": "p_85",
+          "wordEn": "You can do it!",
+          "wordEs": "¡Tú puedes hacerlo!",
+          "pronunciation": "/juː kæn duː ɪt/",
+          "example": "Believe in yourself, you can do it!",
+          "exampleEs": "Cree en ti mismo, ¡tú puedes hacerlo!"
+        },
+        {
+          "id": "p_86",
+          "wordEn": "That's too bad",
+          "wordEs": "Qué lástima / Qué mala suerte",
+          "pronunciation": "/ðæts tuː bæd/",
+          "example": "It's raining so we can't play? That's too bad.",
+          "exampleEs": "¿Está lloviendo y no podemos jugar? Qué lástima."
+        },
+        {
+          "id": "p_87",
+          "wordEn": "I appreciate it",
+          "wordEs": "Te lo agradezco mucho",
+          "pronunciation": "/aɪ əˈpriːʃieɪt ɪt/",
+          "example": "Thanks for your advice, I appreciate it.",
+          "exampleEs": "Gracias por tu consejo, te lo agradezco."
+        },
+        {
+          "id": "p_88",
+          "wordEn": "Just in case",
+          "wordEs": "Por si acaso",
+          "pronunciation": "/dʒʌst ɪn keɪs/",
+          "example": "Take an umbrella with you just in case.",
+          "exampleEs": "Lleva un paraguas contigo por si acaso."
+        },
+        {
+          "id": "p_89",
+          "wordEn": "Speak of the devil",
+          "wordEs": "Hablando del rey de Roma",
+          "pronunciation": "/spiːk əv ðə ˈdɛvəl/",
+          "example": "Here comes David! Speak of the devil.",
+          "exampleEs": "¡Ahí viene David! Hablando del rey de Roma."
+        },
+        {
+          "id": "p_90",
+          "wordEn": "Long story short",
+          "wordEs": "En pocas palabras / Para resumir",
+          "pronunciation": "/lɒŋ ˈstɔːri ʃɔːrt/",
+          "example": "Long story short, we bought the house!",
+          "exampleEs": "En pocas palabras, ¡compramos la casa!"
+        },
+        {
+          "id": "p_91",
+          "wordEn": "Keep your fingers crossed",
+          "wordEs": "Cruza los dedos",
+          "pronunciation": "/kiːp jʊər ˈfɪŋɡərz krɒst/",
+          "example": "I have my interview today, keep your fingers crossed!",
+          "exampleEs": "Tengo mi entrevista hoy, ¡cruza los dedos!"
+        },
+        {
+          "id": "p_92",
+          "wordEn": "I didn't catch that",
+          "wordEs": "No alcancé a oír/entender eso",
+          "pronunciation": "/aɪ ˈdɪdənt kætʃ ðæt/",
+          "example": "Sorry, the music is loud, I didn't catch that.",
+          "exampleEs": "Perdón, la música está fuerte, no alcancé a oír eso."
+        },
+        {
+          "id": "p_93",
+          "wordEn": "Point taken",
+          "wordEs": "Punto concedido / Te entiendo",
+          "pronunciation": "/pɔɪnt ˈteɪkən/",
+          "example": "You're right about the budget, point taken.",
+          "exampleEs": "Tienes razón con el presupuesto, punto concedido."
+        },
+        {
+          "id": "p_94",
+          "wordEn": "Same here",
+          "wordEs": "Yo igual / Lo mismo digo",
+          "pronunciation": "/seɪm hɪr/",
+          "example": "I really enjoyed the party! - Same here!",
+          "exampleEs": "¡Disfruté mucho la fiesta! - ¡Yo igual!"
+        },
+        {
+          "id": "p_95",
+          "wordEn": "Fair enough",
+          "wordEs": "Me parece justo / De acuerdo",
+          "pronunciation": "/fɛr ɪˈnʌf/",
+          "example": "If you pay dinner, I'll buy dessert. - Fair enough.",
+          "exampleEs": "Si pagas la cena, compro el postre. - Me parece justo."
+        },
+        {
+          "id": "p_96",
+          "wordEn": "No way!",
+          "wordEs": "¡De ninguna manera! / ¡No me digas!",
+          "pronunciation": "/noʊ weɪ/",
+          "example": "You met the president? No way!",
+          "exampleEs": "¿Conociste al presidente? ¡No me digas!"
+        },
+        {
+          "id": "p_97",
+          "wordEn": "Sleep tight",
+          "wordEs": "Duerme bien / Que descanses",
+          "pronunciation": "/sliːp taɪt/",
+          "example": "Good night and sleep tight, sweet dreams.",
+          "exampleEs": "Buenas noches y que descanses, dulces sueños."
+        },
+        {
+          "id": "p_98",
+          "wordEn": "Cheer up!",
+          "wordEs": "¡Ánimo! / ¡Alégrate!",
+          "pronunciation": "/tʃɪr ʌp/",
+          "example": "Don't be sad, cheer up, tomorrow is a new day!",
+          "exampleEs": "No estés triste, ¡ánimo! Mañana es un nuevo día."
+        },
+        {
+          "id": "p_99",
+          "wordEn": "What a shame!",
+          "wordEs": "¡Qué pena! / ¡Qué lástima!",
+          "pronunciation": "/wɒt ə ʃeɪm/",
+          "example": "They canceled the concert, what a shame!",
+          "exampleEs": "Cancelaron el concierto, ¡qué pena!"
+        },
+        {
+          "id": "p_100",
+          "wordEn": "Let's call it a day",
+          "wordEs": "Demos por terminado el día",
+          "pronunciation": "/lɛts kɔːl ɪt ə deɪ/",
+          "example": "We worked for eight hours, let's call it a day.",
+          "exampleEs": "Trabajamos por ocho horas, demos por terminado el día."
+        }
+      ]
+    },
+    {
+      "id": "phrasal_verbs",
+      "name": "Phrasal Verbs",
+      "nameEs": "Phrasal Verbs",
+      "icon": "⚡",
+      "color": "#00BFA5",
+      "cards": [
+        {
+          "id": "pv_1",
+          "wordEn": "Give up",
+          "wordEs": "Rendirse / Abandonar",
+          "pronunciation": "/ɡɪv ʌp/",
+          "example": "Never give up on your dreams.",
+          "exampleEs": "Nunca te rindas en tus sueños."
+        },
+        {
+          "id": "pv_2",
+          "wordEn": "Look for",
+          "wordEs": "Buscar",
+          "pronunciation": "/lʊk fɔːr/",
+          "example": "I am looking for my car keys.",
+          "exampleEs": "Estoy buscando las llaves de mi auto."
+        },
+        {
+          "id": "pv_3",
+          "wordEn": "Turn on",
+          "wordEs": "Encender / Prender",
+          "pronunciation": "/tɜːrn ɒn/",
+          "example": "Turn on the lamp, it's dark.",
+          "exampleEs": "Enciende la lámpara, está oscuro."
+        },
+        {
+          "id": "pv_4",
+          "wordEn": "Turn off",
+          "wordEs": "Apagar",
+          "pronunciation": "/tɜːrn ɒf/",
+          "example": "Please turn off your phone in the cinema.",
+          "exampleEs": "Por favor apaga tu teléfono en el cine."
+        },
+        {
+          "id": "pv_5",
+          "wordEn": "Wake up",
+          "wordEs": "Despertarse",
+          "pronunciation": "/weɪk ʌp/",
+          "example": "I wake up at six in the morning.",
+          "exampleEs": "Me despierto a las seis de la mañana."
+        },
+        {
+          "id": "pv_6",
+          "wordEn": "Get up",
+          "wordEs": "Levantarse de la cama",
+          "pronunciation": "/ɡɛt ʌp/",
+          "example": "I wake up early but get up late.",
+          "exampleEs": "Me despierto temprano pero me levanto tarde."
+        },
+        {
+          "id": "pv_7",
+          "wordEn": "Find out",
+          "wordEs": "Enterarse / Descubrir",
+          "pronunciation": "/faɪnd aʊt/",
+          "example": "I found out the truth yesterday.",
+          "exampleEs": "Me enteré de la verdad ayer."
+        },
+        {
+          "id": "pv_8",
+          "wordEn": "Put on",
+          "wordEs": "Ponerse (ropa/zapatos)",
+          "pronunciation": "/pʊt ɒn/",
+          "example": "Put on your coat before you go out.",
+          "exampleEs": "Ponte el abrigo antes de salir."
+        },
+        {
+          "id": "pv_9",
+          "wordEn": "Take off",
+          "wordEs": "Quitarse ropa / Despegar",
+          "pronunciation": "/teɪk ɒf/",
+          "example": "The plane will take off in ten minutes.",
+          "exampleEs": "El avión despegará en diez minutos."
+        },
+        {
+          "id": "pv_10",
+          "wordEn": "Call back",
+          "wordEs": "Devolver la llamada",
+          "pronunciation": "/kɔːl bæk/",
+          "example": "I will call you back in five minutes.",
+          "exampleEs": "Te devolveré la llamada en cinco minutos."
+        },
+        {
+          "id": "pv_11",
+          "wordEn": "Carry on",
+          "wordEs": "Continuar / Seguir",
+          "pronunciation": "/ˈkæri ɒn/",
+          "example": "Carry on studying, you will succeed.",
+          "exampleEs": "Sigue estudiando, tendrás éxito."
+        },
+        {
+          "id": "pv_12",
+          "wordEn": "Come in",
+          "wordEs": "Entrar / Pasar adelante",
+          "pronunciation": "/kʌm ɪn/",
+          "example": "Please knock before you come in.",
+          "exampleEs": "Por favor toca antes de entrar."
+        },
+        {
+          "id": "pv_13",
+          "wordEn": "Look after",
+          "wordEs": "Cuidar a alguien o algo",
+          "pronunciation": "/lʊk ˈæftər/",
+          "example": "She looks after her grandmother.",
+          "exampleEs": "Ella cuida a su abuela."
+        },
+        {
+          "id": "pv_14",
+          "wordEn": "Run out of",
+          "wordEs": "Quedarse sin / Agotarse",
+          "pronunciation": "/rʌn aʊt əv/",
+          "example": "We ran out of coffee this morning.",
+          "exampleEs": "Nos quedamos sin café esta mañana."
+        },
+        {
+          "id": "pv_15",
+          "wordEn": "Go on",
+          "wordEs": "Continuar / Ocurrir",
+          "pronunciation": "/ɡoʊ ɒn/",
+          "example": "The show must go on.",
+          "exampleEs": "El espectáculo debe continuar."
+        },
+        {
+          "id": "pv_16",
+          "wordEn": "Hold on",
+          "wordEs": "Esperar un momento",
+          "pronunciation": "/hoʊld ɒn/",
+          "example": "Hold on please, I'll transfer your call.",
+          "exampleEs": "Espere un momento por favor, transferiré su llamada."
+        },
+        {
+          "id": "pv_17",
+          "wordEn": "Grow up",
+          "wordEs": "Crecer / Madurar",
+          "pronunciation": "/ɡroʊ ʌp/",
+          "example": "Children grow up so fast.",
+          "exampleEs": "Los niños crecen tan rápido."
+        },
+        {
+          "id": "pv_18",
+          "wordEn": "Check in",
+          "wordEs": "Registrarse en hotel/aeropuerto",
+          "pronunciation": "/tʃɛk ɪn/",
+          "example": "We checked in at 2:00 PM.",
+          "exampleEs": "Nos registramos a las 2:00 PM."
+        },
+        {
+          "id": "pv_19",
+          "wordEn": "Check out",
+          "wordEs": "Hacer el check out / Pagar",
+          "pronunciation": "/tʃɛk aʊt/",
+          "example": "We must check out before noon.",
+          "exampleEs": "Debemos hacer el check out antes del mediodía."
+        },
+        {
+          "id": "pv_20",
+          "wordEn": "Set up",
+          "wordEs": "Configurar / Establecer",
+          "pronunciation": "/sɛt ʌp/",
+          "example": "They set up a new company.",
+          "exampleEs": "Ellos establecieron una nueva empresa."
+        },
+        {
+          "id": "pv_21",
+          "wordEn": "Pick up",
+          "wordEs": "Recoger / Contestar",
+          "pronunciation": "/pɪk ʌp/",
+          "example": "Pick up the phone, it's ringing.",
+          "exampleEs": "Contesta el teléfono, está sonando."
+        },
+        {
+          "id": "pv_22",
+          "wordEn": "Drop off",
+          "wordEs": "Dejar a alguien / Entregar",
+          "pronunciation": "/drɒp ɒf/",
+          "example": "Can you drop me off at school?",
+          "exampleEs": "¿Puedes dejarme en la escuela?"
+        },
+        {
+          "id": "pv_23",
+          "wordEn": "Break down",
+          "wordEs": "Averiarse / Descomponerse",
+          "pronunciation": "/breɪk daʊn/",
+          "example": "My car broke down on the highway.",
+          "exampleEs": "Mi auto se averió en la autopista."
+        },
+        {
+          "id": "pv_24",
+          "wordEn": "Break up",
+          "wordEs": "Terminar una relación",
+          "pronunciation": "/breɪk ʌp/",
+          "example": "They broke up after three years.",
+          "exampleEs": "Terminaron su relación después de tres años."
+        },
+        {
+          "id": "pv_25",
+          "wordEn": "Bring up",
+          "wordEs": "Mencionar un tema / Criar",
+          "pronunciation": "/brɪŋ ʌp/",
+          "example": "Don't bring up politics at dinner.",
+          "exampleEs": "No menciones la política en la cena."
+        },
+        {
+          "id": "pv_26",
+          "wordEn": "Call off",
+          "wordEs": "Cancelar un evento",
+          "pronunciation": "/kɔːl ɒf/",
+          "example": "They called off the soccer match due to rain.",
+          "exampleEs": "Cancelaron el partido de fútbol por lluvia."
+        },
+        {
+          "id": "pv_27",
+          "wordEn": "Catch up",
+          "wordEs": "Ponerse al día",
+          "pronunciation": "/kætʃ ʌp/",
+          "example": "Let's grab a coffee and catch up.",
+          "exampleEs": "Tomemos un café y pongámonos al día."
+        },
+        {
+          "id": "pv_28",
+          "wordEn": "Clean up",
+          "wordEs": "Limpiar / Ordenar",
+          "pronunciation": "/kliːn ʌp/",
+          "example": "Please clean up your bedroom.",
+          "exampleEs": "Por favor limpia tu habitación."
+        },
+        {
+          "id": "pv_29",
+          "wordEn": "Come across",
+          "wordEs": "Encontrarse con por casualidad",
+          "pronunciation": "/kʌm əˈkrɒs/",
+          "example": "I came across an old photo album.",
+          "exampleEs": "Me encontré con un viejo álbum de fotos."
+        },
+        {
+          "id": "pv_30",
+          "wordEn": "Come back",
+          "wordEs": "Regresar / Volver",
+          "pronunciation": "/kʌm bæk/",
+          "example": "When will you come back from vacation?",
+          "exampleEs": "¿Cuándo regresarás de vacaciones?"
+        },
+        {
+          "id": "pv_31",
+          "wordEn": "Count on",
+          "wordEs": "Contar con alguien",
+          "pronunciation": "/kaʊnt ɒn/",
+          "example": "You can always count on my help.",
+          "exampleEs": "Siempre puedes contar con mi ayuda."
+        },
+        {
+          "id": "pv_32",
+          "wordEn": "Cut down on",
+          "wordEs": "Reducir el consumo de",
+          "pronunciation": "/kʌt daʊn ɒn/",
+          "example": "I'm trying to cut down on sugar.",
+          "exampleEs": "Estoy intentando reducir el consumo de azúcar."
+        },
+        {
+          "id": "pv_33",
+          "wordEn": "Dress up",
+          "wordEs": "Vestirse elegante / Disfrazarse",
+          "pronunciation": "/drɛs ʌp/",
+          "example": "We need to dress up for the wedding.",
+          "exampleEs": "Tenemos que vestirnos elegantes para la boda."
+        },
+        {
+          "id": "pv_34",
+          "wordEn": "Drop by",
+          "wordEs": "Pasar a visitar brevemente",
+          "pronunciation": "/drɒp baɪ/",
+          "example": "Feel free to drop by anytime!",
+          "exampleEs": "¡Pasa a visitar cuando quieras!"
+        },
+        {
+          "id": "pv_35",
+          "wordEn": "Eat out",
+          "wordEs": "Comer en restaurante",
+          "pronunciation": "/iːt aʊt/",
+          "example": "Let's eat out tonight, I don't want to cook.",
+          "exampleEs": "Comamos fuera esta noche, no quiero cocinar."
+        },
+        {
+          "id": "pv_36",
+          "wordEn": "End up",
+          "wordEs": "Terminar en / Acabar haciendo",
+          "pronunciation": "/ɛnd ʌp/",
+          "example": "We got lost and ended up in another town.",
+          "exampleEs": "Nos perdimos y terminamos en otro pueblo."
+        },
+        {
+          "id": "pv_37",
+          "wordEn": "Fall apart",
+          "wordEs": "Desmoronarse / Romperse en pedazos",
+          "pronunciation": "/fɔːl əˈpɑːrt/",
+          "example": "My old shoes are falling apart.",
+          "exampleEs": "Mis zapatos viejos se están cayendo a pedazos."
+        },
+        {
+          "id": "pv_38",
+          "wordEn": "Figure out",
+          "wordEs": "Descifrar / Resolver / Entender",
+          "pronunciation": "/ˈfɪɡjər aʊt/",
+          "example": "I finally figured out how to fix it.",
+          "exampleEs": "Por fin entendí cómo arreglarlo."
+        },
+        {
+          "id": "pv_39",
+          "wordEn": "Fill in",
+          "wordEs": "Rellenar (formulario)",
+          "pronunciation": "/fɪl ɪn/",
+          "example": "Please fill in this application form.",
+          "exampleEs": "Por favor rellene este formulario de solicitud."
+        },
+        {
+          "id": "pv_40",
+          "wordEn": "Fill up",
+          "wordEs": "Llenar por completo",
+          "pronunciation": "/fɪl ʌp/",
+          "example": "Fill up the gas tank, please.",
+          "exampleEs": "Llene el tanque de gasolina, por favor."
+        },
+        {
+          "id": "pv_41",
+          "wordEn": "Get along with",
+          "wordEs": "Llevarse bien con alguien",
+          "pronunciation": "/ɡɛt əˈlɒŋ wɪð/",
+          "example": "I get along very well with my neighbors.",
+          "exampleEs": "Me llevo muy bien con mis vecinos."
+        },
+        {
+          "id": "pv_42",
+          "wordEn": "Get away",
+          "wordEs": "Escaparse / Irse de vacaciones",
+          "pronunciation": "/ɡɛt əˈweɪ/",
+          "example": "We need a weekend to get away.",
+          "exampleEs": "Necesitamos un fin de semana para escaparnos."
+        },
+        {
+          "id": "pv_43",
+          "wordEn": "Get back",
+          "wordEs": "Volver / Recuperar",
+          "pronunciation": "/ɡɛt bæk/",
+          "example": "I got back home at midnight.",
+          "exampleEs": "Volví a casa a medianoche."
+        },
+        {
+          "id": "pv_44",
+          "wordEn": "Get in",
+          "wordEs": "Entrar (a un auto/taxi/lugar)",
+          "pronunciation": "/ɡɛt ɪn/",
+          "example": "Get in the car, we're late!",
+          "exampleEs": "¡Entra al carro, se nos hace tarde!"
+        },
+        {
+          "id": "pv_45",
+          "wordEn": "Get out",
+          "wordEs": "Salir / Bajar del auto",
+          "pronunciation": "/ɡɛt aʊt/",
+          "example": "Get out and enjoy the sunshine.",
+          "exampleEs": "Sal y disfruta del sol."
+        },
+        {
+          "id": "pv_46",
+          "wordEn": "Get over",
+          "wordEs": "Superar una enfermedad o desamor",
+          "pronunciation": "/ɡɛt ˈoʊvər/",
+          "example": "It took him weeks to get over the flu.",
+          "exampleEs": "Le tomó semanas superar la gripe."
+        },
+        {
+          "id": "pv_47",
+          "wordEn": "Give away",
+          "wordEs": "Regalar / Donar / Delatar",
+          "pronunciation": "/ɡɪv əˈweɪ/",
+          "example": "I gave away my old clothes to charity.",
+          "exampleEs": "Regalé mi ropa vieja a la caridad."
+        },
+        {
+          "id": "pv_48",
+          "wordEn": "Give back",
+          "wordEs": "Devolver algo prestado",
+          "pronunciation": "/ɡɪv bæk/",
+          "example": "Remember to give back the borrowed book.",
+          "exampleEs": "Recuerda devolver el libro prestado."
+        },
+        {
+          "id": "pv_49",
+          "wordEn": "Go ahead",
+          "wordEs": "Adelante / Proceder",
+          "pronunciation": "/ɡoʊ əˈhɛd/",
+          "example": "Go ahead and ask your question.",
+          "exampleEs": "Adelante, haz tu pregunta."
+        },
+        {
+          "id": "pv_50",
+          "wordEn": "Go back",
+          "wordEs": "Regresar a un lugar",
+          "pronunciation": "/ɡoʊ bæk/",
+          "example": "I want to go back to Italy someday.",
+          "exampleEs": "Quiero regresar a Italia algún día."
+        },
+        {
+          "id": "pv_51",
+          "wordEn": "Go out",
+          "wordEs": "Salir de fiesta o paseo",
+          "pronunciation": "/ɡoʊ aʊt/",
+          "example": "Do you want to go out this Friday?",
+          "exampleEs": "¿Quieres salir este viernes?"
+        },
+        {
+          "id": "pv_52",
+          "wordEn": "Hang on",
+          "wordEs": "Esperar un momento",
+          "pronunciation": "/hæŋ ɒn/",
+          "example": "Hang on, I'll be ready in a minute.",
+          "exampleEs": "Espera un momento, estaré listo en un minuto."
+        },
+        {
+          "id": "pv_53",
+          "wordEn": "Hang out",
+          "wordEs": "Pasar el rato con amigos",
+          "pronunciation": "/hæŋ aʊt/",
+          "example": "We hung out at the mall yesterday.",
+          "exampleEs": "Pasamos el rato en el centro comercial ayer."
+        },
+        {
+          "id": "pv_54",
+          "wordEn": "Hang up",
+          "wordEs": "Colgar el teléfono",
+          "pronunciation": "/hæŋ ʌp/",
+          "example": "Don't hang up, I have more news!",
+          "exampleEs": "¡No cuelgues, tengo más noticias!"
+        },
+        {
+          "id": "pv_55",
+          "wordEn": "Keep on",
+          "wordEs": "Seguir haciendo algo",
+          "pronunciation": "/kiːp ɒn/",
+          "example": "Keep on practicing every day.",
+          "exampleEs": "Sigue practicando todos los días."
+        },
+        {
+          "id": "pv_56",
+          "wordEn": "Keep up with",
+          "wordEs": "Mantenerse al ritmo de",
+          "pronunciation": "/kiːp ʌp wɪð/",
+          "example": "It's hard to keep up with the news.",
+          "exampleEs": "Es difícil mantenerse al día con las noticias."
+        },
+        {
+          "id": "pv_57",
+          "wordEn": "Let down",
+          "wordEs": "Decepcionar a alguien",
+          "pronunciation": "/lɛt daʊn/",
+          "example": "I won't let you down, I promise.",
+          "exampleEs": "No te decepcionaré, lo prometo."
+        },
+        {
+          "id": "pv_58",
+          "wordEn": "Look forward to",
+          "wordEs": "Esperar con ilusión",
+          "pronunciation": "/lʊk ˈfɔːrwərd tuː/",
+          "example": "I look forward to meeting you.",
+          "exampleEs": "Tengo mucha ilusión de conocerte."
+        },
+        {
+          "id": "pv_59",
+          "wordEn": "Look out",
+          "wordEs": "¡Cuidado! / Estar alerta",
+          "pronunciation": "/lʊk aʊt/",
+          "example": "Look out! The floor is wet.",
+          "exampleEs": "¡Cuidado! El piso está mojado."
+        },
+        {
+          "id": "pv_60",
+          "wordEn": "Look up",
+          "wordEs": "Buscar información (palabra/mapa)",
+          "pronunciation": "/lʊk ʌp/",
+          "example": "Look up the word in the dictionary.",
+          "exampleEs": "Busca la palabra en el diccionario."
+        },
+        {
+          "id": "pv_61",
+          "wordEn": "Make up",
+          "wordEs": "Inventar / Reconciliarse",
+          "pronunciation": "/meɪk ʌp/",
+          "example": "They argued but made up quickly.",
+          "exampleEs": "Discutieron pero se reconciliaron rápido."
+        },
+        {
+          "id": "pv_62",
+          "wordEn": "Pass away",
+          "wordEs": "Fallecer / Morir",
+          "pronunciation": "/pæs əˈweɪ/",
+          "example": "His grandfather passed away peacefully.",
+          "exampleEs": "Su abuelo falleció en paz."
+        },
+        {
+          "id": "pv_63",
+          "wordEn": "Pass out",
+          "wordEs": "Desmayarse",
+          "pronunciation": "/pæs aʊt/",
+          "example": "He felt dizzy and passed out.",
+          "exampleEs": "Se sintió mareado y se desmayó."
+        },
+        {
+          "id": "pv_64",
+          "wordEn": "Pay back",
+          "wordEs": "Devolver dinero / Pagar deuda",
+          "pronunciation": "/peɪ bæk/",
+          "example": "I will pay you back on payday.",
+          "exampleEs": "Te pagaré el dinero el día de pago."
+        },
+        {
+          "id": "pv_65",
+          "wordEn": "Point out",
+          "wordEs": "Señalar / Destacar un detalle",
+          "pronunciation": "/pɔɪnt aʊt/",
+          "example": "She pointed out a mistake in the report.",
+          "exampleEs": "Ella señaló un error en el informe."
+        },
+        {
+          "id": "pv_66",
+          "wordEn": "Put away",
+          "wordEs": "Guardar en su lugar",
+          "pronunciation": "/pʊt əˈweɪ/",
+          "example": "Please put away your toys.",
+          "exampleEs": "Por favor guarda tus juguetes en su lugar."
+        },
+        {
+          "id": "pv_67",
+          "wordEn": "Put off",
+          "wordEs": "Posponer / Aplazar",
+          "pronunciation": "/pʊt ɒf/",
+          "example": "Don't put off what you can do today.",
+          "exampleEs": "No pospongas lo que puedes hacer hoy."
+        },
+        {
+          "id": "pv_68",
+          "wordEn": "Put out",
+          "wordEs": "Apagar un fuego o cigarro",
+          "pronunciation": "/pʊt aʊt/",
+          "example": "Firefighters put out the fire.",
+          "exampleEs": "Los bomberos apagaron el fuego."
+        },
+        {
+          "id": "pv_69",
+          "wordEn": "Run into",
+          "wordEs": "Toparse con alguien por sorpresa",
+          "pronunciation": "/rʌn ˈɪntuː/",
+          "example": "I ran into my teacher at the supermarket.",
+          "exampleEs": "Me topé con mi profesor en el supermercado."
+        },
+        {
+          "id": "pv_70",
+          "wordEn": "Show up",
+          "wordEs": "Aparecer / Llegar a una cita",
+          "pronunciation": "/ʃoʊ ʌp/",
+          "example": "He didn't show up to the meeting.",
+          "exampleEs": "Él no apareció en la reunión."
+        },
+        {
+          "id": "pv_71",
+          "wordEn": "Shut down",
+          "wordEs": "Apagar sistema / Cerrar negocio",
+          "pronunciation": "/ʃʌt daʊn/",
+          "example": "Shut down your computer before leaving.",
+          "exampleEs": "Apaga tu computadora antes de salir."
+        },
+        {
+          "id": "pv_72",
+          "wordEn": "Slow down",
+          "wordEs": "Reducir la velocidad",
+          "pronunciation": "/sloʊ daʊn/",
+          "example": "Slow down, you're driving too fast!",
+          "exampleEs": "¡Baja la velocidad, vas muy rápido!"
+        },
+        {
+          "id": "pv_73",
+          "wordEn": "Speed up",
+          "wordEs": "Acelerar / Aumentar velocidad",
+          "pronunciation": "/spiːd ʌp/",
+          "example": "We need to speed up to finish on time.",
+          "exampleEs": "Necesitamos acelerar para terminar a tiempo."
+        },
+        {
+          "id": "pv_74",
+          "wordEn": "Stand by",
+          "wordEs": "Estar en espera / Apoyar",
+          "pronunciation": "/stænd baɪ/",
+          "example": "Please stand by for further instructions.",
+          "exampleEs": "Por favor esté en espera de más instrucciones."
+        },
+        {
+          "id": "pv_75",
+          "wordEn": "Stand up",
+          "wordEs": "Ponerse de pie",
+          "pronunciation": "/stænd ʌp/",
+          "example": "Everyone stood up when the anthem played.",
+          "exampleEs": "Todos se pusieron de pie cuando sonó el himno."
+        },
+        {
+          "id": "pv_76",
+          "wordEn": "Stay up",
+          "wordEs": "Quedarse despierto hasta tarde",
+          "pronunciation": "/steɪ ʌp/",
+          "example": "I stayed up all night studying.",
+          "exampleEs": "Me quedé despierto toda la noche estudiando."
+        },
+        {
+          "id": "pv_77",
+          "wordEn": "Switch on",
+          "wordEs": "Encender interruptor",
+          "pronunciation": "/swɪtʃ ɒn/",
+          "example": "Switch on the air conditioner.",
+          "exampleEs": "Enciende el aire acondicionado."
+        },
+        {
+          "id": "pv_78",
+          "wordEn": "Switch off",
+          "wordEs": "Apagar interruptor",
+          "pronunciation": "/swɪtʃ ɒf/",
+          "example": "Switch off the lights when you leave.",
+          "exampleEs": "Apaga las luces cuando salgas."
+        },
+        {
+          "id": "pv_79",
+          "wordEn": "Take after",
+          "wordEs": "Parecerse a un familiar",
+          "pronunciation": "/teɪk ˈæftər/",
+          "example": "He takes after his father in many ways.",
+          "exampleEs": "Él se parece a su padre en muchas cosas."
+        },
+        {
+          "id": "pv_80",
+          "wordEn": "Take back",
+          "wordEs": "Retractarse / Devolver a la tienda",
+          "pronunciation": "/teɪk bæk/",
+          "example": "I take back what I said, I was wrong.",
+          "exampleEs": "Me retracto de lo que dije, me equivoqué."
+        },
+        {
+          "id": "pv_81",
+          "wordEn": "Take care of",
+          "wordEs": "Cuidar / Encargarse de",
+          "pronunciation": "/teɪk kɛr əv/",
+          "example": "I will take care of the cooking tonight.",
+          "exampleEs": "Yo me encargaré de cocinar esta noche."
+        },
+        {
+          "id": "pv_82",
+          "wordEn": "Take in",
+          "wordEs": "Asimilar información / Alojar",
+          "pronunciation": "/teɪk ɪn/",
+          "example": "It was too much information to take in.",
+          "exampleEs": "Fue demasiada información para asimilar."
+        },
+        {
+          "id": "pv_83",
+          "wordEn": "Take out",
+          "wordEs": "Sacar la basura / Invitar a salir",
+          "pronunciation": "/teɪk aʊt/",
+          "example": "Please take out the trash before you leave.",
+          "exampleEs": "Por favor saca la basura antes de irte."
+        },
+        {
+          "id": "pv_84",
+          "wordEn": "Take over",
+          "wordEs": "Tomar el control / Asumir mando",
+          "pronunciation": "/teɪk ˈoʊvər/",
+          "example": "She took over the family business.",
+          "exampleEs": "Ella tomó el control del negocio familiar."
+        },
+        {
+          "id": "pv_85",
+          "wordEn": "Take up",
+          "wordEs": "Empezar un nuevo hobby o deporte",
+          "pronunciation": "/teɪk ʌp/",
+          "example": "I want to take up photography.",
+          "exampleEs": "Quiero empezar a hacer fotografía."
+        },
+        {
+          "id": "pv_86",
+          "wordEn": "Think over",
+          "wordEs": "Pensar detenidamente / Meditar",
+          "pronunciation": "/θɪŋk ˈoʊvər/",
+          "example": "Think it over before making a decision.",
+          "exampleEs": "Piénsalo bien antes de tomar una decisión."
+        },
+        {
+          "id": "pv_87",
+          "wordEn": "Throw away",
+          "wordEs": "Tirar a la basura",
+          "pronunciation": "/θroʊ əˈweɪ/",
+          "example": "Don't throw away useful items.",
+          "exampleEs": "No tires a la basura cosas útiles."
+        },
+        {
+          "id": "pv_88",
+          "wordEn": "Try on",
+          "wordEs": "Probarse una prenda de ropa",
+          "pronunciation": "/traɪ ɒn/",
+          "example": "Try on this dress, it looks nice.",
+          "exampleEs": "Pruébate este vestido, se ve muy bien."
+        },
+        {
+          "id": "pv_89",
+          "wordEn": "Turn down",
+          "wordEs": "Rechazar oferta / Bajar volumen",
+          "pronunciation": "/tɜːrn daʊn/",
+          "example": "Turn down the volume, it's too loud.",
+          "exampleEs": "Baja el volumen, está muy alto."
+        },
+        {
+          "id": "pv_90",
+          "wordEn": "Turn up",
+          "wordEs": "Subir volumen / Aparecer",
+          "pronunciation": "/tɜːrn ʌp/",
+          "example": "Turn up the music, I love this song!",
+          "exampleEs": "¡Sube la música, me encanta esta canción!"
+        },
+        {
+          "id": "pv_91",
+          "wordEn": "Use up",
+          "wordEs": "Agotar por completo un recurso",
+          "pronunciation": "/juːz ʌp/",
+          "example": "We used up all the printer paper.",
+          "exampleEs": "Agotamos todo el papel de la impresora."
+        },
+        {
+          "id": "pv_92",
+          "wordEn": "Warm up",
+          "wordEs": "Calentar antes de ejercicio",
+          "pronunciation": "/wɔːrm ʌp/",
+          "example": "Always warm up before running.",
+          "exampleEs": "Siempre calienta antes de correr."
+        },
+        {
+          "id": "pv_93",
+          "wordEn": "Wash up",
+          "wordEs": "Lavarse las manos y cara / Lavar platos",
+          "pronunciation": "/wɒʃ ʌp/",
+          "example": "Wash up before coming to dinner.",
+          "exampleEs": "Lávate las manos antes de venir a cenar."
+        },
+        {
+          "id": "pv_94",
+          "wordEn": "Watch out",
+          "wordEs": "Estar atento / Tener precaución",
+          "pronunciation": "/wɒtʃ aʊt/",
+          "example": "Watch out for cars when crossing the street.",
+          "exampleEs": "Ten cuidado con los autos al cruzar la calle."
+        },
+        {
+          "id": "pv_95",
+          "wordEn": "Wear out",
+          "wordEs": "Desgastar algo por el uso",
+          "pronunciation": "/wɛr aʊt/",
+          "example": "I wore out my running shoes.",
+          "exampleEs": "Desgasté mis zapatillas de correr."
+        },
+        {
+          "id": "pv_96",
+          "wordEn": "Work out",
+          "wordEs": "Hacer ejercicio / Solucionarse",
+          "pronunciation": "/wɜːrk aʊt/",
+          "example": "I work out at the gym three times a week.",
+          "exampleEs": "Hago ejercicio en el gimnasio tres veces por semana."
+        },
+        {
+          "id": "pv_97",
+          "wordEn": "Write down",
+          "wordEs": "Anotar en papel",
+          "pronunciation": "/raɪt daʊn/",
+          "example": "Write down my phone number so you don't forget.",
+          "exampleEs": "Anota mi número de teléfono para que no lo olvides."
+        },
+        {
+          "id": "pv_98",
+          "wordEn": "Back up",
+          "wordEs": "Hacer copia de seguridad / Retroceder",
+          "pronunciation": "/bæk ʌp/",
+          "example": "Always back up your files.",
+          "exampleEs": "Siempre haz una copia de seguridad de tus archivos."
+        },
+        {
+          "id": "pv_99",
+          "wordEn": "Blow up",
+          "wordEs": "Explotar / Inflar",
+          "pronunciation": "/bloʊ ʌp/",
+          "example": "Help me blow up these balloons for the party.",
+          "exampleEs": "Ayúdame a inflar estos globos para la fiesta."
+        },
+        {
+          "id": "pv_100",
+          "wordEn": "Calm down",
+          "wordEs": "Tranquilizarse / Calmarse",
+          "pronunciation": "/kɑːm daʊn/",
+          "example": "Deep breaths will help you calm down.",
+          "exampleEs": "Respirar profundo te ayudará a calmarte."
+        }
+      ]
+    },
+    {
+      "id": "irregular_verbs",
+      "name": "Irregular Verbs",
+      "nameEs": "Verbos Irregulares",
+      "icon": "📖",
+      "color": "#FF7043",
+      "cards": [
+        {
+          "id": "iv_1",
+          "wordEn": "Be • Was / Were • Been",
+          "wordEs": "Ser / Estar",
+          "present": "be",
+          "past": "was / were",
+          "participle": "been",
+          "pronunciation": "/biː/ • /wɒz/ • /biːn/",
+          "example": "I am happy. I was tired yesterday. I have been busy all week.",
+          "exampleEs": "Estoy feliz. Estuve cansado ayer. He estado ocupado toda la semana."
+        },
+        {
+          "id": "iv_2",
+          "wordEn": "Go • Went • Gone",
+          "wordEs": "Ir",
+          "present": "go",
+          "past": "went",
+          "participle": "gone",
+          "pronunciation": "/ɡoʊ/ • /wɛnt/ • /ɡɒn/",
+          "example": "I go to work daily. She went home early. They have gone to Spain.",
+          "exampleEs": "Voy a trabajar a diario. Ella fue a casa temprano. Se han ido a España."
+        },
+        {
+          "id": "iv_3",
+          "wordEn": "Do • Did • Done",
+          "wordEs": "Hacer",
+          "present": "do",
+          "past": "did",
+          "participle": "done",
+          "pronunciation": "/duː/ • /dɪd/ • /dʌn/",
+          "example": "I do my best. He did his homework. We have done the job.",
+          "exampleEs": "Hago mi mejor esfuerzo. Él hizo su tarea. Hemos hecho el trabajo."
+        },
+        {
+          "id": "iv_4",
+          "wordEn": "Have • Had • Had",
+          "wordEs": "Tener / Haber",
+          "present": "have",
+          "past": "had",
+          "participle": "had",
+          "pronunciation": "/hæv/ • /hæd/ • /hæd/",
+          "example": "I have a question. She had a dog. I have had a great day.",
+          "exampleEs": "Tengo una pregunta. Ella tuvo un perro. He tenido un gran día."
+        },
+        {
+          "id": "iv_5",
+          "wordEn": "See • Saw • Seen",
+          "wordEs": "Ver",
+          "present": "see",
+          "past": "saw",
+          "participle": "seen",
+          "pronunciation": "/siː/ • /sɔː/ • /siːn/",
+          "example": "I see the ocean. I saw a movie. Have you seen my keys?",
+          "exampleEs": "Veo el océano. Vi una película. ¿Has visto mis llaves?"
+        },
+        {
+          "id": "iv_6",
+          "wordEn": "Come • Came • Come",
+          "wordEs": "Venir",
+          "present": "come",
+          "past": "came",
+          "participle": "come",
+          "pronunciation": "/kʌm/ • /keɪm/ • /kʌm/",
+          "example": "Come in, please. He came late. They have come to help.",
+          "exampleEs": "Pasa por favor. Él vino tarde. Ellos han venido a ayudar."
+        },
+        {
+          "id": "iv_7",
+          "wordEn": "Take • Took • Taken",
+          "wordEs": "Tomar / Llevar",
+          "present": "take",
+          "past": "took",
+          "participle": "taken",
+          "pronunciation": "/teɪk/ • /tʊk/ • /ˈteɪkən/",
+          "example": "Take your time. He took a photo. The seat is taken.",
+          "exampleEs": "Tómate tu tiempo. Él tomó una foto. El asiento está ocupado."
+        },
+        {
+          "id": "iv_8",
+          "wordEn": "Make • Made • Made",
+          "wordEs": "Hacer / Fabricar",
+          "present": "make",
+          "past": "made",
+          "participle": "made",
+          "pronunciation": "/meɪk/ • /meɪd/ • /meɪd/",
+          "example": "I make coffee. She made a cake. It was made in Italy.",
+          "exampleEs": "Hago café. Ella hizo un pastel. Fue hecho en Italia."
+        },
+        {
+          "id": "iv_9",
+          "wordEn": "Say • Said • Said",
+          "wordEs": "Decir",
+          "present": "say",
+          "past": "said",
+          "participle": "said",
+          "pronunciation": "/seɪ/ • /sɛd/ • /sɛd/",
+          "example": "Say hello. He said yes. She has said enough.",
+          "exampleEs": "Di hola. Él dijo que sí. Ella ha dicho suficiente."
+        },
+        {
+          "id": "iv_10",
+          "wordEn": "Get • Got • Gotten",
+          "wordEs": "Obtener / Llegar",
+          "present": "get",
+          "past": "got",
+          "participle": "gotten",
+          "pronunciation": "/ɡɛt/ • /ɡɒt/ • /ˈɡɒtən/",
+          "example": "Get ready. I got a prize. I have gotten better.",
+          "exampleEs": "Prepárate. Obtuve un premio. He mejorado."
+        },
+        {
+          "id": "iv_11",
+          "wordEn": "Know • Knew • Known",
+          "wordEs": "Saber / Conocer",
+          "present": "know",
+          "past": "knew",
+          "participle": "known",
+          "pronunciation": "/noʊ/ • /njuː/ • /noʊn/",
+          "example": "I know the answer. I knew him well. He is well known.",
+          "exampleEs": "Sé la respuesta. Lo conocí bien. Él es bien conocido."
+        },
+        {
+          "id": "iv_12",
+          "wordEn": "Think • Thought • Thought",
+          "wordEs": "Pensar",
+          "present": "think",
+          "past": "thought",
+          "participle": "thought",
+          "pronunciation": "/θɪŋk/ • /θɔːt/ • /θɔːt/",
+          "example": "I think so. I thought of you. I have thought about it.",
+          "exampleEs": "Creo que sí. Pensé en ti. He pensado en ello."
+        },
+        {
+          "id": "iv_13",
+          "wordEn": "Give • Gave • Given",
+          "wordEs": "Dar",
+          "present": "give",
+          "past": "gave",
+          "participle": "given",
+          "pronunciation": "/ɡɪv/ • /ɡeɪv/ • /ˈɡɪvən/",
+          "example": "Give me a hand. She gave me a gift. It was given to me.",
+          "exampleEs": "Dame una mano. Ella me dio un regalo. Me fue dado."
+        },
+        {
+          "id": "iv_14",
+          "wordEn": "Find • Found • Found",
+          "wordEs": "Encontrar",
+          "present": "find",
+          "past": "found",
+          "participle": "found",
+          "pronunciation": "/faɪnd/ • /faʊnd/ • /faʊnd/",
+          "example": "I can't find it. I found my wallet. We found a solution.",
+          "exampleEs": "No puedo encontrarlo. Encontré mi billetera. Encontramos una solución."
+        },
+        {
+          "id": "iv_15",
+          "wordEn": "Tell • Told • Told",
+          "wordEs": "Decir / Contar",
+          "present": "tell",
+          "past": "told",
+          "participle": "told",
+          "pronunciation": "/tɛl/ • /toʊld/ • /toʊld/",
+          "example": "Tell me the story. He told the truth. I was told to wait.",
+          "exampleEs": "Cuéntame la historia. Él dijo la verdad. Me dijeron que esperara."
+        },
+        {
+          "id": "iv_16",
+          "wordEn": "Speak • Spoke • Spoken",
+          "wordEs": "Hablar",
+          "present": "speak",
+          "past": "spoke",
+          "participle": "spoken",
+          "pronunciation": "/spiːk/ • /spoʊk/ • /ˈspoʊkən/",
+          "example": "I speak English. We spoke yesterday. English is spoken here.",
+          "exampleEs": "Hablo inglés. Hablamos ayer. Se habla inglés aquí."
+        },
+        {
+          "id": "iv_17",
+          "wordEn": "Write • Wrote • Written",
+          "wordEs": "Escribir",
+          "present": "write",
+          "past": "wrote",
+          "participle": "written",
+          "pronunciation": "/raɪt/ • /roʊt/ • /ˈrɪtən/",
+          "example": "Write clearly. She wrote a book. The letter is written.",
+          "exampleEs": "Escribe claro. Ella escribió un libro. La carta está escrita."
+        },
+        {
+          "id": "iv_18",
+          "wordEn": "Read • Read • Read",
+          "wordEs": "Leer",
+          "present": "read",
+          "past": "read",
+          "participle": "read",
+          "pronunciation": "/riːd/ • /rɛd/ • /rɛd/",
+          "example": "I read daily. I read that novel. Have you read this?",
+          "exampleEs": "Leo a diario. Leí esa novela. ¿Has leído esto?"
+        },
+        {
+          "id": "iv_19",
+          "wordEn": "Eat • Ate • Eaten",
+          "wordEs": "Comer",
+          "present": "eat",
+          "past": "ate",
+          "participle": "eaten",
+          "pronunciation": "/iːt/ • /eɪt/ • /ˈiːtən/",
+          "example": "Let's eat lunch. I ate pizza. Have you eaten yet?",
+          "exampleEs": "Vamos a almorzar. Comí pizza. ¿Ya has comido?"
+        },
+        {
+          "id": "iv_20",
+          "wordEn": "Drink • Drank • Drunk",
+          "wordEs": "Beber",
+          "present": "drink",
+          "past": "drank",
+          "participle": "drunk",
+          "pronunciation": "/drɪŋk/ • /dræŋk/ • /drʌŋk/",
+          "example": "Drink water. I drank tea. He has drunk the juice.",
+          "exampleEs": "Bebe agua. Bebí té. Él se ha bebido el jugo."
+        },
+        {
+          "id": "iv_21",
+          "wordEn": "Begin • Began • Begun",
+          "wordEs": "Empezar / Comenzar",
+          "present": "begin",
+          "past": "began",
+          "participle": "begun",
+          "pronunciation": "/bɪˈɡɪn/ • /bɪˈɡæn/ • /bɪˈɡʌn/",
+          "example": "Classes begin now. The movie began at eight. The game has begun.",
+          "exampleEs": "Las clases empiezan ahora. La película empezó a las ocho. El juego ha comenzado."
+        },
+        {
+          "id": "iv_22",
+          "wordEn": "Break • Broke • Broken",
+          "wordEs": "Romper / Quebrar",
+          "present": "break",
+          "past": "broke",
+          "participle": "broken",
+          "pronunciation": "/breɪk/ • /broʊk/ • /ˈbroʊkən/",
+          "example": "Don't break the glass. He broke his arm. The watch is broken.",
+          "exampleEs": "No rompas el vaso. Se rompió el brazo. El reloj está roto."
+        },
+        {
+          "id": "iv_23",
+          "wordEn": "Bring • Brought • Brought",
+          "wordEs": "Traer",
+          "present": "bring",
+          "past": "brought",
+          "participle": "brought",
+          "pronunciation": "/brɪŋ/ • /brɔːt/ • /brɔːt/",
+          "example": "Bring an umbrella. She brought flowers. I have brought food.",
+          "exampleEs": "Trae un paraguas. Ella trajo flores. He traído comida."
+        },
+        {
+          "id": "iv_24",
+          "wordEn": "Buy • Bought • Bought",
+          "wordEs": "Comprar",
+          "present": "buy",
+          "past": "bought",
+          "participle": "bought",
+          "pronunciation": "/baɪ/ • /bɔːt/ • /bɔːt/",
+          "example": "I buy groceries. He bought a new car. We have bought the tickets.",
+          "exampleEs": "Compro víveres. Él compró un auto nuevo. Hemos comprado los boletos."
+        },
+        {
+          "id": "iv_25",
+          "wordEn": "Catch • Caught • Caught",
+          "wordEs": "Atrapar / Tomar",
+          "present": "catch",
+          "past": "caught",
+          "participle": "caught",
+          "pronunciation": "/kætʃ/ • /kɔːt/ • /kɔːt/",
+          "example": "Catch the ball! I caught the early train. He has caught a cold.",
+          "exampleEs": "¡Atrapa la pelota! Tomé el tren temprano. Ha pescado un resfriado."
+        },
+        {
+          "id": "iv_26",
+          "wordEn": "Choose • Chose • Chosen",
+          "wordEs": "Elegir / Escoger",
+          "present": "choose",
+          "past": "chose",
+          "participle": "chosen",
+          "pronunciation": "/tʃuːz/ • /tʃoʊz/ • /ˈtʃoʊzən/",
+          "example": "Choose wisely. She chose the blue dress. He has been chosen.",
+          "exampleEs": "Elige sabiamente. Ella eligió el vestido azul. Ha sido elegido."
+        },
+        {
+          "id": "iv_27",
+          "wordEn": "Drive • Drove • Driven",
+          "wordEs": "Conducir / Manejar",
+          "present": "drive",
+          "past": "drove",
+          "participle": "driven",
+          "pronunciation": "/draɪv/ • /droʊv/ • /ˈdrɪvən/",
+          "example": "I drive to work. He drove carefully. She has driven for hours.",
+          "exampleEs": "Conduzco al trabajo. Él manejó con cuidado. Ella ha manejado por horas."
+        },
+        {
+          "id": "iv_28",
+          "wordEn": "Fall • Fell • Fallen",
+          "wordEs": "Caer",
+          "present": "fall",
+          "past": "fell",
+          "participle": "fallen",
+          "pronunciation": "/fɔːl/ • /fɛl/ • /ˈfɔːlən/",
+          "example": "Leaves fall in autumn. He fell down. The snow has fallen.",
+          "exampleEs": "Las hojas caen en otoño. Él se cayó. La nieve ha caído."
+        },
+        {
+          "id": "iv_29",
+          "wordEn": "Feel • Felt • Felt",
+          "wordEs": "Sentir",
+          "present": "feel",
+          "past": "felt",
+          "participle": "felt",
+          "pronunciation": "/fiːl/ • /fɛlt/ • /fɛlt/",
+          "example": "I feel great today. She felt sick yesterday. We have felt welcomed.",
+          "exampleEs": "Me siento genial hoy. Ella se sintió enferma ayer. Nos hemos sentido bienvenidos."
+        },
+        {
+          "id": "iv_30",
+          "wordEn": "Fly • Flew • Flown",
+          "wordEs": "Volar",
+          "present": "fly",
+          "past": "flew",
+          "participle": "flown",
+          "pronunciation": "/flaɪ/ • /fluː/ • /floʊn/",
+          "example": "Birds fly high. The plane flew over clouds. I have flown many times.",
+          "exampleEs": "Las aves vuelan alto. El avión voló sobre las nubes. He volado muchas veces."
+        },
+        {
+          "id": "iv_31",
+          "wordEn": "Forget • Forgot • Forgotten",
+          "wordEs": "Olvidar",
+          "present": "forget",
+          "past": "forgot",
+          "participle": "forgotten",
+          "pronunciation": "/fərˈɡɛt/ • /fərˈɡɒt/ • /fərˈɡɒtən/",
+          "example": "Don't forget me. I forgot my password. Have you forgotten our meeting?",
+          "exampleEs": "No me olvides. Olvidé mi contraseña. ¿Has olvidado nuestra reunión?"
+        },
+        {
+          "id": "iv_32",
+          "wordEn": "Grow • Grew • Grown",
+          "wordEs": "Crecer / Cultivar",
+          "present": "grow",
+          "past": "grew",
+          "participle": "grown",
+          "pronunciation": "/ɡroʊ/ • /ɡruː/ • /ɡroʊn/",
+          "example": "Plants grow fast. The city grew rapidly. You have grown taller!",
+          "exampleEs": "Las plantas crecen rápido. La ciudad creció rápido. ¡Has crecido más alto!"
+        },
+        {
+          "id": "iv_33",
+          "wordEn": "Hear • Heard • Heard",
+          "wordEs": "Oír / Escuchar",
+          "present": "hear",
+          "past": "heard",
+          "participle": "heard",
+          "pronunciation": "/hɪr/ • /hɜːrd/ • /hɜːrd/",
+          "example": "I hear music. I heard a loud noise. Have you heard the news?",
+          "exampleEs": "Oigo música. Escuché un ruido fuerte. ¿Has oído las noticias?"
+        },
+        {
+          "id": "iv_34",
+          "wordEn": "Hold • Held • Held",
+          "wordEs": "Sostener / Celebrar",
+          "present": "hold",
+          "past": "held",
+          "participle": "held",
+          "pronunciation": "/hoʊld/ • /hɛld/ • /hɛld/",
+          "example": "Hold my hand. The meeting was held on Monday. She held the baby.",
+          "exampleEs": "Sostén mi mano. La reunión se celebró el lunes. Ella sostuvo al bebé."
+        },
+        {
+          "id": "iv_35",
+          "wordEn": "Keep • Kept • Kept",
+          "wordEs": "Mantener / Guardar",
+          "present": "keep",
+          "past": "kept",
+          "participle": "kept",
+          "pronunciation": "/kiːp/ • /kɛpt/ • /kɛpt/",
+          "example": "Keep going. She kept her secret. I have kept your gift safe.",
+          "exampleEs": "Sigue adelante. Ella guardó su secreto. He guardado tu regalo a salvo."
+        },
+        {
+          "id": "iv_36",
+          "wordEn": "Leave • Left • Left",
+          "wordEs": "Salir / Dejar",
+          "present": "leave",
+          "past": "left",
+          "participle": "left",
+          "pronunciation": "/liːv/ • /lɛft/ • /lɛft/",
+          "example": "I leave at five. The train left on time. He has left the building.",
+          "exampleEs": "Salgo a las cinco. El tren salió a tiempo. Él ha salido del edificio."
+        },
+        {
+          "id": "iv_37",
+          "wordEn": "Lose • Lost • Lost",
+          "wordEs": "Perder",
+          "present": "lose",
+          "past": "lost",
+          "participle": "lost",
+          "pronunciation": "/luːz/ • /lɒst/ • /lɒst/",
+          "example": "Don't lose hope. I lost my glasses. We have lost the game.",
+          "exampleEs": "No pierdas la esperanza. Perdí mis lentes. Hemos perdido el juego."
+        },
+        {
+          "id": "iv_38",
+          "wordEn": "Meet • Met • Met",
+          "wordEs": "Conocer / Encontrarse con",
+          "present": "meet",
+          "past": "met",
+          "participle": "met",
+          "pronunciation": "/miːt/ • /mɛt/ • /mɛt/",
+          "example": "Nice to meet you. We met at university. Have you met my boss?",
+          "exampleEs": "Gusto en conocerte. Nos conocimos en la universidad. ¿Conoces a mi jefe?"
+        },
+        {
+          "id": "iv_39",
+          "wordEn": "Pay • Paid • Paid",
+          "wordEs": "Pagar",
+          "present": "pay",
+          "past": "paid",
+          "participle": "paid",
+          "pronunciation": "/peɪ/ • /peɪd/ • /peɪd/",
+          "example": "I pay by card. He paid the rent yesterday. All bills are paid.",
+          "exampleEs": "Pago con tarjeta. Él pagó el alquiler ayer. Todas las cuentas están pagadas."
+        },
+        {
+          "id": "iv_40",
+          "wordEn": "Run • Ran • Run",
+          "wordEs": "Correr",
+          "present": "run",
+          "past": "ran",
+          "participle": "run",
+          "pronunciation": "/rʌn/ • /ræn/ • /rʌn/",
+          "example": "I run every morning. She ran five kilometers. We have run out of time.",
+          "exampleEs": "Corro cada mañana. Ella corrió cinco kilómetros. Nos hemos quedado sin tiempo."
+        },
+        {
+          "id": "iv_41",
+          "wordEn": "Send • Sent • Sent",
+          "wordEs": "Enviar",
+          "present": "send",
+          "past": "sent",
+          "participle": "sent",
+          "pronunciation": "/sɛnd/ • /sɛnt/ • /sɛnt/",
+          "example": "Send an email. I sent the letter yesterday. Has it been sent?",
+          "exampleEs": "Envía un correo. Envié la carta ayer. ¿Ha sido enviada?"
+        },
+        {
+          "id": "iv_42",
+          "wordEn": "Sing • Sang • Sung",
+          "wordEs": "Cantar",
+          "present": "sing",
+          "past": "sang",
+          "participle": "sung",
+          "pronunciation": "/sɪŋ/ • /sæŋ/ • /sʌŋ/",
+          "example": "Birds sing in the morning. She sang beautifully. The anthem was sung.",
+          "exampleEs": "Las aves cantan en la mañana. Ella cantó hermoso. El himno fue cantado."
+        },
+        {
+          "id": "iv_43",
+          "wordEn": "Sit • Sat • Sat",
+          "wordEs": "Sentarse",
+          "present": "sit",
+          "past": "sat",
+          "participle": "sat",
+          "pronunciation": "/sɪt/ • /sæt/ • /sæt/",
+          "example": "Please sit down. We sat near the window. He has sat there for an hour.",
+          "exampleEs": "Por favor siéntate. Nos sentamos cerca de la ventana. Se ha sentado allí por una hora."
+        },
+        {
+          "id": "iv_44",
+          "wordEn": "Sleep • Slept • Slept",
+          "wordEs": "Dormir",
+          "present": "sleep",
+          "past": "slept",
+          "participle": "slept",
+          "pronunciation": "/sliːp/ • /slɛpt/ • /slɛpt/",
+          "example": "I sleep eight hours. She slept well. The baby has slept all night.",
+          "exampleEs": "Duermo ocho horas. Ella durmió bien. El bebé ha dormido toda la noche."
+        },
+        {
+          "id": "iv_45",
+          "wordEn": "Stand • Stood • Stood",
+          "wordEs": "Estar de pie / Soportar",
+          "present": "stand",
+          "past": "stood",
+          "participle": "stood",
+          "pronunciation": "/stænd/ • /stʊd/ • /stʊd/",
+          "example": "Stand up please. They stood in line. I have stood here for hours.",
+          "exampleEs": "Póngase de pie por favor. Ellos estuvieron de pie en fila. He estado aquí de pie por horas."
+        },
+        {
+          "id": "iv_46",
+          "wordEn": "Swim • Swam • Swum",
+          "wordEs": "Nadar",
+          "present": "swim",
+          "past": "swam",
+          "participle": "swum",
+          "pronunciation": "/swɪm/ • /swæm/ • /swʌm/",
+          "example": "I swim at the pool. We swam in the lake. She has swum across the river.",
+          "exampleEs": "Nado en la piscina. Nadamos en el lago. Ella ha nadado a través del río."
+        },
+        {
+          "id": "iv_47",
+          "wordEn": "Teach • Taught • Taught",
+          "wordEs": "Enseñar",
+          "present": "teach",
+          "past": "taught",
+          "participle": "taught",
+          "pronunciation": "/tiːtʃ/ • /tɔːt/ • /tɔːt/",
+          "example": "I teach English. She taught me to cook. He has taught for twenty years.",
+          "exampleEs": "Enseño inglés. Ella me enseñó a cocinar. Él ha enseñado por veinte años."
+        },
+        {
+          "id": "iv_48",
+          "wordEn": "Understand • Understood • Understood",
+          "wordEs": "Entender / Comprender",
+          "present": "understand",
+          "past": "understood",
+          "participle": "understood",
+          "pronunciation": "/ˌʌndərˈstænd/ • /ˌʌndərˈstʊd/ • /ˌʌndərˈstʊd/",
+          "example": "I understand you. We understood the lesson. Have you understood?",
+          "exampleEs": "Te entiendo. Entendimos la lección. ¿Has entendido?"
+        },
+        {
+          "id": "iv_49",
+          "wordEn": "Wear • Wore • Worn",
+          "wordEs": "Vestir / Usar puesto",
+          "present": "wear",
+          "past": "wore",
+          "participle": "worn",
+          "pronunciation": "/wɛr/ • /wɔːr/ • /wɔːrn/",
+          "example": "I wear glasses. She wore a red coat. The tires are worn out.",
+          "exampleEs": "Uso lentes. Ella usó un abrigo rojo. Los neumáticos están desgastados."
+        },
+        {
+          "id": "iv_50",
+          "wordEn": "Win • Won • Won",
+          "wordEs": "Ganar",
+          "present": "win",
+          "past": "won",
+          "participle": "won",
+          "pronunciation": "/wɪn/ • /wʌn/ • /wʌn/",
+          "example": "We want to win. Our team won yesterday. She has won three awards.",
+          "exampleEs": "Queremos ganar. Nuestro equipo ganó ayer. Ella ha ganado tres premios."
+        },
+        {
+          "id": "iv_51",
+          "wordEn": "Become • Became • Become",
+          "wordEs": "Convertirse / Llegar a ser",
+          "present": "become",
+          "past": "became",
+          "participle": "become",
+          "pronunciation": "/bɪˈkʌm/ • /bɪˈkeɪm/ • /bɪˈkʌm/",
+          "example": "It becomes cold at night. He became a doctor. She has become successful.",
+          "exampleEs": "Se vuelve frío de noche. Él se convirtió en doctor. Ella se ha vuelto exitosa."
+        },
+        {
+          "id": "iv_52",
+          "wordEn": "Bite • Bit • Bitten",
+          "wordEs": "Morder",
+          "present": "bite",
+          "past": "bit",
+          "participle": "bitten",
+          "pronunciation": "/baɪt/ • /bɪt/ • /ˈbɪtən/",
+          "example": "Dogs bite when scared. The mosquito bit me. He was bitten by a dog.",
+          "exampleEs": "Los perros muerden cuando tienen miedo. El mosquito me picó. Fue mordido por un perro."
+        },
+        {
+          "id": "iv_53",
+          "wordEn": "Bleed • Bled • Bled",
+          "wordEs": "Sangrar",
+          "present": "bleed",
+          "past": "bled",
+          "participle": "bled",
+          "pronunciation": "/bliːd/ • /blɛd/ • /blɛd/",
+          "example": "A wound can bleed. His nose bled after the hit. It has stopped bleeding.",
+          "exampleEs": "Una herida puede sangrar. Su nariz sangró tras el golpe. Ha dejado de sangrar."
+        },
+        {
+          "id": "iv_54",
+          "wordEn": "Blow • Blew • Blown",
+          "wordEs": "Soplar",
+          "present": "blow",
+          "past": "blew",
+          "participle": "blown",
+          "pronunciation": "/bloʊ/ • /bluː/ • /bloʊn/",
+          "example": "Wind blows hard. The storm blew the roof. The candle was blown out.",
+          "exampleEs": "El viento sopla fuerte. La tormenta voló el techo. La vela fue apagada soplándola."
+        },
+        {
+          "id": "iv_55",
+          "wordEn": "Build • Built • Built",
+          "wordEs": "Construir",
+          "present": "build",
+          "past": "built",
+          "participle": "built",
+          "pronunciation": "/bɪld/ • /bɪlt/ • /bɪlt/",
+          "example": "They build houses. The Romans built roads. The bridge was built in 1990.",
+          "exampleEs": "Ellos construyen casas. Los romanos construyeron caminos. El puente fue construido en 1990."
+        },
+        {
+          "id": "iv_56",
+          "wordEn": "Burn • Burnt • Burnt",
+          "wordEs": "Quemar / Arder",
+          "present": "burn",
+          "past": "burnt",
+          "participle": "burnt",
+          "pronunciation": "/bɜːrn/ • /bɜːrnt/ • /bɜːrnt/",
+          "example": "Wood burns easily. The toast burnt. The house was burnt down.",
+          "exampleEs": "La madera se quema fácil. La tostada se quemó. La casa fue quemada."
+        },
+        {
+          "id": "iv_57",
+          "wordEn": "Cost • Cost • Cost",
+          "wordEs": "Costar",
+          "present": "cost",
+          "past": "cost",
+          "participle": "cost",
+          "pronunciation": "/kɒst/ • /kɒst/ • /kɒst/",
+          "example": "How much does it cost? The dinner cost fifty dollars. It has cost a lot.",
+          "exampleEs": "¿Cuánto cuesta? La cena costó cincuenta dólares. Ha costado mucho."
+        },
+        {
+          "id": "iv_58",
+          "wordEn": "Cut • Cut • Cut",
+          "wordEs": "Cortar",
+          "present": "cut",
+          "past": "cut",
+          "participle": "cut",
+          "pronunciation": "/kʌt/ • /kʌt/ • /kʌt/",
+          "example": "Cut the paper carefully. She cut her finger. The hair is freshly cut.",
+          "exampleEs": "Corta el papel con cuidado. Ella se cortó el dedo. El cabello está recién cortado."
+        },
+        {
+          "id": "iv_59",
+          "wordEn": "Dig • Dug • Dug",
+          "wordEs": "Cavar / Excavar",
+          "present": "dig",
+          "past": "dug",
+          "participle": "dug",
+          "pronunciation": "/dɪɡ/ • /dʌɡ/ • /dʌɡ/",
+          "example": "Dogs dig holes. Workers dug a deep trench. They have dug for gold.",
+          "exampleEs": "Los perros cavan hoyos. Los trabajadores cavaron una zanja profunda. Han cavado buscando oro."
+        },
+        {
+          "id": "iv_60",
+          "wordEn": "Draw • Drew • Drawn",
+          "wordEs": "Dibujar / Sacar",
+          "present": "draw",
+          "past": "drew",
+          "participle": "drawn",
+          "pronunciation": "/drɔː/ • /druː/ • /drɔːn/",
+          "example": "I draw landscapes. She drew a lovely portrait. The curtains are drawn.",
+          "exampleEs": "Dibujo paisajes. Ella dibujó un hermoso retrato. Las cortinas están corridas."
+        },
+        {
+          "id": "iv_61",
+          "wordEn": "Dream • Dreamt • Dreamt",
+          "wordEs": "Soñar",
+          "present": "dream",
+          "past": "dreamt",
+          "participle": "dreamt",
+          "pronunciation": "/driːm/ • /drɛmt/ • /drɛmt/",
+          "example": "I dream every night. I dreamt about flying. Have you ever dreamt of this?",
+          "exampleEs": "Sueño cada noche. Soñé que volaba. ¿Has soñado alguna vez con esto?"
+        },
+        {
+          "id": "iv_62",
+          "wordEn": "Feed • Fed • Fed",
+          "wordEs": "Alimentar",
+          "present": "feed",
+          "past": "fed",
+          "participle": "fed",
+          "pronunciation": "/fiːd/ • /fɛd/ • /fɛd/",
+          "example": "Feed the cat. She fed the birds this morning. The baby has been fed.",
+          "exampleEs": "Alimenta al gato. Ella alimentó a las aves esta mañana. El bebé ha sido alimentado."
+        },
+        {
+          "id": "iv_63",
+          "wordEn": "Fight • Fought • Fought",
+          "wordEs": "Pelear / Luchar",
+          "present": "fight",
+          "past": "fought",
+          "participle": "fought",
+          "pronunciation": "/faɪt/ • /fɔːt/ • /fɔːt/",
+          "example": "Never fight with anger. Soldiers fought bravely. They have fought for freedom.",
+          "exampleEs": "Nunca pelees con ira. Los soldados lucharon con valor. Han luchado por la libertad."
+        },
+        {
+          "id": "iv_64",
+          "wordEn": "Forgive • Forgave • Forgiven",
+          "wordEs": "Perdonar",
+          "present": "forgive",
+          "past": "forgave",
+          "participle": "forgiven",
+          "pronunciation": "/fərˈɡɪv/ • /fərˈɡeɪv/ • /fərˈɡɪvən/",
+          "example": "Forgive and forget. She forgave his mistake. You are forgiven.",
+          "exampleEs": "Perdona y olvida. Ella perdonó su error. Estás perdonado."
+        },
+        {
+          "id": "iv_65",
+          "wordEn": "Freeze • Froze • Frozen",
+          "wordEs": "Congelar",
+          "present": "freeze",
+          "past": "froze",
+          "participle": "frozen",
+          "pronunciation": "/friːz/ • /froʊz/ • /ˈfroʊzən/",
+          "example": "Water freezes at zero degrees. The lake froze yesterday. The screen is frozen.",
+          "exampleEs": "El agua se congela a cero grados. El lago se congeló ayer. La pantalla está congelada."
+        },
+        {
+          "id": "iv_66",
+          "wordEn": "Hang • Hung • Hung",
+          "wordEs": "Colgar",
+          "present": "hang",
+          "past": "hung",
+          "participle": "hung",
+          "pronunciation": "/hæŋ/ • /hʌŋ/ • /hʌŋ/",
+          "example": "Hang your coat here. He hung the painting. The clothes were hung outside.",
+          "exampleEs": "Cuelga tu abrigo aquí. Él colgó la pintura. La ropa fue colgada afuera."
+        },
+        {
+          "id": "iv_67",
+          "wordEn": "Hide • Hid • Hidden",
+          "wordEs": "Esconder / Ocultar",
+          "present": "hide",
+          "past": "hid",
+          "participle": "hidden",
+          "pronunciation": "/haɪd/ • /hɪd/ • /ˈhɪdən/",
+          "example": "Where do you hide? He hid behind the door. The treasure is hidden.",
+          "exampleEs": "¿Dónde te escondes? Él se escondió tras la puerta. El tesoro está oculto."
+        },
+        {
+          "id": "iv_68",
+          "wordEn": "Hit • Hit • Hit",
+          "wordEs": "Golpear / Pegar",
+          "present": "hit",
+          "past": "hit",
+          "participle": "hit",
+          "pronunciation": "/hɪt/ • /hɪt/ • /hɪt/",
+          "example": "Don't hit the table. The ball hit the window. He was hit by a ball.",
+          "exampleEs": "No golpees la mesa. La pelota golpeó la ventana. Fue golpeado por una pelota."
+        },
+        {
+          "id": "iv_69",
+          "wordEn": "Hurt • Hurt • Hurt",
+          "wordEs": "Doler / Lastimar",
+          "present": "hurt",
+          "past": "hurt",
+          "participle": "hurt",
+          "pronunciation": "/hɜːrt/ • /hɜːrt/ • /hɜːrt/",
+          "example": "My knees hurt. The fall hurt his back. No one was hurt.",
+          "exampleEs": "Me duelen las rodillas. La caída le lastimó la espalda. Nadie salió lastimado."
+        },
+        {
+          "id": "iv_70",
+          "wordEn": "Lead • Led • Led",
+          "wordEs": "Liderar / Guiar",
+          "present": "lead",
+          "past": "led",
+          "participle": "led",
+          "pronunciation": "/liːd/ • /lɛd/ • /lɛd/",
+          "example": "Leaders lead by example. She led the team to victory. The path led to a lake.",
+          "exampleEs": "Los líderes guían con el ejemplo. Ella guió al equipo a la victoria. El camino llevó a un lago."
+        },
+        {
+          "id": "iv_71",
+          "wordEn": "Lend • Lent • Lent",
+          "wordEs": "Prestar",
+          "present": "lend",
+          "past": "lent",
+          "participle": "lent",
+          "pronunciation": "/lɛnd/ • /lɛnt/ • /lɛnt/",
+          "example": "Can you lend me ten dollars? I lent him my bicycle. She has lent many books.",
+          "exampleEs": "¿Puedes prestarme diez dólares? Le presté mi bicicleta. Ella ha prestado muchos libros."
+        },
+        {
+          "id": "iv_72",
+          "wordEn": "Let • Let • Let",
+          "wordEs": "Permitir / Dejar",
+          "present": "let",
+          "past": "let",
+          "participle": "let",
+          "pronunciation": "/lɛt/ • /lɛt/ • /lɛt/",
+          "example": "Let it be. My parents let me go out. They have let us enter.",
+          "exampleEs": "Déjalo ser. Mis padres me dejaron salir. Nos han dejado entrar."
+        },
+        {
+          "id": "iv_73",
+          "wordEn": "Lie • Lay • Lain",
+          "wordEs": "Recostarse / Yacer",
+          "present": "lie",
+          "past": "lay",
+          "participle": "lain",
+          "pronunciation": "/laɪ/ • /leɪ/ • /leɪn/",
+          "example": "Lie down and rest. He lay on the grass. The book has lain on the floor.",
+          "exampleEs": "Acuéstate y descansa. Él se recostó en la hierba. El libro ha yacido en el piso."
+        },
+        {
+          "id": "iv_74",
+          "wordEn": "Light • Lit • Lit",
+          "wordEs": "Encender / Iluminar",
+          "present": "light",
+          "past": "lit",
+          "participle": "lit",
+          "pronunciation": "/laɪt/ • /lɪt/ • /lɪt/",
+          "example": "Light the campfire. She lit a candle. The street is brightly lit.",
+          "exampleEs": "Enciende la fogata. Ella encendió una vela. La calle está brillantemente iluminada."
+        },
+        {
+          "id": "iv_75",
+          "wordEn": "Mean • Meant • Meant",
+          "wordEs": "Significar / Querer decir",
+          "present": "mean",
+          "past": "meant",
+          "participle": "meant",
+          "pronunciation": "/miːn/ • /mɛnt/ • /mɛnt/",
+          "example": "What does it mean? I meant to call you earlier. He meant well.",
+          "exampleEs": "¿Qué significa? Quise llamarte más temprano. Él tenía buenas intenciones."
+        },
+        {
+          "id": "iv_76",
+          "wordEn": "Ride • Rode • Ridden",
+          "wordEs": "Montar (bici/caballo)",
+          "present": "ride",
+          "past": "rode",
+          "participle": "ridden",
+          "pronunciation": "/raɪd/ • /roʊd/ • /ˈrɪdən/",
+          "example": "I ride a bike to work. She rode a horse yesterday. Have you ridden an elephant?",
+          "exampleEs": "Monto en bicicleta al trabajo. Ella montó a caballo ayer. ¿Has montado un elefante?"
+        },
+        {
+          "id": "iv_77",
+          "wordEn": "Ring • Rang • Rung",
+          "wordEs": "Sonar / Timbrar",
+          "present": "ring",
+          "past": "rang",
+          "participle": "rung",
+          "pronunciation": "/rɪŋ/ • /ræŋ/ • /rʌŋ/",
+          "example": "Phones ring constantly. The alarm rang at dawn. The church bell has rung.",
+          "exampleEs": "Los teléfonos timbran constante. La alarma sonó al amanecer. La campana ha sonado."
+        },
+        {
+          "id": "iv_78",
+          "wordEn": "Rise • Rose • Risen",
+          "wordEs": "Subir / Levantarse (sol/precios)",
+          "present": "rise",
+          "past": "rose",
+          "participle": "risen",
+          "pronunciation": "/raɪz/ • /roʊz/ • /ˈrɪzən/",
+          "example": "The sun rises in the east. Prices rose last month. The bread has risen.",
+          "exampleEs": "El sol sale por el este. Los precios subieron el mes pasado. El pan ha leudado."
+        },
+        {
+          "id": "iv_79",
+          "wordEn": "Sell • Sold • Sold",
+          "wordEs": "Vender",
+          "present": "sell",
+          "past": "sold",
+          "participle": "sold",
+          "pronunciation": "/sɛl/ • /soʊld/ • /soʊld/",
+          "example": "They sell fresh bread. He sold his laptop. All tickets are sold out.",
+          "exampleEs": "Venden pan fresco. Él vendió su laptop. Todos los boletos están vendidos."
+        },
+        {
+          "id": "iv_80",
+          "wordEn": "Set • Set • Set",
+          "wordEs": "Poner / Ajustar / Establecer",
+          "present": "set",
+          "past": "set",
+          "participle": "set",
+          "pronunciation": "/sɛt/ • /sɛt/ • /sɛt/",
+          "example": "Set the alarm for seven. She set the table for dinner. The sun has set.",
+          "exampleEs": "Pon la alarma a las siete. Ella puso la mesa para cenar. El sol se ha ocultado."
+        },
+        {
+          "id": "iv_81",
+          "wordEn": "Shake • Shook • Shaken",
+          "wordEs": "Agitar / Sacudir",
+          "present": "shake",
+          "past": "shook",
+          "participle": "shaken",
+          "pronunciation": "/ʃeɪk/ • /ʃʊk/ • /ˈʃeɪkən/",
+          "example": "Shake well before opening. We shook hands. He was shaken by the news.",
+          "exampleEs": "Agita bien antes de abrir. Nos dimos la mano. Quedó sacudido por las noticias."
+        },
+        {
+          "id": "iv_82",
+          "wordEn": "Shine • Shone • Shone",
+          "wordEs": "Brillar",
+          "present": "shine",
+          "past": "shone",
+          "participle": "shone",
+          "pronunciation": "/ʃaɪn/ • /ʃoʊn/ • /ʃoʊn/",
+          "example": "Stars shine at night. The sun shone bright all day. His shoes are freshly shone.",
+          "exampleEs": "Las estrellas brillan de noche. El sol brilló todo el día. Sus zapatos están recién brillados."
+        },
+        {
+          "id": "iv_83",
+          "wordEn": "Shoot • Shot • Shot",
+          "wordEs": "Disparar / Tirar a gol",
+          "present": "shoot",
+          "past": "shot",
+          "participle": "shot",
+          "pronunciation": "/ʃuːt/ • /ʃɒt/ • /ʃɒt/",
+          "example": "Shoot the ball! The player shot and scored. A film was shot here.",
+          "exampleEs": "¡Tira el balón! El jugador tiró y anotó. Una película fue filmada aquí."
+        },
+        {
+          "id": "iv_84",
+          "wordEn": "Shut • Shut • Shut",
+          "wordEs": "Cerrar",
+          "present": "shut",
+          "past": "shut",
+          "participle": "shut",
+          "pronunciation": "/ʃʌt/ • /ʃʌt/ • /ʃʌt/",
+          "example": "Shut the door please. She shut the window quickly. The store is shut.",
+          "exampleEs": "Cierra la puerta por favor. Ella cerró la ventana rápido. La tienda está cerrada."
+        },
+        {
+          "id": "iv_85",
+          "wordEn": "Sink • Sank • Sunk",
+          "wordEs": "Hundir / Hundirse",
+          "present": "sink",
+          "past": "sank",
+          "participle": "sunk",
+          "pronunciation": "/sɪŋk/ • /sæŋk/ • /sʌŋk/",
+          "example": "Heavy stones sink. The ship sank in the ocean. The sun has sunk below horizon.",
+          "exampleEs": "Las piedras pesadas se hunden. El barco se hundió en el océano. El sol se ha hundido en el horizonte."
+        },
+        {
+          "id": "iv_86",
+          "wordEn": "Spend • Spent • Spent",
+          "wordEs": "Gastar / Pasar tiempo",
+          "present": "spend",
+          "past": "spent",
+          "participle": "spent",
+          "pronunciation": "/spɛnd/ • /spɛnt/ • /spɛnt/",
+          "example": "Spend time with family. I spent twenty dollars. We have spent days here.",
+          "exampleEs": "Pasa tiempo con la familia. Gasté veinte dólares. Hemos pasado días aquí."
+        },
+        {
+          "id": "iv_87",
+          "wordEn": "Spread • Spread • Spread",
+          "wordEs": "Extender / Untar / Esparcir",
+          "present": "spread",
+          "past": "spread",
+          "participle": "spread",
+          "pronunciation": "/sprɛd/ • /sprɛd/ • /sprɛd/",
+          "example": "Spread butter on toast. News spread quickly. The virus has spread.",
+          "exampleEs": "Unta mantequilla en la tostada. La noticia se esparció rápido. El virus se ha propagado."
+        },
+        {
+          "id": "iv_88",
+          "wordEn": "Steal • Stole • Stolen",
+          "wordEs": "Robar",
+          "present": "steal",
+          "past": "stole",
+          "participle": "stolen",
+          "pronunciation": "/stiːl/ • /stoʊl/ • /ˈstoʊlən/",
+          "example": "Thieves steal valuables. Someone stole my bike. My wallet was stolen.",
+          "exampleEs": "Los ladrones roban cosas de valor. Alguien robó mi bici. Mi billetera fue robada."
+        },
+        {
+          "id": "iv_89",
+          "wordEn": "Stick • Stuck • Stuck",
+          "wordEs": "Pegar / Quedarse atascado",
+          "present": "stick",
+          "past": "stuck",
+          "participle": "stuck",
+          "pronunciation": "/stɪk/ • /stʌk/ • /stʌk/",
+          "example": "Stick the label on the box. The car got stuck in mud. I am stuck in traffic.",
+          "exampleEs": "Pega la etiqueta en la caja. El auto quedó atascado en lodo. Estoy atascado en el tráfico."
+        },
+        {
+          "id": "iv_90",
+          "wordEn": "Strike • Struck • Struck",
+          "wordEs": "Golpear / Declarar huelga",
+          "present": "strike",
+          "past": "struck",
+          "participle": "struck",
+          "pronunciation": "/straɪk/ • /strʌk/ • /strʌk/",
+          "example": "Lightning strikes trees. Clock struck midnight. Workers have struck for wages.",
+          "exampleEs": "El rayo golpea árboles. El reloj dio la medianoche. Los trabajadores fueron a la huelga."
+        },
+        {
+          "id": "iv_91",
+          "wordEn": "Swear • Swore • Sworn",
+          "wordEs": "Jurar / Decir palabrotas",
+          "present": "swear",
+          "past": "swore",
+          "participle": "sworn",
+          "pronunciation": "/swɛr/ • /swɔːr/ • /swɔːrn/",
+          "example": "I swear I am telling the truth. He swore under oath. Officers are sworn in.",
+          "exampleEs": "Juro que digo la verdad. Él juró bajo juramento. Los oficiales están juramentados."
+        },
+        {
+          "id": "iv_92",
+          "wordEn": "Sweep • Swept • Swept",
+          "wordEs": "Barrer",
+          "present": "sweep",
+          "past": "swept",
+          "participle": "swept",
+          "pronunciation": "/swiːp/ • /swɛpt/ • /swɛpt/",
+          "example": "Sweep the kitchen floor. She swept the leaves. The room has been swept clean.",
+          "exampleEs": "Barre el piso de la cocina. Ella barrió las hojas. La habitación ha sido barrida."
+        },
+        {
+          "id": "iv_93",
+          "wordEn": "Tear • Tore • Torn",
+          "wordEs": "Rasgar / Romper papel o tela",
+          "present": "tear",
+          "past": "tore",
+          "participle": "torn",
+          "pronunciation": "/tɛr/ • /tɔːr/ • /tɔːrn/",
+          "example": "Don't tear the paper. He tore his shirt on a branch. The page was torn out.",
+          "exampleEs": "No rompas el papel. Se rasgó la camisa con una rama. La página fue arrancada."
+        },
+        {
+          "id": "iv_94",
+          "wordEn": "Throw • Threw • Thrown",
+          "wordEs": "Lanzar / Tirar",
+          "present": "throw",
+          "past": "threw",
+          "participle": "thrown",
+          "pronunciation": "/θroʊ/ • /θruː/ • /θroʊn/",
+          "example": "Throw the ball to me. She threw the trash away. The dice has been thrown.",
+          "exampleEs": "Lánzame la pelota. Ella tiró la basura. Los dados han sido lanzados."
+        },
+        {
+          "id": "iv_95",
+          "wordEn": "Wake • Woke • Woken",
+          "wordEs": "Despertar",
+          "present": "wake",
+          "past": "woke",
+          "participle": "woken",
+          "pronunciation": "/weɪk/ • /woʊk/ • /ˈwoʊkən/",
+          "example": "Wake me at seven. The noise woke the baby. Have you woken up yet?",
+          "exampleEs": "Despiértame a las siete. El ruido despertó al bebé. ¿Ya te has despertado?"
+        },
+        {
+          "id": "iv_96",
+          "wordEn": "Weep • Wept • Wept",
+          "wordEs": "Llorar / Sollozar",
+          "present": "weep",
+          "past": "wept",
+          "participle": "wept",
+          "pronunciation": "/wiːp/ • /wɛpt/ • /wɛpt/",
+          "example": "People weep with joy. She wept at the sad movie. Tears were wept in sorrow.",
+          "exampleEs": "La gente llora de alegría. Ella lloró con la película triste. Se sollozó de tristeza."
+        },
+        {
+          "id": "iv_97",
+          "wordEn": "Wind • Wound • Wound",
+          "wordEs": "Enrollar / Dar cuerda",
+          "present": "wind",
+          "past": "wound",
+          "participle": "wound",
+          "pronunciation": "/waɪnd/ • /waʊnd/ • /waʊnd/",
+          "example": "Wind the clock. He wound the wire neatly. The river has wound through hills.",
+          "exampleEs": "Dale cuerda al reloj. Él enrolló el cable ordenadamente. El río serpenteó por colinas."
+        },
+        {
+          "id": "iv_98",
+          "wordEn": "Withdraw • Withdrew • Withdrawn",
+          "wordEs": "Retirar dinero / Retirarse",
+          "present": "withdraw",
+          "past": "withdrew",
+          "participle": "withdrawn",
+          "pronunciation": "/wɪðˈdrɔː/ • /wɪðˈdruː/ • /wɪðˈdrɔːn/",
+          "example": "Withdraw cash from ATM. He withdrew from the race. Money was withdrawn.",
+          "exampleEs": "Retira efectivo del cajero. Él se retiró de la carrera. El dinero fue retirado."
+        },
+        {
+          "id": "iv_99",
+          "wordEn": "Freeze • Froze • Frozen",
+          "wordEs": "Congelar",
+          "present": "freeze",
+          "past": "froze",
+          "participle": "frozen",
+          "pronunciation": "/friːz/ • /froʊz/ • /ˈfroʊzən/",
+          "example": "Water freezes at 0°C. Pipes froze in winter. The meat is frozen.",
+          "exampleEs": "El agua se congela a 0°C. Las tuberías se congelaron en invierno. La carne está congelada."
+        },
+        {
+          "id": "iv_100",
+          "wordEn": "Shrink • Shrank • Shrunk",
+          "wordEs": "Encoger / Encogerse",
+          "present": "shrink",
+          "past": "shrank",
+          "participle": "shrunk",
+          "pronunciation": "/ʃrɪŋk/ • /ʃræŋk/ • /ʃrʌŋk/",
+          "example": "Wool sweaters shrink in hot water. The shirt shrank after wash. It has shrunk.",
+          "exampleEs": "Los suéteres de lana se encogen con agua caliente. La camisa se encogió al lavarla. Se ha encogido."
+        }
+      ]
+    }
+  ]
+}
