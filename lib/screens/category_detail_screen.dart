@@ -162,6 +162,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
     }).toList();
 
     final mastery = flashcardProvider.getCategoryMastery(widget.category.id);
+    final isIrregularVerbs = widget.category.id == 'irregular_verbs';
 
     return Scaffold(
       backgroundColor: AppTheme.darkBg,
@@ -190,8 +191,15 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             decoration: BoxDecoration(
-              color: AppTheme.darkCard,
-              border: Border(bottom: BorderSide(color: AppTheme.darkBorder)),
+              gradient: LinearGradient(
+                colors: [
+                  widget.category.color.withValues(alpha: 0.12),
+                  AppTheme.darkCard,
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+              border: Border(bottom: BorderSide(color: widget.category.color.withValues(alpha: 0.2))),
             ),
             child: Column(
               children: [
@@ -200,12 +208,14 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: widget.category.color.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                        color: widget.category.color.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                        border: Border.all(color: widget.category.color.withValues(alpha: 0.4)),
                       ),
-                      child: Text(
-                        widget.category.icon,
-                        style: const TextStyle(fontSize: 30),
+                      child: Icon(
+                        widget.category.vectorIcon,
+                        size: 28,
+                        color: widget.category.color,
                       ),
                     ),
                     const SizedBox(width: 14),
@@ -217,10 +227,10 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                '${allCategoryCards.length} elementos',
+                                '${allCategoryCards.length} elementos en total',
                                 style: TextStyle(
                                   fontSize: 13,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w700,
                                   color: widget.category.color,
                                 ),
                               ),
@@ -234,12 +244,12 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 6),
+                          const SizedBox(height: 8),
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: BorderRadius.circular(6),
                             child: LinearProgressIndicator(
                               value: mastery / 100,
-                              backgroundColor: AppTheme.darkBorder,
+                              backgroundColor: Colors.white12,
                               valueColor: AlwaysStoppedAnimation<Color>(widget.category.color),
                               minHeight: 6,
                             ),
@@ -249,77 +259,53 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 14),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => FlashcardSessionScreen(
-                          categoryId: widget.category.id,
-                          title: widget.category.nameEs,
-                        ),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.style_rounded, size: 20),
-                  label: const Text('Iniciar Sesión de Flashcards'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: widget.category.color,
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(double.infinity, 44),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
 
-          // Search and Filters Bar
+          // Search and Filters
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
                 TextField(
                   controller: _searchController,
-                  onChanged: (val) {
-                    setState(() {
-                      _searchQuery = val;
-                    });
-                  },
+                  onChanged: (val) => setState(() => _searchQuery = val),
+                  style: const TextStyle(color: Colors.white, fontSize: 14),
                   decoration: InputDecoration(
-                    hintText: 'Buscar en la lista...',
-                    hintStyle: const TextStyle(color: Colors.white38, fontSize: 14),
-                    prefixIcon: const Icon(Icons.search_rounded, color: Colors.white54, size: 20),
+                    hintText: isIrregularVerbs ? 'Buscar por infinitivo, pasado o español...' : 'Buscar palabra o traducción...',
+                    hintStyle: const TextStyle(color: Colors.white38, fontSize: 13),
+                    prefixIcon: const Icon(Icons.search_rounded, color: Colors.white38, size: 20),
                     suffixIcon: _searchQuery.isNotEmpty
                         ? IconButton(
                             icon: const Icon(Icons.clear_rounded, size: 18),
                             onPressed: () {
                               _searchController.clear();
-                              setState(() {
-                                _searchQuery = '';
-                              });
+                              setState(() => _searchQuery = '');
                             },
                           )
                         : null,
                     filled: true,
                     fillColor: AppTheme.darkCard,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                      borderSide: BorderSide(color: AppTheme.darkBorder),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                      borderSide: const BorderSide(color: AppTheme.darkBorder),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                      borderSide: BorderSide(color: AppTheme.darkBorder),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                      borderSide: const BorderSide(color: AppTheme.darkBorder),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                      borderSide: BorderSide(color: widget.category.color),
                     ),
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 12),
                 Row(
                   children: [
-                    _buildFilterChip('Todos (${allCategoryCards.length})', 'all'),
+                    _buildFilterChip('Todas (${allCategoryCards.length})', 'all'),
                     const SizedBox(width: 8),
                     _buildFilterChip('Aprendidas', 'learned'),
                     const SizedBox(width: 8),
@@ -342,104 +328,17 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                 : ListView.separated(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     itemCount: filteredCards.length,
-                    separatorBuilder: (context, index) => const SizedBox(height: 10),
+                    separatorBuilder: (context, index) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
                       final card = filteredCards[index];
                       final progress = flashcardProvider.getProgressForCard(card.id);
                       final isLearned = progress.repetitions >= 1;
 
-                      return Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () => _openCardModal(card),
-                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                          child: Container(
-                            padding: const EdgeInsets.all(14),
-                            decoration: BoxDecoration(
-                              color: AppTheme.darkCard,
-                              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                              border: Border.all(
-                                color: isLearned
-                                    ? AppTheme.accent.withValues(alpha: 0.3)
-                                    : AppTheme.darkBorder,
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 32,
-                                  height: 32,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.05),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      '${index + 1}',
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white54,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      if (card.isVerbWithForms) ...[
-                                        Wrap(
-                                          spacing: 6,
-                                          runSpacing: 4,
-                                          children: [
-                                            _buildVerbBadge('PRES', card.present!, AppTheme.accent),
-                                            _buildVerbBadge('PAST', card.past!, AppTheme.primaryLight),
-                                            _buildVerbBadge('PART', card.participle!, AppTheme.accentOrange),
-                                          ],
-                                        ),
-                                      ] else ...[
-                                        Text(
-                                          card.wordEn,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ],
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        card.wordEs,
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          color: Colors.white.withValues(alpha: 0.7),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.push_pin_outlined, size: 20),
-                                  color: AppTheme.accent,
-                                  tooltip: 'Fijar en Widget',
-                                  onPressed: () {
-                                    WidgetPinSheet.show(context, card);
-                                  },
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.volume_up_rounded, size: 22),
-                                  color: AppTheme.primaryLight,
-                                  onPressed: () {
-                                    _ttsService.speak(card.wordEn);
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
+                      if (isIrregularVerbs && card.isVerbWithForms) {
+                        return _buildLargeIrregularVerbCard(card, index, isLearned);
+                      }
+
+                      return _buildStandardWordCard(card, index, isLearned);
                     },
                   ),
           ),
@@ -448,20 +347,265 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
     );
   }
 
-  Widget _buildVerbBadge(String label, String value, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: color.withValues(alpha: 0.4)),
+  /// TARJETA GRANDE Y DESTACADA PARA VERBOS IRREGULARES
+  Widget _buildLargeIrregularVerbCard(Flashcard card, int index, bool isLearned) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _openCardModal(card),
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                const Color(0xFF1E283A),
+                AppTheme.darkCard,
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+            border: Border.all(
+              color: isLearned
+                  ? AppTheme.accent.withValues(alpha: 0.4)
+                  : Colors.white.withValues(alpha: 0.12),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.3),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Fila superior con Número, Significado en español y Acciones
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      color: AppTheme.accentOrange.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: AppTheme.accentOrange.withValues(alpha: 0.3)),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '${index + 1}',
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.accentOrange,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      card.wordEs,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.push_pin_outlined, size: 20),
+                    color: AppTheme.accent,
+                    tooltip: 'Fijar en Widget',
+                    onPressed: () => WidgetPinSheet.show(context, card),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.volume_up_rounded, size: 22),
+                    color: AppTheme.primaryLight,
+                    onPressed: () => _ttsService.speak(card.wordEn),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+
+              // Bloque GRANDE de 3 tiempos verbales (Present, Past, Participle)
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.04),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  border: Border.all(color: Colors.white10),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _buildLargeTenseColumn(
+                        label: 'INFINITIVO',
+                        verb: card.present!,
+                        color: AppTheme.accent,
+                      ),
+                    ),
+                    Container(width: 1, height: 38, color: Colors.white12),
+                    Expanded(
+                      child: _buildLargeTenseColumn(
+                        label: 'PASADO',
+                        verb: card.past!,
+                        color: AppTheme.primaryLight,
+                      ),
+                    ),
+                    Container(width: 1, height: 38, color: Colors.white12),
+                    Expanded(
+                      child: _buildLargeTenseColumn(
+                        label: 'PARTICIPIO',
+                        verb: card.participle!,
+                        color: AppTheme.accentOrange,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 10),
+              // Pronunciación fonética
+              Row(
+                children: [
+                  const Icon(Icons.record_voice_over_rounded, size: 14, color: Colors.white38),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      card.pronunciation,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.white.withValues(alpha: 0.55),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
-      child: Text(
-        '$label: $value',
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.bold,
-          color: color,
+    );
+  }
+
+  Widget _buildLargeTenseColumn({
+    required String label,
+    required String verb,
+    required Color color,
+  }) {
+    return Column(
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 9,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.8,
+            color: color.withValues(alpha: 0.8),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          verb,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w800,
+            color: Colors.white,
+            letterSpacing: -0.2,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// TARJETA ESTÁNDAR PARA FRASES Y VOCABULARIO
+  Widget _buildStandardWordCard(Flashcard card, int index, bool isLearned) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _openCardModal(card),
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: AppTheme.darkCard,
+            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            border: Border.all(
+              color: isLearned
+                  ? AppTheme.accent.withValues(alpha: 0.3)
+                  : AppTheme.darkBorder,
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.05),
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Text(
+                    '${index + 1}',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white54,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      card.wordEn,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      card.wordEs,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.white.withValues(alpha: 0.7),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.push_pin_outlined, size: 20),
+                color: AppTheme.accent,
+                tooltip: 'Fijar en Widget',
+                onPressed: () {
+                  WidgetPinSheet.show(context, card);
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.volume_up_rounded, size: 22),
+                color: AppTheme.primaryLight,
+                onPressed: () {
+                  _ttsService.speak(card.wordEn);
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

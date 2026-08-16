@@ -18,6 +18,27 @@ class Category {
     required this.cardCount,
   });
 
+  /// Modern vector icon for the category
+  IconData get vectorIcon {
+    switch (id) {
+      case 'phrases':
+        return Icons.chat_bubble_outline_rounded;
+      case 'phrasal_verbs':
+        return Icons.bolt_rounded;
+      case 'irregular_verbs':
+        return Icons.menu_book_rounded;
+      case 'travel':
+        return Icons.flight_takeoff_rounded;
+      case 'business':
+        return Icons.business_center_rounded;
+      case 'daily_life':
+        return Icons.coffee_rounded;
+      default:
+        return Icons.auto_awesome_rounded;
+    }
+  }
+
+
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(
       id: json['id'] as String,
