@@ -198,7 +198,7 @@ struct LockScreenLiveActivityView: View {
                         Text("EXAMPLE")
                             .font(.system(size: 9, weight: .heavy, design: .rounded))
                             .foregroundColor(Color.cyan.opacity(0.9))
-                            .letterSpacing(0.8)
+                            .kerning(0.8)
                     }
 
                     HStack(alignment: .top, spacing: 6) {
