@@ -12,6 +12,7 @@ class Flashcard {
   final String? participle;
 
   final List<String>? extraExamples;
+  final String? structure;
 
   const Flashcard({
     required this.id,
@@ -25,9 +26,12 @@ class Flashcard {
     this.past,
     this.participle,
     this.extraExamples,
+    this.structure,
   });
 
-  bool get isVerbWithForms => present != null && past != null && participle != null;
+  bool get isVerbWithForms =>
+      present != null && past != null && participle != null;
+  bool get hasStructure => structure != null && structure!.isNotEmpty;
 
   /// Returns all available examples for widget timeline rotation
   List<String> get allExamples {
@@ -53,14 +57,18 @@ class Flashcard {
       wordEn: json['wordEn'] as String,
       wordEs: json['wordEs'] as String,
       pronunciation: json['pronunciation'] as String,
-      example: json['example'] as String? ?? (json['examples'] != null && (json['examples'] as List).isNotEmpty ? json['examples'][0] : ''),
+      example:
+          json['example'] as String? ??
+          (json['examples'] != null && (json['examples'] as List).isNotEmpty
+              ? json['examples'][0]
+              : ''),
       exampleEs: json['exampleEs'] as String? ?? '',
       categoryId: categoryId,
       present: json['present'] as String?,
       past: json['past'] as String?,
       participle: json['participle'] as String?,
       extraExamples: extra,
+      structure: json['structure'] as String?,
     );
   }
 }
-

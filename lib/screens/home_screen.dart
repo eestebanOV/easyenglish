@@ -21,6 +21,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final flashcardProvider = context.watch<FlashcardProvider>();
     final settingsProvider = context.watch<SettingsProvider>();
+    final t = settingsProvider.translate;
 
     if (flashcardProvider.isLoading) {
       return const Scaffold(
@@ -50,15 +51,15 @@ class HomeScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '¡Hola!',
+                        t('home.greeting'),
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.white.withValues(alpha: 0.6),
                         ),
                       ),
-                      const Text(
-                        'Aprende hoy',
-                        style: TextStyle(
+                      Text(
+                        t('home.learnToday'),
+                        style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -101,9 +102,9 @@ class HomeScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Meta Diaria',
-                            style: TextStyle(
+                          Text(
+                            t('home.dailyGoal'),
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -112,8 +113,8 @@ class HomeScreen extends StatelessWidget {
                           const SizedBox(height: 6),
                           Text(
                             dueCards.isNotEmpty
-                                ? '${dueCards.length} tarjetas pendientes para hoy'
-                                : '¡Felicidades! Meta completada por hoy 🎉',
+                                ? '${dueCards.length} ${t('home.dueCards')}'
+                                : t('home.goalDone'),
                             style: TextStyle(
                               fontSize: 13,
                               color: Colors.white.withValues(alpha: 0.7),
@@ -124,20 +125,20 @@ class HomeScreen extends StatelessWidget {
                             onPressed: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (_) => const FlashcardSessionScreen(
-                                    title: 'Repaso Diario',
+                                  builder: (_) => FlashcardSessionScreen(
+                                    title: t('srs.title'),
                                   ),
                                 ),
                               );
                             },
                             icon: const Icon(Icons.play_arrow_rounded, size: 20),
                             label: Text(
-                              dueCards.isNotEmpty ? 'Comenzar Repaso' : 'Practicar Más',
+                              dueCards.isNotEmpty ? t('home.startReview') : t('home.practiceMore'),
                               style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppTheme.accent,
-                              foregroundColor: Colors.black87,
+                              foregroundColor: AppTheme.darkBg,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 18,
                                 vertical: 10,
@@ -152,7 +153,7 @@ class HomeScreen extends StatelessWidget {
                       progress: progress,
                       current: stats.reviewsToday,
                       total: dailyGoal,
-                      label: 'Meta Diaria',
+                      label: t('home.dailyGoal'),
                     ),
                   ],
                 ),
@@ -165,7 +166,7 @@ class HomeScreen extends StatelessWidget {
                   Expanded(
                     child: _buildMiniStatCard(
                       icon: Icons.check_circle_outline_rounded,
-                      title: 'Aprendidas',
+                      title: t('home.learned'),
                       value: '${flashcardProvider.totalLearnedCount}',
                       color: AppTheme.success,
                     ),
@@ -174,7 +175,7 @@ class HomeScreen extends StatelessWidget {
                   Expanded(
                     child: _buildMiniStatCard(
                       icon: Icons.star_rounded,
-                      title: 'Dominadas',
+                      title: t('home.mastered'),
                       value: '${flashcardProvider.totalMasteredCount}',
                       color: AppTheme.warning,
                     ),
@@ -183,7 +184,7 @@ class HomeScreen extends StatelessWidget {
                   Expanded(
                     child: _buildMiniStatCard(
                       icon: Icons.layers_rounded,
-                      title: 'Total',
+                      title: t('home.totalCards'),
                       value: '${flashcardProvider.allCards.length}',
                       color: AppTheme.primaryLight,
                     ),
@@ -196,9 +197,9 @@ class HomeScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Categorías',
-                    style: TextStyle(
+                  Text(
+                    t('home.categoriesTitle'),
+                    style: const TextStyle(
                       fontSize: 19,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -206,9 +207,9 @@ class HomeScreen extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () => onNavigateTab?.call(1),
-                    child: const Text(
-                      'Ver todas',
-                      style: TextStyle(color: AppTheme.primaryLight, fontSize: 13),
+                    child: Text(
+                      t('home.viewAll'),
+                      style: const TextStyle(color: AppTheme.primaryLight, fontSize: 13),
                     ),
                   ),
                 ],

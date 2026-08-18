@@ -1,5 +1,7 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
+
 import '../models/flashcard.dart';
 import '../services/tts_service.dart';
 import '../theme/app_theme.dart';
@@ -36,9 +38,10 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
       vsync: this,
       duration: const Duration(milliseconds: 400),
     );
-    _animation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _animation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     _initExamples();
 
@@ -125,7 +128,7 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
   Widget _buildFront() {
     return Container(
       width: double.infinity,
-      constraints: const BoxConstraints(minHeight: 360),
+      constraints: const BoxConstraints(minHeight: 380),
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 26.0),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
@@ -145,27 +148,161 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
             offset: const Offset(0, 10),
           ),
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.4),
+            color: AppTheme.shadowSoft,
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Tag Superior
-          Container(
+      child: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        child: widget.card.categoryId == "verb_tenses"
+            ? _buildVerbTenseFront()
+            : _buildStandardFront(),
+      ),
+    );
+  }
+
+  Widget _buildVerbTenseFront() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // Tag Superior: STRUCTURE
+        Center(
+          child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
             decoration: BoxDecoration(
-              color: AppTheme.primaryLight.withValues(alpha: 0.15),
+              color: AppTheme.accentOrange.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(AppTheme.radiusRound),
-              border: Border.all(color: AppTheme.primaryLight.withValues(alpha: 0.3)),
+              border: Border.all(
+                color: AppTheme.accentOrange.withValues(alpha: 0.3),
+              ),
             ),
             child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.translate_rounded, size: 14, color: AppTheme.primaryLight),
+                Icon(
+                  Icons.rule_rounded,
+                  size: 14,
+                  color: AppTheme.accentOrange,
+                ),
+                SizedBox(width: 6),
+                Text(
+                  'STRUCTURE',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2,
+                    color: AppTheme.accentOrange,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 22),
+
+        // Nombre del tiempo verbal
+        Text(
+          widget.card.wordEn,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.w800,
+            color: Colors.white,
+            letterSpacing: -0.5,
+          ),
+        ),
+        const SizedBox(height: 24),
+
+        // Estructura gramatical
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          decoration: BoxDecoration(
+            color: AppTheme.accentOrange.withValues(alpha: 0.14),
+            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+            border: Border.all(
+              color: AppTheme.accentOrange.withValues(alpha: 0.4),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'GRAMMAR FORMULA',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.3,
+                  color: AppTheme.accentOrange,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                widget.card.structure ?? '',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  color: AppTheme.accentOrange.withValues(alpha: 0.95),
+                  fontFamily: 'monospace',
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
+
+        // Indicador para voltear
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.touch_app_rounded,
+              size: 15,
+              color: Colors.white.withValues(alpha: 0.45),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              'Toca para ver ejemplos de uso',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.white.withValues(alpha: 0.45),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStandardFront() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // Tag Superior
+        Center(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+            decoration: BoxDecoration(
+              color: AppTheme.primaryLight.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(AppTheme.radiusRound),
+              border: Border.all(
+                color: AppTheme.primaryLight.withValues(alpha: 0.3),
+              ),
+            ),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.translate_rounded,
+                  size: 14,
+                  color: AppTheme.primaryLight,
+                ),
                 SizedBox(width: 6),
                 Text(
                   'PALABRA & TRADUCCIÓN',
@@ -179,61 +316,63 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
               ],
             ),
           ),
-          const SizedBox(height: 20),
+        ),
+        const SizedBox(height: 20),
 
-          // Término en Inglés o 3 formas verbales
-          if (widget.card.isVerbWithForms) ...[
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.05),
-                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: _buildTenseBox(
-                      tense: 'PRESENT',
-                      word: widget.card.present!,
-                      color: AppTheme.accent,
-                    ),
-                  ),
-                  Container(width: 1, height: 44, color: Colors.white12),
-                  Expanded(
-                    child: _buildTenseBox(
-                      tense: 'PAST',
-                      word: widget.card.past!,
-                      color: AppTheme.primaryLight,
-                    ),
-                  ),
-                  Container(width: 1, height: 44, color: Colors.white12),
-                  Expanded(
-                    child: _buildTenseBox(
-                      tense: 'PARTICIPLE',
-                      word: widget.card.participle!,
-                      color: AppTheme.accentOrange,
-                    ),
-                  ),
-                ],
-              ),
+        // Término en Inglés o 3 formas verbales
+        if (widget.card.isVerbWithForms) ...[
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
             ),
-          ] else ...[
-            Text(
-              widget.card.wordEn,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.w800,
-                color: Colors.white,
-                letterSpacing: -0.5,
-              ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _buildTenseBox(
+                    tense: 'PRESENT',
+                    word: widget.card.present!,
+                    color: AppTheme.accent,
+                  ),
+                ),
+                Container(width: 1, height: 44, color: Colors.white12),
+                Expanded(
+                  child: _buildTenseBox(
+                    tense: 'PAST',
+                    word: widget.card.past!,
+                    color: AppTheme.primaryLight,
+                  ),
+                ),
+                Container(width: 1, height: 44, color: Colors.white12),
+                Expanded(
+                  child: _buildTenseBox(
+                    tense: 'PARTICIPLE',
+                    word: widget.card.participle!,
+                    color: AppTheme.accentOrange,
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
+        ] else ...[
+          Text(
+            widget.card.wordEn,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.w800,
+              color: Colors.white,
+              letterSpacing: -0.5,
+            ),
+          ),
+        ],
 
-          const SizedBox(height: 10),
+        const SizedBox(height: 10),
 
-          // Pronunciación Fonética
+        // Pronunciación Fonética
+        if (widget.card.pronunciation.isNotEmpty)
           Text(
             widget.card.pronunciation,
             textAlign: TextAlign.center,
@@ -244,77 +383,76 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
             ),
           ),
 
-          const SizedBox(height: 18),
+        const SizedBox(height: 18),
 
-          // Traducción al Español Destacada en el Frente
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-            decoration: BoxDecoration(
-              color: AppTheme.accent.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-              border: Border.all(color: AppTheme.accent.withValues(alpha: 0.35)),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.check_rounded, size: 16, color: AppTheme.accent),
-                const SizedBox(width: 8),
-                Flexible(
-                  child: Text(
-                    widget.card.wordEs,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.accent,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+        // Traducción al Español Destacada en el Frente
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+          decoration: BoxDecoration(
+            color: AppTheme.accent.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            border: Border.all(color: AppTheme.accent.withValues(alpha: 0.35)),
           ),
-
-          const SizedBox(height: 18),
-
-          // Bocina para pronunciación
-          IconButton.filledTonal(
-            onPressed: _speak,
-            icon: const Icon(Icons.volume_up_rounded, size: 24),
-            style: IconButton.styleFrom(
-              backgroundColor: AppTheme.primaryLight.withValues(alpha: 0.2),
-              foregroundColor: AppTheme.primaryLight,
-              padding: const EdgeInsets.all(12),
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Indicador para voltear
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                Icons.touch_app_rounded,
-                size: 15,
-                color: Colors.white.withValues(alpha: 0.45),
-              ),
-              const SizedBox(width: 6),
-              Text(
-                'Toca para ver ejemplos de uso',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.white.withValues(alpha: 0.45),
-                  fontWeight: FontWeight.w500,
+              const Icon(Icons.check_rounded, size: 16, color: AppTheme.accent),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  widget.card.wordEs,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.accent,
+                  ),
                 ),
               ),
             ],
           ),
-        ],
-      ),
+        ),
+
+        const SizedBox(height: 18),
+
+        // Bocina para pronunciación
+        IconButton.filledTonal(
+          onPressed: _speak,
+          icon: const Icon(Icons.volume_up_rounded, size: 24),
+          style: IconButton.styleFrom(
+            backgroundColor: AppTheme.primaryLight.withValues(alpha: 0.2),
+            foregroundColor: AppTheme.primaryLight,
+            padding: const EdgeInsets.all(12),
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
+        // Indicador para voltear
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.touch_app_rounded,
+              size: 15,
+              color: Colors.white.withValues(alpha: 0.45),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              'Toca para ver ejemplos de uso',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.white.withValues(alpha: 0.45),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
-  /// LADO 2 (REVERSO): DEDICADO A EJEMPLOS + BOTÓN DADO 🎲 + BOCINA
+  /// LADO 2 (REVERSO): DEDICADO A EJEMPLOS + BOTÓN DADO + BOCINA
   Widget _buildBack() {
     final currentExample = _examplesList[_exampleIndex % _examplesList.length];
 
@@ -323,7 +461,7 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
       transform: Matrix4.identity()..rotateY(pi),
       child: Container(
         width: double.infinity,
-        constraints: const BoxConstraints(minHeight: 360),
+        constraints: const BoxConstraints(minHeight: 380),
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 26.0),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
@@ -343,30 +481,40 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
               offset: const Offset(0, 10),
             ),
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.4),
+              color: AppTheme.shadowSoft,
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
           ],
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Header reverso con Tag y Botón Dado
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+        child: SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Header reverso con Tag - CENTRALIZADO
+              Center(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: AppTheme.accent.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(AppTheme.radiusRound),
-                    border: Border.all(color: AppTheme.accent.withValues(alpha: 0.3)),
+                    border: Border.all(
+                      color: AppTheme.accent.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.format_quote_rounded, size: 14, color: AppTheme.accent),
+                      const Icon(
+                        Icons.format_quote_rounded,
+                        size: 14,
+                        color: AppTheme.accent,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         'EJEMPLO ${_exampleIndex + 1}/${_examplesList.length}',
@@ -380,144 +528,122 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
                     ],
                   ),
                 ),
+              ),
 
-                // BOTÓN DE DADO 🎲 PARA CAMBIAR EJEMPLO
-                InkWell(
-                  onTap: _rollNextExample,
-                  borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: AppTheme.accentOrange.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: AppTheme.accentOrange.withValues(alpha: 0.5),
-                        width: 1.2,
-                      ),
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.casino_rounded, size: 18, color: AppTheme.accentOrange),
-                        SizedBox(width: 6),
-                        Text(
-                          'Cambiar',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.accentOrange,
-                          ),
-                        ),
-                      ],
-                    ),
+              const SizedBox(height: 24),
+
+              // Contenedor del Ejemplo Actual - contenido CENTRALIZADO
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(22),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.06),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.12),
                   ),
                 ),
-              ],
-            ),
-
-            const SizedBox(height: 24),
-
-            // Contenedor del Ejemplo Actual
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.06),
-                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 250),
+                      child: Text(
+                        '"$currentExample"',
+                        key: ValueKey(currentExample),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          fontStyle: FontStyle.italic,
+                          color: Colors.white,
+                          height: 1.5,
+                        ),
+                      ),
+                    ),
+                    if (_exampleIndex == 0 &&
+                        widget.card.exampleEs.isNotEmpty) ...[
+                      const SizedBox(height: 14),
+                      const Divider(
+                        color: Colors.white12,
+                        height: 1,
+                        indent: 30,
+                        endIndent: 30,
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        widget.card.exampleEs,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white.withValues(alpha: 0.7),
+                          fontWeight: FontWeight.w500,
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+
+              const SizedBox(height: 22),
+
+              // Barra inferior con Bocina y Dado juntos
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 250),
-                    child: Text(
-                      '"$currentExample"',
-                      key: ValueKey(currentExample),
-                      style: const TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                        fontStyle: FontStyle.italic,
-                        color: Colors.white,
-                        height: 1.4,
-                      ),
+                  // Bocina para escuchar el ejemplo
+                  IconButton.filledTonal(
+                    onPressed: _speakCurrentExample,
+                    icon: const Icon(Icons.volume_up_rounded, size: 24),
+                    style: IconButton.styleFrom(
+                      backgroundColor: AppTheme.accent.withValues(alpha: 0.2),
+                      foregroundColor: AppTheme.accent,
+                      padding: const EdgeInsets.all(12),
                     ),
+                    tooltip: 'Escuchar ejemplo',
                   ),
-                  if (_exampleIndex == 0 && widget.card.exampleEs.isNotEmpty) ...[
-                    const SizedBox(height: 12),
-                    const Divider(color: Colors.white12, height: 1),
-                    const SizedBox(height: 10),
-                    Text(
-                      widget.card.exampleEs,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.white.withValues(alpha: 0.65),
-                        fontWeight: FontWeight.w400,
+                  const SizedBox(width: 14),
+
+                  // Botón Dado (solo icono, sin texto)
+                  IconButton.filledTonal(
+                    onPressed: _rollNextExample,
+                    icon: const Icon(Icons.casino_rounded, size: 24),
+                    style: IconButton.styleFrom(
+                      backgroundColor: AppTheme.accentOrange.withValues(
+                        alpha: 0.2,
                       ),
+                      foregroundColor: AppTheme.accentOrange,
+                      padding: const EdgeInsets.all(12),
                     ),
-                  ],
+                    tooltip: 'Cambiar ejemplo',
+                  ),
                 ],
               ),
-            ),
 
-            const SizedBox(height: 22),
+              const SizedBox(height: 16),
 
-            // Barra inferior con Bocina y Acción de Dado
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Bocina para escuchar el ejemplo
-                IconButton.filledTonal(
-                  onPressed: _speakCurrentExample,
-                  icon: const Icon(Icons.volume_up_rounded, size: 24),
-                  style: IconButton.styleFrom(
-                    backgroundColor: AppTheme.accent.withValues(alpha: 0.2),
-                    foregroundColor: AppTheme.accent,
-                    padding: const EdgeInsets.all(12),
-                  ),
-                  tooltip: 'Escuchar ejemplo',
-                ),
-                const SizedBox(width: 14),
-
-                // Botón Dado grande
-                ElevatedButton.icon(
-                  onPressed: _rollNextExample,
-                  icon: const Icon(Icons.casino_rounded, size: 20),
-                  label: const Text('Nuevo Ejemplo (Dado)'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.accentOrange,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 16),
-
-            // Indicador para volver al frente
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.flip_to_front_rounded,
-                  size: 15,
-                  color: Colors.white.withValues(alpha: 0.4),
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  'Toca la tarjeta para volver',
-                  style: TextStyle(
-                    fontSize: 12,
+              // Indicador para volver al frente
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.flip_to_front_rounded,
+                    size: 15,
                     color: Colors.white.withValues(alpha: 0.4),
                   ),
-                ),
-              ],
-            ),
-          ],
+                  const SizedBox(width: 6),
+                  Text(
+                    'Toca la tarjeta para volver',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white.withValues(alpha: 0.4),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

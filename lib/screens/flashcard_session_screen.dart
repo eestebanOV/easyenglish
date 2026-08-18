@@ -5,7 +5,7 @@ import '../providers/flashcard_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/confidence_buttons.dart';
 import '../widgets/flashcard_widget.dart';
-import '../widgets/widget_pin_sheet.dart';
+import '../widgets/live_activity_pin_sheet.dart';
 
 class FlashcardSessionScreen extends StatefulWidget {
   final String? categoryId;
@@ -50,11 +50,6 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
 
     await provider.recordCardReview(currentCard.id, quality);
     _cardsReviewedInSession++;
-
-    // If quality is 1 (Don't know), re-append the card to the end of the session
-    if (quality == 1) {
-      _sessionCards.add(currentCard);
-    }
 
     if (_currentIndex < _sessionCards.length - 1) {
       setState(() {
@@ -146,7 +141,7 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
                     onPressed: () => Navigator.of(context).pop(),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.accent,
-                      foregroundColor: Colors.black87,
+                      foregroundColor: AppTheme.darkBg,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 36,
                         vertical: 16,
@@ -178,10 +173,10 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.push_pin_outlined),
-            tooltip: 'Fijar en Lock Screen Widget',
+            icon: const Icon(Icons.bolt_rounded),
+            tooltip: 'Live Activity del Día',
             onPressed: () {
-              WidgetPinSheet.show(context, currentCard);
+              LiveActivityPinSheet.show(context, currentCard);
             },
           ),
         ],

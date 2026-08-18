@@ -33,11 +33,14 @@ class Category {
         return Icons.business_center_rounded;
       case 'daily_life':
         return Icons.coffee_rounded;
+      case 'common_words':
+        return Icons.auto_stories_rounded;
+      case 'verb_tenses':
+        return Icons.schedule_rounded;
       default:
         return Icons.auto_awesome_rounded;
     }
   }
-
 
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(

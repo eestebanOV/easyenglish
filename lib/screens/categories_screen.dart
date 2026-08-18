@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/flashcard_provider.dart';
+import '../providers/settings_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/category_card.dart';
 import 'category_detail_screen.dart';
@@ -11,12 +12,13 @@ class CategoriesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final flashcardProvider = context.watch<FlashcardProvider>();
+    final t = context.watch<SettingsProvider>().translate;
     final categories = flashcardProvider.categories;
 
     return Scaffold(
       backgroundColor: AppTheme.darkBg,
       appBar: AppBar(
-        title: const Text('Categorías de Vocabulario'),
+        title: Text(t('cats.title')),
         automaticallyImplyLeading: false,
       ),
       body: SafeArea(

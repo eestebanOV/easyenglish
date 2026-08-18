@@ -1,5 +1,3 @@
-import '../core/constants.dart';
-
 /// Model representing the learning progress of a single flashcard
 class CardProgress {
   final String cardId;
@@ -43,7 +41,7 @@ class CardProgress {
   factory CardProgress.fromMap(Map<dynamic, dynamic> map) {
     return CardProgress(
       cardId: map['cardId'] as String,
-      easeFactor: (map['easeFactor'] as num?)?.toDouble() ?? AppConstants.defaultEaseFactor,
+      easeFactor: (map['easeFactor'] as num?)?.toDouble() ?? 2.5,
       interval: (map['interval'] as num?)?.toInt() ?? 0,
       repetitions: (map['repetitions'] as num?)?.toInt() ?? 0,
       nextReview: map['nextReview'] != null

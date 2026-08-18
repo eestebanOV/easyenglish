@@ -4,17 +4,18 @@ class AppConstants {
   static const String appName = 'EasyEnglish';
   static const String appVersion = '1.0.0';
   
-  // SRS Algorithm constants (SM-2 based)
-  static const double defaultEaseFactor = 2.5;
-  static const double minEaseFactor = 1.3;
-  static const int maxQuality = 4;
+  // SRS Algorithm constants
+  // Sistema simplificado: Difícil / Normal / Fácil
+  static const int maxQuality = 3;
   static const int minQuality = 1;
   
   // SRS intervals (in minutes)
-  static const int intervalAgain = 1;        // "Don't know" - 1 minute
-  static const int intervalHard = 10;        // "Hard" - 10 minutes
-  static const int intervalGood = 1440;      // "Good" - 1 day (in minutes)
-  static const int intervalEasy = 4320;      // "Easy" - 3 days (in minutes)
+  // Difícil = todos los días (24h)
+  static const int intervalHard = 1440;
+  // Normal = 1 día sí, 1 día no (48h)
+  static const int intervalNormal = 2880;
+  // Fácil = 1 vez por semana (7 días)
+  static const int intervalEasy = 10080;
   
   // Daily goals
   static const List<int> dailyGoalOptions = [5, 10, 15, 20, 30];
@@ -29,6 +30,7 @@ class AppConstants {
   static const String keyDailyGoal = 'daily_goal';
   static const String keyDarkMode = 'dark_mode';
   static const String keySoundEnabled = 'sound_enabled';
+  static const String keyLanguage = 'language_code';
   static const String keyOnboardingComplete = 'onboarding_complete';
   static const String keyStreakDays = 'streak_days';
   static const String keyLastStudyDate = 'last_study_date';

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/category.dart';
+import '../providers/settings_provider.dart';
 import '../theme/app_theme.dart';
 
 class CategoryCard extends StatelessWidget {
@@ -16,6 +18,10 @@ class CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<SettingsProvider>();
+    final t = settings.translate;
+    final isEs = settings.languageCode == 'es';
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -44,7 +50,7 @@ class CategoryCard extends StatelessWidget {
                 offset: const Offset(0, 6),
               ),
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.35),
+                color: AppTheme.shadowSoft,
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -81,7 +87,9 @@ class CategoryCard extends StatelessWidget {
                       border: Border.all(color: Colors.white10),
                     ),
                     child: Text(
-                      '${category.cardCount} palabras',
+                      category.id == 'phrases' || category.id == 'travel'
+                          ? '${category.cardCount} ${t('cardcount.phrases')}'
+                          : '${category.cardCount} ${t('cardcount.words')}',
                       style: const TextStyle(
                         fontSize: 10,
                         color: Colors.white70,
@@ -94,7 +102,7 @@ class CategoryCard extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                category.nameEs,
+                isEs ? category.nameEs : category.name,
                 style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
@@ -106,7 +114,7 @@ class CategoryCard extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                category.name,
+                isEs ? category.name : category.nameEs,
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.white.withValues(alpha: 0.5),
@@ -119,9 +127,9 @@ class CategoryCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Dominio',
-                    style: TextStyle(fontSize: 10, color: Colors.white54, fontWeight: FontWeight.w500),
+                  Text(
+                    t('home.dominio'),
+                    style: const TextStyle(fontSize: 10, color: Colors.white54, fontWeight: FontWeight.w500),
                   ),
                   Text(
                     '${masteryPercentage.toInt()}%',

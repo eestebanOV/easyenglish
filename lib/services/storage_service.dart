@@ -89,4 +89,13 @@ class StorageService {
   Future<void> setInt(String key, int value) async {
     await _settingsBox?.put(key, value);
   }
+
+  String getString(String key, {String defaultValue = ''}) {
+    if (_settingsBox == null) return defaultValue;
+    return _settingsBox!.get(key, defaultValue: defaultValue) as String? ?? defaultValue;
+  }
+
+  Future<void> setString(String key, String value) async {
+    await _settingsBox?.put(key, value);
+  }
 }

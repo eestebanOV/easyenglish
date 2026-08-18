@@ -189,7 +189,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     onPressed: _nextPage,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.accent,
-                      foregroundColor: Colors.black87,
+                      foregroundColor: AppTheme.darkBg,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 28,
                         vertical: 14,

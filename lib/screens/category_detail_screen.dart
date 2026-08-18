@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../models/category.dart';
 import '../models/flashcard.dart';
 import '../providers/flashcard_provider.dart';
+import '../providers/settings_provider.dart';
 import '../services/tts_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/flashcard_widget.dart';
-import '../widgets/widget_pin_sheet.dart';
+import '../widgets/live_activity_pin_sheet.dart';
 import 'flashcard_session_screen.dart';
 
 class CategoryDetailScreen extends StatefulWidget {
   final Category category;
 
-  const CategoryDetailScreen({
-    super.key,
-    required this.category,
-  });
+  const CategoryDetailScreen({super.key, required this.category});
 
   @override
   State<CategoryDetailScreen> createState() => _CategoryDetailScreenState();
@@ -42,45 +41,49 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
       builder: (ctx) {
         return StatefulBuilder(
           builder: (context, setModalState) {
-            return Container(
-              height: MediaQuery.of(context).size.height * 0.78,
-              decoration: const BoxDecoration(
-                color: AppTheme.darkBg,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Colors.white24,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: AppTheme.darkBg,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                ),
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
+                child: SingleChildScrollView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        widget.category.nameEs,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: widget.category.color,
+                      Container(
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: Colors.white24,
+                          borderRadius: BorderRadius.circular(2),
                         ),
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.close_rounded),
-                        onPressed: () => Navigator.of(context).pop(),
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            widget.category.nameEs,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: widget.category.color,
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close_rounded),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Expanded(
-                    child: Center(
-                      child: FlashcardWidget(
+                      const SizedBox(height: 12),
+                      FlashcardWidget(
                         card: card,
                         isFlipped: isFlipped,
                         onFlip: () {
@@ -89,45 +92,32 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                           });
                         },
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            _ttsService.speak(card.wordEn);
-                          },
-                          icon: const Icon(Icons.volume_up_rounded, size: 20),
-                          label: const Text('Pronunciar'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.primaryLight.withValues(alpha: 0.2),
-                            foregroundColor: AppTheme.primaryLight,
-                            minimumSize: const Size(0, 48),
-                            side: BorderSide(color: AppTheme.primaryLight.withValues(alpha: 0.3)),
+                      const SizedBox(height: 18),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                LiveActivityPinSheet.show(context, card);
+                              },
+                              icon: const Icon(
+                                Icons.bolt_rounded,
+                                size: 22,
+                              ),
+                              label: const Text('Live Activity del Día'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppTheme.accent,
+                                foregroundColor: Colors.white,
+                                minimumSize: const Size(0, 48),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            WidgetPinSheet.show(context, card);
-                          },
-                          icon: const Icon(Icons.push_pin_rounded, size: 20),
-                          label: const Text('Fijar en Widget'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.accent,
-                            foregroundColor: Colors.white,
-                            minimumSize: const Size(0, 48),
-                          ),
-                        ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
             );
           },
@@ -139,16 +129,26 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final flashcardProvider = context.watch<FlashcardProvider>();
+    final settings = context.watch<SettingsProvider>();
+    final t = settings.translate;
+    final isEs = settings.languageCode == 'es';
+
     final allCategoryCards = flashcardProvider.allCards
         .where((c) => c.categoryId == widget.category.id)
         .toList();
 
     final filteredCards = allCategoryCards.where((card) {
-      final matchesSearch = card.wordEn.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+      final matchesSearch =
+          card.wordEn.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           card.wordEs.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          (card.present?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false) ||
-          (card.past?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false) ||
-          (card.participle?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false);
+          (card.present?.toLowerCase().contains(_searchQuery.toLowerCase()) ??
+              false) ||
+          (card.past?.toLowerCase().contains(_searchQuery.toLowerCase()) ??
+              false) ||
+          (card.participle?.toLowerCase().contains(
+                _searchQuery.toLowerCase(),
+              ) ??
+              false);
 
       if (!matchesSearch) return false;
 
@@ -167,11 +167,11 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
     return Scaffold(
       backgroundColor: AppTheme.darkBg,
       appBar: AppBar(
-        title: Text(widget.category.nameEs),
+        title: Text(isEs ? widget.category.nameEs : widget.category.name),
         actions: [
           IconButton(
             icon: const Icon(Icons.play_circle_filled_rounded),
-            tooltip: 'Repasar Flashcards',
+            tooltip: t('home.studyNow'),
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -199,7 +199,11 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
-              border: Border(bottom: BorderSide(color: widget.category.color.withValues(alpha: 0.2))),
+              border: Border(
+                bottom: BorderSide(
+                  color: widget.category.color.withValues(alpha: 0.2),
+                ),
+              ),
             ),
             child: Column(
               children: [
@@ -210,7 +214,9 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                       decoration: BoxDecoration(
                         color: widget.category.color.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                        border: Border.all(color: widget.category.color.withValues(alpha: 0.4)),
+                        border: Border.all(
+                          color: widget.category.color.withValues(alpha: 0.4),
+                        ),
                       ),
                       child: Icon(
                         widget.category.vectorIcon,
@@ -250,7 +256,9 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                             child: LinearProgressIndicator(
                               value: mastery / 100,
                               backgroundColor: Colors.white12,
-                              valueColor: AlwaysStoppedAnimation<Color>(widget.category.color),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                widget.category.color,
+                              ),
                               minHeight: 6,
                             ),
                           ),
@@ -273,9 +281,18 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                   onChanged: (val) => setState(() => _searchQuery = val),
                   style: const TextStyle(color: Colors.white, fontSize: 14),
                   decoration: InputDecoration(
-                    hintText: isIrregularVerbs ? 'Buscar por infinitivo, pasado o español...' : 'Buscar palabra o traducción...',
-                    hintStyle: const TextStyle(color: Colors.white38, fontSize: 13),
-                    prefixIcon: const Icon(Icons.search_rounded, color: Colors.white38, size: 20),
+                    hintText: isIrregularVerbs
+                        ? 'Buscar por infinitivo, pasado o español...'
+                        : 'Buscar palabra o traducción...',
+                    hintStyle: const TextStyle(
+                      color: Colors.white38,
+                      fontSize: 13,
+                    ),
+                    prefixIcon: const Icon(
+                      Icons.search_rounded,
+                      color: Colors.white38,
+                      size: 20,
+                    ),
                     suffixIcon: _searchQuery.isNotEmpty
                         ? IconButton(
                             icon: const Icon(Icons.clear_rounded, size: 18),
@@ -287,7 +304,10 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                         : null,
                     filled: true,
                     fillColor: AppTheme.darkCard,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(AppTheme.radiusLg),
                       borderSide: const BorderSide(color: AppTheme.darkBorder),
@@ -305,7 +325,10 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    _buildFilterChip('Todas (${allCategoryCards.length})', 'all'),
+                    _buildFilterChip(
+                      'Todas (${allCategoryCards.length})',
+                      'all',
+                    ),
                     const SizedBox(width: 8),
                     _buildFilterChip('Aprendidas', 'learned'),
                     const SizedBox(width: 8),
@@ -326,16 +349,26 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                     ),
                   )
                 : ListView.separated(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
                     itemCount: filteredCards.length,
-                    separatorBuilder: (context, index) => const SizedBox(height: 12),
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 12),
                     itemBuilder: (context, index) {
                       final card = filteredCards[index];
-                      final progress = flashcardProvider.getProgressForCard(card.id);
+                      final progress = flashcardProvider.getProgressForCard(
+                        card.id,
+                      );
                       final isLearned = progress.repetitions >= 1;
 
                       if (isIrregularVerbs && card.isVerbWithForms) {
-                        return _buildLargeIrregularVerbCard(card, index, isLearned);
+                        return _buildLargeIrregularVerbCard(
+                          card,
+                          index,
+                          isLearned,
+                        );
                       }
 
                       return _buildStandardWordCard(card, index, isLearned);
@@ -348,7 +381,11 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
   }
 
   /// TARJETA GRANDE Y DESTACADA PARA VERBOS IRREGULARES
-  Widget _buildLargeIrregularVerbCard(Flashcard card, int index, bool isLearned) {
+  Widget _buildLargeIrregularVerbCard(
+    Flashcard card,
+    int index,
+    bool isLearned,
+  ) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -358,10 +395,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                const Color(0xFF1E283A),
-                AppTheme.darkCard,
-              ],
+              colors: [const Color(0xFF1E283A), AppTheme.darkCard],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -374,7 +408,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.3),
+                color: AppTheme.shadowSoft,
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
@@ -393,7 +427,9 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                     decoration: BoxDecoration(
                       color: AppTheme.accentOrange.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AppTheme.accentOrange.withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: AppTheme.accentOrange.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Center(
                       child: Text(
@@ -418,10 +454,10 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.push_pin_outlined, size: 20),
+                    icon: const Icon(Icons.bolt_rounded, size: 22),
                     color: AppTheme.accent,
-                    tooltip: 'Fijar en Widget',
-                    onPressed: () => WidgetPinSheet.show(context, card),
+                    tooltip: 'Live Activity del Día',
+                    onPressed: () => LiveActivityPinSheet.show(context, card),
                   ),
                   IconButton(
                     icon: const Icon(Icons.volume_up_rounded, size: 22),
@@ -434,7 +470,10 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
 
               // Bloque GRANDE de 3 tiempos verbales (Present, Past, Participle)
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 8,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.04),
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
@@ -473,7 +512,11 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
               // Pronunciación fonética
               Row(
                 children: [
-                  const Icon(Icons.record_voice_over_rounded, size: 14, color: Colors.white38),
+                  const Icon(
+                    Icons.record_voice_over_rounded,
+                    size: 14,
+                    color: Colors.white38,
+                  ),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
@@ -529,6 +572,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
 
   /// TARJETA ESTÁNDAR PARA FRASES Y VOCABULARIO
   Widget _buildStandardWordCard(Flashcard card, int index, bool isLearned) {
+    final isVerbTenses = widget.category.id == 'verb_tenses';
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -578,32 +622,35 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                         color: Colors.white,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      card.wordEs,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.white.withValues(alpha: 0.7),
+                    if (!isVerbTenses) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        card.wordEs,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.white.withValues(alpha: 0.7),
+                        ),
                       ),
-                    ),
+                    ],
                   ],
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.push_pin_outlined, size: 20),
+                icon: const Icon(Icons.bolt_rounded, size: 22),
                 color: AppTheme.accent,
-                tooltip: 'Fijar en Widget',
+                tooltip: 'Live Activity del Día',
                 onPressed: () {
-                  WidgetPinSheet.show(context, card);
+                  LiveActivityPinSheet.show(context, card);
                 },
               ),
-              IconButton(
-                icon: const Icon(Icons.volume_up_rounded, size: 22),
-                color: AppTheme.primaryLight,
-                onPressed: () {
-                  _ttsService.speak(card.wordEn);
-                },
-              ),
+              if (!isVerbTenses)
+                IconButton(
+                  icon: const Icon(Icons.volume_up_rounded, size: 22),
+                  color: AppTheme.primaryLight,
+                  onPressed: () {
+                    _ttsService.speak(card.wordEn);
+                  },
+                ),
             ],
           ),
         ),
@@ -618,7 +665,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
         label,
         style: TextStyle(
           fontSize: 12,
-          color: isSelected ? Colors.black87 : Colors.white70,
+          color: isSelected ? AppTheme.darkBg : Colors.white70,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
       ),

@@ -81,6 +81,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final t = context.watch<SettingsProvider>().translate;
     return Scaffold(
       backgroundColor: AppTheme.darkBg,
       body: Center(
@@ -118,9 +119,9 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
                 ),
                 const SizedBox(height: 24),
-                const Text(
-                  'EasyEnglish',
-                  style: TextStyle(
+                Text(
+                  t('app.title'),
+                  style: const TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -129,7 +130,7 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Aprende inglés a tu propio ritmo',
+                  t('splash.loading'),
                   style: TextStyle(
                     fontSize: 15,
                     color: Colors.white.withValues(alpha: 0.6),

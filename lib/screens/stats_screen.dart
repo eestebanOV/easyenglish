@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../providers/flashcard_provider.dart';
+import '../providers/settings_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/streak_badge.dart';
 
@@ -11,6 +12,10 @@ class StatsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final flashcardProvider = context.watch<FlashcardProvider>();
+    final settings = context.watch<SettingsProvider>();
+    final t = settings.translate;
+    final isEs = settings.languageCode == 'es';
+
     final stats = flashcardProvider.stats;
     final categories = flashcardProvider.categories;
     final totalCards = flashcardProvider.allCards.length;
@@ -21,7 +26,7 @@ class StatsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppTheme.darkBg,
       appBar: AppBar(
-        title: const Text('Mi Progreso'),
+        title: Text(t('stats.title')),
         automaticallyImplyLeading: false,
       ),
       body: SafeArea(
@@ -39,7 +44,7 @@ class StatsScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: _buildMetricCard(
-                      title: 'Repasos Totales',
+                      title: t('stats.totalReviews'),
                       value: '${stats.totalReviews}',
                       icon: Icons.repeat_rounded,
                       color: AppTheme.primaryLight,
@@ -48,8 +53,8 @@ class StatsScreen extends StatelessWidget {
                   const SizedBox(width: 12),
                   Expanded(
                     child: _buildMetricCard(
-                      title: 'Mejor Racha',
-                      value: '${stats.bestStreak} días',
+                      title: t('stats.bestStreak'),
+                      value: '${stats.bestStreak} ${t('stats.days')}',
                       icon: Icons.emoji_events_rounded,
                       color: AppTheme.warning,
                     ),
@@ -69,9 +74,9 @@ class StatsScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Distribución de Vocabulario',
-                      style: TextStyle(
+                    Text(
+                      t('stats.distribution'),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -93,7 +98,7 @@ class StatsScreen extends StatelessWidget {
                                     radius: 35,
                                     titleStyle: const TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.black87,
+                                      color: AppTheme.darkBg,
                                       fontSize: 12,
                                     ),
                                   ),
@@ -104,7 +109,7 @@ class StatsScreen extends StatelessWidget {
                                     radius: 35,
                                     titleStyle: const TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.black87,
+                                      color: AppTheme.darkBg,
                                       fontSize: 12,
                                     ),
                                   ),
@@ -122,15 +127,15 @@ class StatsScreen extends StatelessWidget {
                                 ],
                               ),
                             )
-                          : const Center(child: Text('Sin datos')),
+                          : Center(child: Text(t('stats.noData'))),
                     ),
                     const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        _buildLegendItem('Dominadas', AppTheme.warning),
-                        _buildLegendItem('En aprendizaje', AppTheme.accent),
-                        _buildLegendItem('Nuevas', AppTheme.darkBorder),
+                        _buildLegendItem(t('stats.legendMastered'), AppTheme.warning),
+                        _buildLegendItem(t('stats.legendLearning'), AppTheme.accent),
+                        _buildLegendItem(t('stats.legendNew'), AppTheme.darkBorder),
                       ],
                     ),
                   ],
@@ -149,9 +154,9 @@ class StatsScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Progreso por Categoría',
-                      style: TextStyle(
+                    Text(
+                      t('stats.catProgress'),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -170,10 +175,14 @@ class StatsScreen extends StatelessWidget {
                               children: [
                                 Row(
                                   children: [
-                                    Text(cat.icon, style: const TextStyle(fontSize: 16)),
+                                    Icon(
+                                      cat.vectorIcon,
+                                      size: 16,
+                                      color: cat.color,
+                                    ),
                                     const SizedBox(width: 8),
                                     Text(
-                                      cat.nameEs,
+                                      isEs ? cat.nameEs : cat.name,
                                       style: const TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w600,

@@ -15,7 +15,11 @@ class AppTheme {
   // Success / Error
   static const Color success = Color(0xFF66BB6A);
   static const Color error = Color(0xFFEF5350);
-  static const Color warning = Color(0xFFFFA726);
+  static const Color warning = Color(0xFFB388FF); // Morado violeta para estado medio (no amarillo)
+
+  // Shadow and overlay colors (replaces black.withValues)
+  static const Color shadowSoft = Color(0x33000000);
+  static const Color shadowMedium = Color(0x66000000);
   
   // Dark theme surfaces
   static const Color darkBg = Color(0xFF0D1117);

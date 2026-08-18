@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/settings_provider.dart';
 import '../theme/app_theme.dart';
 import 'home_screen.dart';
 import 'categories_screen.dart';
@@ -23,6 +25,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.watch<SettingsProvider>().translate;
+
     final List<Widget> screens = [
       HomeScreen(onNavigateTab: _onTabTapped),
       const CategoriesScreen(),
@@ -55,22 +59,22 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           unselectedFontSize: 12,
           type: BottomNavigationBarType.fixed,
           elevation: 0,
-          items: const [
+          items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home_rounded),
-              label: 'Inicio',
+              icon: const Icon(Icons.home_rounded),
+              label: t('nav.home'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.grid_view_rounded),
-              label: 'Categorías',
+              icon: const Icon(Icons.grid_view_rounded),
+              label: t('nav.categories'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.bar_chart_rounded),
-              label: 'Progreso',
+              icon: const Icon(Icons.bar_chart_rounded),
+              label: t('nav.progress'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.settings_rounded),
-              label: 'Ajustes',
+              icon: const Icon(Icons.settings_rounded),
+              label: t('nav.settings'),
             ),
           ],
         ),

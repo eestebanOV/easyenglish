@@ -17,41 +17,28 @@ class ConfidenceButtons extends StatelessWidget {
         children: [
           Expanded(
             child: _buildButton(
-              title: 'No lo sé',
-              subtitle: '1 min',
-              color: AppTheme.error,
-              icon: Icons.close_rounded,
+              title: 'Difícil',
+              color: AppTheme.warning,
+              icon: Icons.replay_rounded,
               quality: 1,
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 10),
           Expanded(
             child: _buildButton(
-              title: 'Difícil',
-              subtitle: '10 min',
-              color: AppTheme.warning,
-              icon: Icons.replay_rounded,
+              title: 'Normal',
+              color: AppTheme.primaryLight,
+              icon: Icons.check_rounded,
               quality: 2,
             ),
           ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: _buildButton(
-              title: 'Bien',
-              subtitle: '1 día',
-              color: AppTheme.primaryLight,
-              icon: Icons.check_rounded,
-              quality: 3,
-            ),
-          ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 10),
           Expanded(
             child: _buildButton(
               title: 'Fácil',
-              subtitle: '3 días',
               color: AppTheme.accent,
               icon: Icons.sentiment_very_satisfied_rounded,
-              quality: 4,
+              quality: 3,
             ),
           ),
         ],
@@ -61,7 +48,6 @@ class ConfidenceButtons extends StatelessWidget {
 
   Widget _buildButton({
     required String title,
-    required String subtitle,
     required Color color,
     required IconData icon,
     required int quality,
@@ -70,37 +56,29 @@ class ConfidenceButtons extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: () => onRate(quality),
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
             border: Border.all(
-              color: color.withValues(alpha: 0.5),
+              color: color.withValues(alpha: 0.55),
               width: 1.5,
             ),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, color: color, size: 22),
-              const SizedBox(height: 4),
+              Icon(icon, color: color, size: 26),
+              const SizedBox(height: 6),
               Text(
                 title,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 12,
+                  fontSize: 14,
                   color: color,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                subtitle,
-                style: TextStyle(
-                  fontSize: 10,
-                  color: color.withValues(alpha: 0.8),
                 ),
               ),
             ],
