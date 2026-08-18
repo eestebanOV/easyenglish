@@ -1,6 +1,8 @@
 import Flutter
 import UIKit
+#if canImport(ActivityKit)
 import ActivityKit
+#endif
 import UserNotifications
 
 @main

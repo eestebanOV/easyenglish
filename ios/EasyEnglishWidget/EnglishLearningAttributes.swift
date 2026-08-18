@@ -1,6 +1,8 @@
+#if canImport(ActivityKit)
 import ActivityKit
 import Foundation
 
+@available(iOS 16.1, *)
 public struct EnglishLearningAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
         // Dynamic state that changes each session (e.g. every 30 minutes)
@@ -61,3 +63,4 @@ public struct EnglishLearningAttributes: ActivityAttributes {
         self.categoryName = categoryName
     }
 }
+#endif

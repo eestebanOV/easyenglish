@@ -1,3 +1,4 @@
+#if canImport(ActivityKit)
 import Foundation
 import ActivityKit
 import UserNotifications
@@ -177,21 +178,33 @@ public class LiveActivityManager: NSObject {
             }
 
             do {
-                let content = ActivityContent(
-                    state: state,
-                    staleDate: endTime
-                )
-                let activity = try Activity.request(
-                    attributes: attributes,
-                    content: content,
-                    pushType: nil
-                )
-                print("Live Activity started successfully: \(activity.id) with example: \(activeExample)")
-                
-                // Auto dismiss after duration expiration
-                DispatchQueue.main.asyncAfter(deadline: .now() + Double(durationMins * 60)) {
-                    Task {
-                        await activity.end(using: state, dismissalPolicy: .after(endTime))
+                if #available(iOS 16.2, *) {
+                    let content = ActivityContent(
+                        state: state,
+                        staleDate: endTime
+                    )
+                    let activity = try Activity.request(
+                        attributes: attributes,
+                        content: content,
+                        pushType: nil
+                    )
+                    print("Live Activity started successfully (16.2+): \(activity.id)")
+                    DispatchQueue.main.asyncAfter(deadline: .now() + Double(durationMins * 60)) {
+                        Task {
+                            await activity.end(using: state, dismissalPolicy: .after(endTime))
+                        }
+                    }
+                } else {
+                    let activity = try Activity.request(
+                        attributes: attributes,
+                        contentState: state,
+                        pushType: nil
+                    )
+                    print("Live Activity started successfully (16.1): \(activity.id)")
+                    DispatchQueue.main.asyncAfter(deadline: .now() + Double(durationMins * 60)) {
+                        Task {
+                            await activity.end(using: state, dismissalPolicy: .after(endTime))
+                        }
                     }
                 }
             } catch {
@@ -333,3 +346,4 @@ public class LiveActivityManager: NSObject {
         }
     }
 }
+#endif
