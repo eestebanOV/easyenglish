@@ -6,15 +6,29 @@ import ActivityKit
 import UserNotifications
 
 @main
-@objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
+@objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate, UNUserNotificationCenterDelegate {
     private let CHANNEL_NAME = "com.easyenglish.app/live_activities"
 
     override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        let controller = window?.rootViewController as! FlutterViewController
-        let liveActivityChannel = FlutterMethodChannel(name: CHANNEL_NAME, binaryMessenger: controller.binaryMessenger)
+        if let controller = window?.rootViewController as? FlutterViewController {
+            setupLiveActivityChannel(binaryMessenger: controller.binaryMessenger)
+        }
+
+        UNUserNotificationCenter.current().delegate = self
+
+        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+    }
+
+    func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
+        GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+        setupLiveActivityChannel(binaryMessenger: engineBridge.engine.binaryMessenger)
+    }
+
+    private func setupLiveActivityChannel(binaryMessenger: FlutterBinaryMessenger) {
+        let liveActivityChannel = FlutterMethodChannel(name: CHANNEL_NAME, binaryMessenger: binaryMessenger)
 
         liveActivityChannel.setMethodCallHandler { (call: FlutterMethodCall, result: @escaping FlutterResult) in
             switch call.method {
@@ -79,33 +93,23 @@ import UserNotifications
                 result(FlutterMethodNotImplemented)
             }
         }
-
-        UNUserNotificationCenter.current().delegate = self
-
-        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 
-    func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
-        GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
-    }
-
-    // Handle background notification triggers
-    override func userNotificationCenter(
+    // Handle background notification triggers (UNUserNotificationCenterDelegate protocol)
+    func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
-        // Trigger live activity when notification arrives in foreground
         LiveActivityManager.shared.startSession()
         completionHandler([.banner, .sound, .badge])
     }
 
-    override func userNotificationCenter(
+    func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
-        // Trigger live activity when user interacts with notification
         LiveActivityManager.shared.startSession()
         completionHandler()
     }

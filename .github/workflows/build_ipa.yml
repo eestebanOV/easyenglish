@@ -5,6 +5,9 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+env:
+  ACTIONS_RUNNER_FORCE_ACTIONS_NODE_VERSION: node24
+
 jobs:
   build:
     name: Build IPA (Unsigned / Sideload Ready)
