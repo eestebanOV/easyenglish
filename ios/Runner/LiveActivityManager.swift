@@ -217,10 +217,16 @@ public class LiveActivityManager: NSObject {
 
     /// Dismisses any currently active Live Activity
     public func endCurrentActivity() {
-        if #available(iOS 16.1, *) {
+        if #available(iOS 16.2, *) {
             Task {
                 for activity in Activity<EnglishLearningAttributes>.activities {
                     await activity.end(nil, dismissalPolicy: .immediate)
+                }
+            }
+        } else if #available(iOS 16.1, *) {
+            Task {
+                for activity in Activity<EnglishLearningAttributes>.activities {
+                    await activity.end(dismissalPolicy: .immediate)
                 }
             }
         }

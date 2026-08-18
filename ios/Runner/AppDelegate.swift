@@ -6,7 +6,7 @@ import ActivityKit
 import UserNotifications
 
 @main
-@objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate, UNUserNotificationCenterDelegate {
+@objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
     private let CHANNEL_NAME = "com.easyenglish.app/live_activities"
 
     override func application(
@@ -24,7 +24,6 @@ import UserNotifications
 
     func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
         GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
-        setupLiveActivityChannel(binaryMessenger: engineBridge.engine.binaryMessenger)
     }
 
     private func setupLiveActivityChannel(binaryMessenger: FlutterBinaryMessenger) {
@@ -95,8 +94,8 @@ import UserNotifications
         }
     }
 
-    // Handle background notification triggers (UNUserNotificationCenterDelegate protocol)
-    func userNotificationCenter(
+    // Handle background notification triggers
+    override func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
@@ -105,7 +104,7 @@ import UserNotifications
         completionHandler([.banner, .sound, .badge])
     }
 
-    func userNotificationCenter(
+    override func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void
