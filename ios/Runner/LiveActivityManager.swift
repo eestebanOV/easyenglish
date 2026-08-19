@@ -331,13 +331,13 @@ public class LiveActivityManager: NSObject {
     public func stopDayLearning() {
         endCurrentActivity()
         let defs = defaults
-        defs?.set(false, forKey: keyActive)
-        defs?.set("", forKey: keyWordEn)
-        defs?.set("", forKey: keyWordEs)
-        defs?.set("", forKey: keyPronunciation)
-        defs?.set("[]", forKey: keyExamplesJson)
-        defs?.set("", forKey: keyCardId)
-        defs?.synchronize()
+        defs.set(false, forKey: keyActive)
+        defs.set("", forKey: keyWordEn)
+        defs.set("", forKey: keyWordEs)
+        defs.set("", forKey: keyPronunciation)
+        defs.set("[]", forKey: keyExamplesJson)
+        defs.set("", forKey: keyCardId)
+        defs.synchronize()
 
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         internalTimer?.invalidate()
@@ -347,21 +347,21 @@ public class LiveActivityManager: NSObject {
     /// Retrieves current state for Flutter UI
     public func getActiveState() -> [String: Any] {
         let defs = defaults
-        let isActive = defs?.bool(forKey: keyActive) ?? false
-        let wordEn = defs?.string(forKey: keyWordEn) ?? ""
-        let wordEs = defs?.string(forKey: keyWordEs) ?? ""
-        let phonetic = defs?.string(forKey: keyPronunciation) ?? ""
-        let type = defs?.string(forKey: keyType) ?? "PHRASE"
-        let category = defs?.string(forKey: keyCategory) ?? ""
-        let startHour = defs?.integer(forKey: keyStartHour) ?? 8
-        let endHour = defs?.integer(forKey: keyEndHour) ?? 22
-        let intervalMins = defs?.integer(forKey: keyIntervalMinutes) ?? 30
-        let durationMins = defs?.integer(forKey: keyDurationMinutes) ?? 5
-        let currentIdx = defs?.integer(forKey: keyCurrentExampleIndex) ?? 0
-        let cardId = defs?.string(forKey: keyCardId) ?? ""
+        let isActive = defs.bool(forKey: keyActive)
+        let wordEn = defs.string(forKey: keyWordEn) ?? ""
+        let wordEs = defs.string(forKey: keyWordEs) ?? ""
+        let phonetic = defs.string(forKey: keyPronunciation) ?? ""
+        let type = defs.string(forKey: keyType) ?? "PHRASE"
+        let category = defs.string(forKey: keyCategory) ?? ""
+        let startHour = defs.integer(forKey: keyStartHour)
+        let endHour = defs.integer(forKey: keyEndHour)
+        let intervalMins = defs.integer(forKey: keyIntervalMinutes)
+        let durationMins = defs.integer(forKey: keyDurationMinutes)
+        let currentIdx = defs.integer(forKey: keyCurrentExampleIndex)
+        let cardId = defs.string(forKey: keyCardId) ?? ""
 
         var examples: [String] = []
-        if let jsonStr = defs?.string(forKey: keyExamplesJson),
+        if let jsonStr = defs.string(forKey: keyExamplesJson),
            let data = jsonStr.data(using: .utf8),
            let list = try? JSONDecoder().decode([String].self, from: data) {
             examples = list
