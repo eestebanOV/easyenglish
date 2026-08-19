@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+
 import '../core/constants.dart';
 import '../services/storage_service.dart';
 
@@ -21,15 +22,12 @@ class SettingsProvider extends ChangeNotifier {
   Locale get locale => Locale(_languageCode);
 
   List<LocalizationsDelegate> get localizationsDelegates => const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ];
+    GlobalMaterialLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+  ];
 
-  List<Locale> get supportedLocales => const [
-        Locale('es'),
-        Locale('en'),
-      ];
+  List<Locale> get supportedLocales => const [Locale('es'), Locale('en')];
 
   static const Map<String, Map<String, String>> _strings = {
     'es': {
@@ -119,7 +117,7 @@ class SettingsProvider extends ChangeNotifier {
       'settings.dailyGoal.subtitle': 'palabras por día',
       'settings.sound.title': 'Pronunciación automática',
       'settings.sound.subtitle': 'Audio por voz TTS nativo',
-      'settings.widgetGroup': 'LIVE ACTIVITIES (iOS)',
+      'settings.widgetGroup': 'NOTIFICACIONES LOCALES (iOS)',
       'settings.dataGroup': 'DATOS Y ALMACENAMIENTO',
       'settings.language.title': 'Idioma de la app',
       'settings.language.subtitle': 'Elige el idioma de la interfaz',
@@ -132,17 +130,17 @@ class SettingsProvider extends ChangeNotifier {
       'settings.aboutGroup': 'ACERCA DE',
       'settings.reset.success': 'Progreso reiniciado correctamente',
 
-      // Live Activities / Widget
-      'widget.noWord.title': 'Palabra del Día (Live Activity)',
-      'widget.noWord.hint': 'Selecciona una palabra desde las categorías para activarla en Live Activities',
-      'widget.interval': 'Frecuencia de sesiones:',
+      // Notificaciones Locales / Widget
+      'widget.noWord.title': 'Palabra del Día (Notificaciones)',
+      'widget.noWord.hint': 'Selecciona una palabra desde las categorías para activar notificaciones locales',
+      'widget.interval': 'Frecuencia de notificaciones:',
       'widget.interval.min': 'min',
       'widget.interval.hour': 'hora',
       'widget.interval.hours': 'horas',
       'widget.examplesRotary': 'ejemplos rotativos para el día',
-      'widget.delete.hint': 'Desactivar Live Activity',
-      'widget.tutorial': 'Cada 30 minutos aparecerá una Live Activity de 5 minutos en tu pantalla de bloqueo e Isla Dinámica.',
-      'widget.testSession': 'Probar sesión ahora (5 min)',
+      'widget.delete.hint': 'Desactivar Notificaciones',
+      'widget.tutorial': 'Cada X minutos recibirás una notificación local con un ejemplo nuevo para tu palabra del día. No necesitas cuenta Apple Developer de pago.',
+      'widget.testSession': 'Probar notificación ahora',
 
       // Onboarding
       'onb.back': 'Atrás',
@@ -153,8 +151,8 @@ class SettingsProvider extends ChangeNotifier {
       'onb.page1.sub': 'Vocabulario, frases útiles y verbos irregulares con tarjetas interactivas y audio de pronunciación.',
       'onb.page2.title': 'Repetición espaciada inteligente',
       'onb.page2.sub': 'Sistema de 3 botones (Difícil / Normal / Fácil) que programa cada tarjeta en el momento ideal para que no olvides nada.',
-      'onb.page3.title': 'Live Activities en tu iPhone',
-      'onb.page3.sub': 'Aprende una palabra diaria en tu pantalla de bloqueo e Isla Dinámica con nuevos ejemplos cada 30 minutos.',
+      'onb.page3.title': 'Notificaciones Locales en tu iPhone',
+      'onb.page3.sub': 'Aprende una palabra diaria mediante notificaciones con nuevos ejemplos cada X minutos. Sin cuenta Developer ni push/APNs.',
 
       // Splash
       'splash.loading': 'Cargando EasyEnglish...',
@@ -247,7 +245,7 @@ class SettingsProvider extends ChangeNotifier {
       'settings.dailyGoal.subtitle': 'words per day',
       'settings.sound.title': 'Auto pronunciation',
       'settings.sound.subtitle': 'Native TTS voice audio',
-      'settings.widgetGroup': 'LIVE ACTIVITIES (iOS)',
+      'settings.widgetGroup': 'NOTIFICACIONES LOCALES (iOS)',
       'settings.dataGroup': 'DATA & STORAGE',
       'settings.language.title': 'App language',
       'settings.language.subtitle': 'Choose the interface language',
@@ -260,18 +258,17 @@ class SettingsProvider extends ChangeNotifier {
       'settings.aboutGroup': 'ABOUT',
       'settings.reset.success': 'Progress reset successfully',
 
-      // Live Activities / Widget
-      'widget.noWord.title': 'Word of the Day (Live Activity)',
-      'widget.noWord.hint':
-          'Pick a word from any category to activate Live Activities on your iPhone.',
-      'widget.interval': 'Session frequency:',
+      // Local Notifications / Widget
+      'widget.noWord.title': 'Word of the Day (Notifications)',
+      'widget.noWord.hint': 'Pick a word from any category to activate scheduled local notifications on your iPhone.',
+      'widget.interval': 'Notification frequency:',
       'widget.interval.min': 'min',
       'widget.interval.hour': 'hour',
       'widget.interval.hours': 'hours',
       'widget.examplesRotary': 'daily rotating examples configured',
-      'widget.delete.hint': 'Turn off Live Activity',
-      'widget.tutorial': 'Every 30 minutes, a 5-minute Live Activity will appear on your lock screen and Dynamic Island.',
-      'widget.testSession': 'Test session now (5 min)',
+      'widget.delete.hint': 'Turn off Notifications',
+      'widget.tutorial': 'Every X minutes you will receive a local notification with a fresh example for your daily word. No paid Apple Developer account or push/APNs required.',
+      'widget.testSession': 'Test notification now',
 
       // Onboarding
       'onb.back': 'Back',
@@ -282,8 +279,8 @@ class SettingsProvider extends ChangeNotifier {
       'onb.page1.sub': 'Vocabulary, useful phrases and irregular verbs with interactive cards and pronunciation audio.',
       'onb.page2.title': 'Smart spaced repetition',
       'onb.page2.sub': '3-button system (Hard / Good / Easy) that schedules each card at the perfect time so you never forget.',
-      'onb.page3.title': 'Live Activities on iPhone',
-      'onb.page3.sub': 'Learn a daily word on your lock screen and Dynamic Island with fresh examples rotating every 30 minutes.',
+      'onb.page3.title': 'Local Notifications on iPhone',
+      'onb.page3.sub': 'Learn a daily word through notifications with fresh examples rotating every X minutes. No Developer account or push/APNs required.',
 
       // Splash
       'splash.loading': 'Loading EasyEnglish...',

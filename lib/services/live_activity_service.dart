@@ -5,6 +5,12 @@ import 'package:home_widget/home_widget.dart';
 import '../models/flashcard.dart';
 import 'storage_service.dart';
 
+/// Servicio de aprendizaje diario.
+/// Histórico: originalmente gestionaba Live Activities (ActivityKit iOS), pero se
+/// reemplazó completamente por un sistema de NOTIFICACIONES LOCALES (UNUserNotificationCenter)
+/// porque Live Activities no se actualizan de forma confiable en background sin una
+/// cuenta Apple Developer de pago con APNs/voip.
+/// Mantiene el nombre "LiveActivityService" por compatibilidad con el código existente.
 class LiveActivityService {
   static final LiveActivityService _instance = LiveActivityService._internal();
   factory LiveActivityService() => _instance;
@@ -15,23 +21,22 @@ class LiveActivityService {
   static const String iOSWidgetName = 'EasyEnglishWidget';
   static const String androidWidgetName = 'EasyEnglishWidget';
 
-  // Available intervals in minutes
+  /// Intervalos disponibles entre notificaciones (en minutos).
   static const List<int> availableIntervals = [15, 30, 45, 60, 120];
 
   bool _isInitialized = false;
 
-  /// Initialize HomeWidget and channels
   Future<void> init() async {
     if (_isInitialized) return;
     try {
       await HomeWidget.setAppGroupId(appGroupId);
       _isInitialized = true;
     } catch (e) {
-      debugPrint('LiveActivityService init error: $e');
+      debugPrint('DailyNotificationService init error: $e');
     }
   }
 
-  /// Sets a Flashcard as the active Daily Learning Item for Live Activities
+  /// Programa todas las notificaciones del día para una tarjeta (ítem fijo + ejemplos rotatorios).
   Future<bool> startDayLearning(
     Flashcard card, {
     int startHour = 8,
@@ -44,7 +49,6 @@ class LiveActivityService {
       await init();
       final storage = StorageService();
 
-      // Collect all available examples from card and generate diverse ones if needed
       final List<String> allExamples = [];
       if (customExamples != null && customExamples.isNotEmpty) {
         allExamples.addAll(customExamples);
@@ -61,7 +65,6 @@ class LiveActivityService {
         }
       }
 
-      // Ensure we have plenty of distinct, contextual examples for a full day (at least 6-8)
       if (allExamples.length < 6) {
         allExamples.addAll(_generateContextualExamples(card, allExamples));
       }
@@ -69,7 +72,6 @@ class LiveActivityService {
       final wordType = _determineWordType(card);
       final examplesJson = jsonEncode(allExamples);
 
-      // Save to shared UserDefaults (App Group) via HomeWidget for WidgetKit fallback
       await Future.wait([
         HomeWidget.saveWidgetData<String>('live_activity_word_en', card.wordEn),
         HomeWidget.saveWidgetData<String>('live_activity_word_es', card.wordEs),
@@ -80,11 +82,9 @@ class LiveActivityService {
         HomeWidget.saveWidgetData<int>('live_activity_start_hour', startHour),
         HomeWidget.saveWidgetData<int>('live_activity_end_hour', endHour),
         HomeWidget.saveWidgetData<int>('live_activity_interval_minutes', intervalMinutes),
-        HomeWidget.saveWidgetData<int>('live_activity_duration_minutes', durationMinutes),
         HomeWidget.saveWidgetData<String>('live_activity_card_id', card.id),
       ]);
 
-      // Save locally to Hive for quick app state
       await storage.setBool('live_activity_active', true);
       await storage.setString('live_activity_word_en', card.wordEn);
       await storage.setString('live_activity_word_es', card.wordEs);
@@ -93,7 +93,6 @@ class LiveActivityService {
       await storage.setInt('live_activity_start_hour', startHour);
       await storage.setInt('live_activity_end_hour', endHour);
 
-      // Invoke native iOS ActivityKit via MethodChannel
       try {
         final Map<String, dynamic> params = {
           'learningItem': card.wordEn,
@@ -113,14 +112,13 @@ class LiveActivityService {
         };
 
         final result = await _channel.invokeMethod('startDayLearning', params);
-        debugPrint('Native LiveActivity startDayLearning result: $result');
+        debugPrint('Native Notification startDayLearning result: $result');
       } on MissingPluginException {
-        debugPrint('Native LiveActivity method channel not available (running on simulator/web/android)');
+        debugPrint('Native Notification method channel not available (simulator/web/android)');
       } catch (e) {
-        debugPrint('Native LiveActivity invoke error: $e');
+        debugPrint('Native Notification invoke error: $e');
       }
 
-      // Also trigger widget timeline update
       await HomeWidget.updateWidget(
         name: iOSWidgetName,
         iOSName: iOSWidgetName,
@@ -129,12 +127,12 @@ class LiveActivityService {
 
       return true;
     } catch (e) {
-      debugPrint('Error starting day live activity: $e');
+      debugPrint('Error starting day notifications: $e');
       return false;
     }
   }
 
-  /// Triggers an immediate 5-minute Live Activity session
+  /// Dispara una notificación inmediata (para prueba o sesión manual).
   Future<bool> startSessionNow({int? exampleIndex}) async {
     try {
       await init();
@@ -143,22 +141,17 @@ class LiveActivityService {
       });
       return result?['success'] == true;
     } catch (e) {
-      debugPrint('Error starting immediate Live Activity session: $e');
+      debugPrint('Error triggering immediate notification: $e');
       return false;
     }
   }
 
-  /// Ends the currently active Live Activity banner
+  /// (Alias legacy) Finaliza el aprendizaje diario y cancela todas las notificaciones.
   Future<void> endCurrentActivity() async {
-    try {
-      await init();
-      await _channel.invokeMethod('endCurrentActivity');
-    } catch (e) {
-      debugPrint('Error ending Live Activity: $e');
-    }
+    return stopDayLearning();
   }
 
-  /// Cancels all Live Activities for the day and clears schedule
+  /// Cancela todas las notificaciones pendientes y limpia el estado del día.
   Future<void> stopDayLearning() async {
     try {
       await init();
@@ -185,7 +178,7 @@ class LiveActivityService {
     );
   }
 
-  /// Retrieves active Live Activity information
+  /// Obtén el estado actual (palabra del día, ejemplos, intervalo, etc.).
   Future<Map<String, dynamic>?> getActiveState() async {
     try {
       await init();
@@ -196,7 +189,6 @@ class LiveActivityService {
         }
       } catch (_) {}
 
-      // Fallback from UserDefaults / Storage
       final wordEn = await HomeWidget.getWidgetData<String>('live_activity_word_en');
       if (wordEn == null || wordEn.isEmpty) return null;
 
@@ -233,12 +225,11 @@ class LiveActivityService {
         'cardId': cardId,
       };
     } catch (e) {
-      debugPrint('Error getting active Live Activity state: $e');
+      debugPrint('Error getting active notification state: $e');
       return null;
     }
   }
 
-  /// Determines human readable word type
   String _determineWordType(Flashcard card) {
     if (card.isVerbWithForms) return 'IRREGULAR VERB';
     final cat = card.categoryId.toLowerCase();
@@ -248,12 +239,10 @@ class LiveActivityService {
     return 'VOCABULARY';
   }
 
-  /// Generates contextual, natural English sentences for the learning item
   List<String> _generateContextualExamples(Flashcard card, List<String> existing) {
     final word = card.wordEn.trim();
     final List<String> generated = [];
 
-    // Varied natural structures
     final templates = [
       'Take time to practice using "$word" naturally in conversation.',
       'Remember the meaning of "$word" and try making your own sentence.',

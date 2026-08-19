@@ -14,6 +14,9 @@ struct WidgetConstants {
 }
 
 // MARK: - 1. LIVE ACTIVITY WIDGET (ActivityKit)
+// NOTA: Live Activity COMENTADO temporalmente (sin cuenta Apple Developer de pago no se puede actualizar en background).
+// Se reemplazó por sistema de notificaciones locales (UNUserNotificationCenter).
+/*
 struct EasyEnglishLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: EnglishLearningAttributes.self) { context in
@@ -103,8 +106,11 @@ struct EasyEnglishLiveActivity: Widget {
         }
     }
 }
+*/
 
 // MARK: - Lock Screen Live Activity Banner View
+// COMENTADO (perteneciente a Live Activity)
+/*
 struct LockScreenLiveActivityView: View {
     let context: ActivityViewContext<EnglishLearningAttributes>
 
@@ -266,6 +272,7 @@ struct TensePill: View {
         .cornerRadius(6)
     }
 }
+*/
 
 // MARK: - 2. STANDARD HOME SCREEN WIDGET (WidgetKit)
 struct SimpleEntry: TimelineEntry {
@@ -502,7 +509,7 @@ struct EasyEnglishHomeWidget: Widget {
 @main
 struct EasyEnglishWidgetBundle: WidgetBundle {
     var body: some Widget {
-        EasyEnglishLiveActivity()
+        // EasyEnglishLiveActivity() // COMENTADO: Reemplazado por notificaciones locales
         EasyEnglishHomeWidget()
     }
 }

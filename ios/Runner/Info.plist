@@ -26,10 +26,22 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSSupportsLiveActivities</key>
-	<true/>
-	<key>NSSupportsLiveActivitiesFrequentUpdates</key>
-	<true/>
+	<!-- NOTA: Se eliminaron temporalmente NSSupportsLiveActivities y NSSupportsLiveActivitiesFrequentUpdates (se reemplazó por notificaciones locales UNUserNotificationCenter). -->
+
+	<!-- PERMISOS / CAPACIDADES AUDIO-TTS:
+	     AVAudioSession .playback = TTS sonará INCLUSO si el iPhone está
+	     en modo silencioso (switch lateral). UIBackgroundModes audio permite
+	     seguir reproduciendo pronunciación si el usuario sale momentáneamente
+	     de la app. -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+	</array>
+	<key>AVAudioSessionCategory</key>
+	<string>AVAudioSessionCategoryPlayback</string>
+	<key>AVAudioSessionMode</key>
+	<string>AVAudioSessionModeSpokenAudio</string>
+
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

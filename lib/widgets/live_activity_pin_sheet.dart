@@ -3,6 +3,9 @@ import '../models/flashcard.dart';
 import '../services/live_activity_service.dart';
 import '../theme/app_theme.dart';
 
+/// Bottom sheet para configurar las NOTIFICACIONES LOCALES DIARIAS.
+/// Histórico: originalmente gestionaba Live Activities, se renombró internamente la UI
+/// pero se mantuvo el nombre de la clase/archivo por compatibilidad con el resto del código.
 class LiveActivityPinSheet extends StatefulWidget {
   final Flashcard card;
 
@@ -25,10 +28,10 @@ class LiveActivityPinSheet extends StatefulWidget {
 }
 
 class _LiveActivityPinSheetState extends State<LiveActivityPinSheet> {
-  final LiveActivityService _liveService = LiveActivityService();
-  int _selectedInterval = 30; // 30 minutes default
-  final int _startHour = 8; // 8:00 AM
-  final int _endHour = 22; // 10:00 PM
+  final LiveActivityService _service = LiveActivityService();
+  int _selectedInterval = 30;
+  final int _startHour = 8;
+  final int _endHour = 22;
   int _previewExampleIndex = 0;
   bool _isLoading = false;
   late List<String> _examples;
@@ -67,14 +70,19 @@ class _LiveActivityPinSheetState extends State<LiveActivityPinSheet> {
     return 'VOCABULARY';
   }
 
-  Future<void> _activateLiveActivity() async {
+  int get _estimatedNotificationsPerDay {
+    final windowMinutes = (_endHour - _startHour) * 60;
+    return (windowMinutes / _selectedInterval).floor() + 1;
+  }
+
+  Future<void> _activateNotifications() async {
     setState(() => _isLoading = true);
-    final success = await _liveService.startDayLearning(
+    final success = await _service.startDayLearning(
       widget.card,
       startHour: _startHour,
       endHour: _endHour,
       intervalMinutes: _selectedInterval,
-      durationMinutes: 5,
+      durationMinutes: 0,
       customExamples: _examples,
     );
     setState(() => _isLoading = false);
@@ -88,7 +96,7 @@ class _LiveActivityPinSheetState extends State<LiveActivityPinSheet> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           content: Row(
             children: [
-              const Icon(Icons.bolt_rounded, color: Colors.white, size: 28),
+              const Icon(Icons.notifications_active_rounded, color: Colors.white, size: 28),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -96,13 +104,13 @@ class _LiveActivityPinSheetState extends State<LiveActivityPinSheet> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '¡Live Activity activada para "${widget.card.wordEn}"!',
+                      '¡Notificaciones activadas para "${widget.card.wordEn}"!',
                       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white),
                     ),
                     const SizedBox(height: 2),
-                    const Text(
-                      'Aparecerá cada 30 min por 5 min con un ejemplo nuevo.',
-                      style: TextStyle(fontSize: 12, color: Colors.white70),
+                    Text(
+                      '~$_estimatedNotificationsPerDay notificaciones cada ${_formatInterval(_selectedInterval)} con ejemplos distintos.',
+                      style: const TextStyle(fontSize: 12, color: Colors.white70),
                     ),
                   ],
                 ),
@@ -136,7 +144,6 @@ class _LiveActivityPinSheetState extends State<LiveActivityPinSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Drag handle
             Center(
               child: Container(
                 width: 44,
@@ -149,7 +156,6 @@ class _LiveActivityPinSheetState extends State<LiveActivityPinSheet> {
             ),
             const SizedBox(height: 16),
 
-            // Header
             Row(
               children: [
                 Container(
@@ -159,7 +165,7 @@ class _LiveActivityPinSheetState extends State<LiveActivityPinSheet> {
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: const Icon(
-                    Icons.bolt_rounded,
+                    Icons.notifications_active_rounded,
                     color: AppTheme.accent,
                     size: 26,
                   ),
@@ -170,7 +176,7 @@ class _LiveActivityPinSheetState extends State<LiveActivityPinSheet> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Live Activities (iOS)',
+                        'Notificaciones Locales (iOS)',
                         style: TextStyle(
                           fontSize: 19,
                           fontWeight: FontWeight.bold,
@@ -178,7 +184,7 @@ class _LiveActivityPinSheetState extends State<LiveActivityPinSheet> {
                         ),
                       ),
                       Text(
-                        'English Every Day • Pantalla de Bloqueo e Isla Dinámica',
+                        'English Every Day • Aprendizaje espaciado sin cuenta Developer',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.white60,
@@ -195,9 +201,8 @@ class _LiveActivityPinSheetState extends State<LiveActivityPinSheet> {
             ),
             const SizedBox(height: 18),
 
-            // Live Activity UI Preview
             const Text(
-              'VISTA PREVIA DE LA LIVE ACTIVITY (iOS)',
+              'VISTA PREVIA DE LA NOTIFICACIÓN',
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
@@ -208,7 +213,7 @@ class _LiveActivityPinSheetState extends State<LiveActivityPinSheet> {
             const SizedBox(height: 10),
 
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
                   colors: [
@@ -234,22 +239,50 @@ class _LiveActivityPinSheetState extends State<LiveActivityPinSheet> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Top bar
                   Row(
                     children: [
-                      const Text('📚', style: TextStyle(fontSize: 14)),
-                      const SizedBox(width: 6),
-                      const Text(
-                        'English Every Day',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                      Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: AppTheme.darkCard,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.white10),
+                        ),
+                        child: const Icon(Icons.menu_book_rounded, color: AppTheme.accent, size: 18),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.card.wordEn,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white,
+                                letterSpacing: -0.1,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 1),
+                            Text(
+                              '${widget.card.wordEs}${widget.card.pronunciation.isNotEmpty ? '  ${widget.card.pronunciation}' : ''}',
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: Colors.white60,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
                         ),
                       ),
-                      const Spacer(),
+                      const SizedBox(width: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
                           color: AppTheme.accent.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(6),
@@ -258,78 +291,17 @@ class _LiveActivityPinSheetState extends State<LiveActivityPinSheet> {
                         child: Text(
                           wordType,
                           style: const TextStyle(
-                            fontSize: 10,
+                            fontSize: 9,
                             fontWeight: FontWeight.w800,
                             color: AppTheme.accent,
                           ),
                         ),
                       ),
-                      const SizedBox(width: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: Colors.white10,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          'Ej. ${_previewExampleIndex + 1}/${_examples.length}',
-                          style: const TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white70,
-                          ),
-                        ),
-                      ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 10),
 
-                  // Main learning item (NEVER CHANGES)
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.card.wordEn,
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w900,
-                                color: Colors.white,
-                                letterSpacing: -0.3,
-                              ),
-                            ),
-                            if (widget.card.pronunciation.isNotEmpty) ...[
-                              const SizedBox(height: 2),
-                              Text(
-                                widget.card.pronunciation,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontStyle: FontStyle.italic,
-                                  color: AppTheme.accent,
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                      Text(
-                        widget.card.wordEs,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white70,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  // Irregular verb tenses row
                   if (widget.card.isVerbWithForms) ...[
-                    const SizedBox(height: 10),
                     Container(
                       padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                       decoration: BoxDecoration(
@@ -346,11 +318,9 @@ class _LiveActivityPinSheetState extends State<LiveActivityPinSheet> {
                         ],
                       ),
                     ),
+                    const SizedBox(height: 10),
                   ],
 
-                  const SizedBox(height: 12),
-
-                  // Example container (CHANGES PER SESSION)
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                     decoration: BoxDecoration(
@@ -361,14 +331,27 @@ class _LiveActivityPinSheetState extends State<LiveActivityPinSheet> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'EXAMPLE (Cambia en cada sesión)',
-                          style: TextStyle(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 0.8,
-                            color: AppTheme.accent,
-                          ),
+                        Row(
+                          children: [
+                            const Text(
+                              'NOTIFICACIÓN',
+                              style: TextStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 0.8,
+                                color: AppTheme.accent,
+                              ),
+                            ),
+                            const Spacer(),
+                            Text(
+                              'Ej. ${_previewExampleIndex + 1}/${_examples.length}',
+                              style: const TextStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white60,
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 4),
                         Row(
@@ -397,17 +380,15 @@ class _LiveActivityPinSheetState extends State<LiveActivityPinSheet> {
                   ),
                   const SizedBox(height: 10),
 
-                  // Footer: Live countdown & next session switcher
                   Row(
                     children: [
-                      const Icon(Icons.timer_rounded, size: 14, color: AppTheme.accent),
+                      const Icon(Icons.schedule_rounded, size: 14, color: AppTheme.accent),
                       const SizedBox(width: 4),
-                      const Text(
-                        '04:59',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'monospace',
+                      Text(
+                        'Cada ${_formatInterval(_selectedInterval)} • ~$_estimatedNotificationsPerDay/día',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
                           color: AppTheme.accent,
                         ),
                       ),
@@ -424,7 +405,7 @@ class _LiveActivityPinSheetState extends State<LiveActivityPinSheet> {
                           child: Row(
                             children: [
                               Text(
-                                'Ver siguiente ejemplo (${_previewExampleIndex + 1}/${_examples.length})',
+                                'Ver siguiente (${_previewExampleIndex + 1}/${_examples.length})',
                                 style: const TextStyle(fontSize: 11, color: Colors.white70),
                               ),
                               const SizedBox(width: 4),
@@ -440,7 +421,6 @@ class _LiveActivityPinSheetState extends State<LiveActivityPinSheet> {
             ),
             const SizedBox(height: 16),
 
-            // Important Rules Info Card
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -468,9 +448,10 @@ class _LiveActivityPinSheetState extends State<LiveActivityPinSheet> {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    '1. "${widget.card.wordEn}" será tu palabra de aprendizaje durante TODO el día (no cambia).\n'
-                    '2. Cada 30 min se activa una Live Activity de 5 min con un ejemplo nuevo.\n'
-                    '3. Al terminar los 5 min se cierra automáticamente hasta la próxima sesión.',
+                    '1. "${widget.card.wordEn}" será tu palabra de aprendizaje durante TODO el día (ítem fijo).\n'
+                    '2. Cada ${_formatInterval(_selectedInterval)} recibirás una notificación LOCAL con un ejemplo NUEVO.\n'
+                    '3. Los ejemplos rotan automáticamente por toda la lista hasta que termine el día.\n'
+                    '4. Ventana: ${_startHour.toString().padLeft(2, '0')}:00 a ${_endHour.toString().padLeft(2, '0')}:00. No necesitas cuenta de pago ni push/APNs.',
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.white.withValues(alpha: 0.85),
@@ -482,9 +463,8 @@ class _LiveActivityPinSheetState extends State<LiveActivityPinSheet> {
             ),
             const SizedBox(height: 18),
 
-            // Interval Selector
             const Text(
-              'FRECUENCIA DE LAS SESIONES',
+              'FRECUENCIA DE LAS NOTIFICACIONES',
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
@@ -548,18 +528,17 @@ class _LiveActivityPinSheetState extends State<LiveActivityPinSheet> {
             ),
             const SizedBox(height: 22),
 
-            // Action Button
             ElevatedButton.icon(
-              onPressed: _isLoading ? null : _activateLiveActivity,
+              onPressed: _isLoading ? null : _activateNotifications,
               icon: _isLoading
                   ? const SizedBox(
                       width: 18,
                       height: 18,
                       child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                     )
-                  : const Icon(Icons.bolt_rounded, size: 22),
+                  : const Icon(Icons.notifications_active_rounded, size: 22),
               label: Text(
-                _isLoading ? 'Activando...' : 'Activar Live Activities de Hoy',
+                _isLoading ? 'Programando...' : 'Activar Notificaciones de Hoy',
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               style: ElevatedButton.styleFrom(

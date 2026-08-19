@@ -102,10 +102,10 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                                 LiveActivityPinSheet.show(context, card);
                               },
                               icon: const Icon(
-                                Icons.bolt_rounded,
+                                Icons.notifications_active_rounded,
                                 size: 22,
                               ),
-                              label: const Text('Live Activity del Día'),
+                              label: const Text('Notificaciones del Día'),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppTheme.accent,
                                 foregroundColor: Colors.white,
@@ -454,9 +454,12 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.bolt_rounded, size: 22),
+                    icon: const Icon(
+                      Icons.notifications_active_rounded,
+                      size: 22,
+                    ),
                     color: AppTheme.accent,
-                    tooltip: 'Live Activity del Día',
+                    tooltip: 'Notificaciones del Día',
                     onPressed: () => LiveActivityPinSheet.show(context, card),
                   ),
                   IconButton(
@@ -636,7 +639,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.bolt_rounded, size: 22),
+                icon: const Icon(Icons.notifications_active_rounded, size: 22),
                 color: AppTheme.accent,
                 tooltip: 'Live Activity del Día',
                 onPressed: () {

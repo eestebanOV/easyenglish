@@ -1,9 +1,7 @@
 import Flutter
 import UIKit
-#if canImport(ActivityKit)
-import ActivityKit
-#endif
 import UserNotifications
+import AVFAudio
 
 @main
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
@@ -13,11 +11,33 @@ import UserNotifications
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        if let controller = window?.rootViewController as? FlutterViewController {
-            setupLiveActivityChannel(binaryMessenger: controller.binaryMessenger)
+        // MARK: - Audio Session Config (CRÍTICA para TTS/Pronunciación)
+        // iPhone tiene el switch lateral de "modo silencioso". Sin esta
+        // configuración, la categoría por defecto (Ambient/SoloAmbient)
+        // MUTEA COMPLETAMENTE el audio del TTS cuando el usuario tiene el
+        // teléfono en silencio (incluso si sube el volumen por botones).
+        // .playback = "soy una app de reproducción de audio (como Música)".
+        // = reproduce incluso en modo silencioso, incluso con pantalla bloqueada.
+        do {
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(
+                .playback,
+                mode: .spokenAudio,
+                policy: .longForm,
+                options: [.mixWithOthers, .duckOthers, .allowBluetooth, .allowBluetoothA2DP]
+            )
+            try session.setActive(true, options: .notifyOthersOnDeactivation)
+            print("[AVAudioSession] Configurada como .playback + .spokenAudio → TTS sonará incluso en modo silencioso.")
+        } catch {
+            print("[AVAudioSession] Error al configurar: \(error.localizedDescription)")
         }
 
-        UNUserNotificationCenter.current().delegate = self
+        if let controller = window?.rootViewController as? FlutterViewController {
+            setupDailyLearningChannel(binaryMessenger: controller.binaryMessenger)
+        }
+
+        UNUserNotificationCenter.current().delegate = LocalNotificationManager.shared
+        LocalNotificationManager.shared.requestAuthorizationIfNeeded()
 
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
@@ -26,10 +46,10 @@ import UserNotifications
         GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
     }
 
-    private func setupLiveActivityChannel(binaryMessenger: FlutterBinaryMessenger) {
-        let liveActivityChannel = FlutterMethodChannel(name: CHANNEL_NAME, binaryMessenger: binaryMessenger)
+    private func setupDailyLearningChannel(binaryMessenger: FlutterBinaryMessenger) {
+        let channel = FlutterMethodChannel(name: CHANNEL_NAME, binaryMessenger: binaryMessenger)
 
-        liveActivityChannel.setMethodCallHandler { (call: FlutterMethodCall, result: @escaping FlutterResult) in
+        channel.setMethodCallHandler { (call: FlutterMethodCall, result: @escaping FlutterResult) in
             switch call.method {
             case "startDayLearning":
                 guard let args = call.arguments as? [String: Any],
@@ -49,10 +69,9 @@ import UserNotifications
                 let startHour = args["startHour"] as? Int ?? 8
                 let endHour = args["endHour"] as? Int ?? 22
                 let intervalMinutes = args["intervalMinutes"] as? Int ?? 30
-                let durationMinutes = args["durationMinutes"] as? Int ?? 5
                 let cardId = args["cardId"] as? String ?? ""
 
-                let response = LiveActivityManager.shared.startDayLearning(
+                let response = LocalNotificationManager.shared.startDayLearning(
                     learningItem: learningItem,
                     type: type,
                     translation: translation,
@@ -65,7 +84,6 @@ import UserNotifications
                     startHour: startHour,
                     endHour: endHour,
                     intervalMinutes: intervalMinutes,
-                    durationMinutes: durationMinutes,
                     cardId: cardId
                 )
                 result(response)
@@ -73,43 +91,24 @@ import UserNotifications
             case "startSessionNow":
                 let args = call.arguments as? [String: Any]
                 let exampleIndex = args?["exampleIndex"] as? Int
-                let success = LiveActivityManager.shared.startSession(exampleIndex: exampleIndex)
-                result(["success": success])
+                let response = LocalNotificationManager.shared.triggerImmediateNotification(exampleIndex: exampleIndex)
+                result(response)
 
             case "endCurrentActivity":
-                LiveActivityManager.shared.endCurrentActivity()
+                LocalNotificationManager.shared.stopDayLearning()
                 result(["success": true])
 
             case "stopDayLearning":
-                LiveActivityManager.shared.stopDayLearning()
+                LocalNotificationManager.shared.stopDayLearning()
                 result(["success": true])
 
             case "getActiveState":
-                let state = LiveActivityManager.shared.getActiveState()
+                let state = LocalNotificationManager.shared.getActiveState()
                 result(state)
 
             default:
                 result(FlutterMethodNotImplemented)
             }
         }
-    }
-
-    // Handle background notification triggers
-    override func userNotificationCenter(
-        _ center: UNUserNotificationCenter,
-        willPresent notification: UNNotification,
-        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
-    ) {
-        LiveActivityManager.shared.startSession()
-        completionHandler([.banner, .sound, .badge])
-    }
-
-    override func userNotificationCenter(
-        _ center: UNUserNotificationCenter,
-        didReceive response: UNNotificationResponse,
-        withCompletionHandler completionHandler: @escaping () -> Void
-    ) {
-        LiveActivityManager.shared.startSession()
-        completionHandler()
     }
 }

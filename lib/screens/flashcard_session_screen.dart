@@ -173,8 +173,8 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.bolt_rounded),
-            tooltip: 'Live Activity del Día',
+            icon: const Icon(Icons.notifications_active_rounded),
+            tooltip: 'Notificaciones del Día',
             onPressed: () {
               LiveActivityPinSheet.show(context, currentCard);
             },

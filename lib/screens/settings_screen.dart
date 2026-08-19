@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../core/constants.dart';
 import '../providers/flashcard_provider.dart';
 import '../providers/settings_provider.dart';
@@ -44,7 +45,10 @@ class SettingsScreen extends StatelessWidget {
                 border: Border.all(color: AppTheme.darkBorder),
               ),
               child: ListTile(
-                leading: const Icon(Icons.translate_rounded, color: AppTheme.primaryLight),
+                leading: const Icon(
+                  Icons.translate_rounded,
+                  color: AppTheme.primaryLight,
+                ),
                 title: Text(t('settings.language.title')),
                 subtitle: Text(t('settings.language.subtitle')),
                 trailing: DropdownButton<String>(
@@ -79,9 +83,14 @@ class SettingsScreen extends StatelessWidget {
                 border: Border.all(color: AppTheme.darkBorder),
               ),
               child: ListTile(
-                leading: const Icon(Icons.track_changes_rounded, color: AppTheme.primaryLight),
+                leading: const Icon(
+                  Icons.track_changes_rounded,
+                  color: AppTheme.primaryLight,
+                ),
                 title: Text(t('settings.dailyGoal')),
-                subtitle: Text('${settings.dailyGoal} ${t('settings.dailyGoal.subtitle')}'),
+                subtitle: Text(
+                  '${settings.dailyGoal} ${t('settings.dailyGoal.subtitle')}',
+                ),
                 trailing: DropdownButton<int>(
                   value: settings.dailyGoal,
                   underline: const SizedBox(),
@@ -110,7 +119,10 @@ class SettingsScreen extends StatelessWidget {
                 border: Border.all(color: AppTheme.darkBorder),
               ),
               child: SwitchListTile(
-                secondary: const Icon(Icons.volume_up_rounded, color: AppTheme.accent),
+                secondary: const Icon(
+                  Icons.volume_up_rounded,
+                  color: AppTheme.accent,
+                ),
                 title: Text(t('settings.sound.title')),
                 subtitle: Text(t('settings.sound.subtitle')),
                 value: settings.soundEnabled,
@@ -154,7 +166,10 @@ class SettingsScreen extends StatelessWidget {
                 border: Border.all(color: AppTheme.darkBorder),
               ),
               child: ListTile(
-                leading: const Icon(Icons.delete_outline_rounded, color: AppTheme.error),
+                leading: const Icon(
+                  Icons.delete_outline_rounded,
+                  color: AppTheme.error,
+                ),
                 title: Text(
                   t('settings.reset.title'),
                   style: const TextStyle(color: AppTheme.error),
@@ -231,7 +246,7 @@ class SettingsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Algoritmo de repetición espaciada SM-2 y Live Activities para iOS.',
+                    'Algoritmo de repetición espaciada SM-2 y Notificaciones Locales para iOS.',
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.white.withValues(alpha: 0.6),
@@ -252,10 +267,12 @@ class _LiveActivitiesSettingsCard extends StatefulWidget {
   const _LiveActivitiesSettingsCard({required this.t});
 
   @override
-  State<_LiveActivitiesSettingsCard> createState() => _LiveActivitiesSettingsCardState();
+  State<_LiveActivitiesSettingsCard> createState() =>
+      _LiveActivitiesSettingsCardState();
 }
 
-class _LiveActivitiesSettingsCardState extends State<_LiveActivitiesSettingsCard> {
+class _LiveActivitiesSettingsCardState
+    extends State<_LiveActivitiesSettingsCard> {
   final LiveActivityService _liveService = LiveActivityService();
   Map<String, dynamic>? _liveData;
   bool _isLoading = true;
@@ -297,19 +314,26 @@ class _LiveActivitiesSettingsCardState extends State<_LiveActivitiesSettingsCard
       );
     }
 
-    final hasWord = _liveData != null && (_liveData!['wordEn'] as String).isNotEmpty;
+    final hasWord =
+        _liveData != null && (_liveData!['wordEn'] as String).isNotEmpty;
     final wordEn = _liveData?['wordEn'] ?? widget.t('widget.noWord.title');
     final wordEs = _liveData?['wordEs'] ?? '';
     final type = _liveData?['type'] ?? 'PHRASE';
     final interval = _liveData?['intervalMinutes'] as int? ?? 30;
-    final List<String> examples = (_liveData?['examples'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];
+    final List<String> examples =
+        (_liveData?['examples'] as List<dynamic>?)
+            ?.map((e) => e.toString())
+            .toList() ??
+        [];
 
     return Container(
       decoration: BoxDecoration(
         color: AppTheme.darkCard,
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         border: Border.all(
-          color: hasWord ? AppTheme.accent.withValues(alpha: 0.35) : AppTheme.darkBorder,
+          color: hasWord
+              ? AppTheme.accent.withValues(alpha: 0.35)
+              : AppTheme.darkBorder,
         ),
       ),
       padding: const EdgeInsets.all(16),
@@ -324,7 +348,11 @@ class _LiveActivitiesSettingsCardState extends State<_LiveActivitiesSettingsCard
                   color: AppTheme.accent.withValues(alpha: 0.18),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.bolt_rounded, color: AppTheme.accent, size: 22),
+                child: const Icon(
+                  Icons.notifications_active_rounded,
+                  color: AppTheme.accent,
+                  size: 22,
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -336,14 +364,20 @@ class _LiveActivitiesSettingsCardState extends State<_LiveActivitiesSettingsCard
                         Flexible(
                           child: Text(
                             hasWord ? wordEn : widget.t('widget.noWord.title'),
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         if (hasWord) ...[
                           const SizedBox(width: 8),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: AppTheme.accent.withValues(alpha: 0.18),
                               borderRadius: BorderRadius.circular(4),
@@ -363,19 +397,29 @@ class _LiveActivitiesSettingsCardState extends State<_LiveActivitiesSettingsCard
                     if (hasWord && wordEs.isNotEmpty)
                       Text(
                         wordEs,
-                        style: TextStyle(fontSize: 12, color: Colors.white.withValues(alpha: 0.7)),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.white.withValues(alpha: 0.7),
+                        ),
                       )
                     else if (!hasWord)
                       Text(
                         widget.t('widget.noWord.hint'),
-                        style: TextStyle(fontSize: 12, color: Colors.white.withValues(alpha: 0.6)),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.white.withValues(alpha: 0.6),
+                        ),
                       ),
                   ],
                 ),
               ),
               if (hasWord)
                 IconButton(
-                  icon: const Icon(Icons.delete_outline_rounded, color: Colors.white54, size: 20),
+                  icon: const Icon(
+                    Icons.delete_outline_rounded,
+                    color: Colors.white54,
+                    size: 20,
+                  ),
                   tooltip: widget.t('widget.delete.hint'),
                   onPressed: () async {
                     await _liveService.stopDayLearning();
@@ -393,7 +437,10 @@ class _LiveActivitiesSettingsCardState extends State<_LiveActivitiesSettingsCard
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(widget.t('widget.interval'), style: const TextStyle(fontSize: 13, color: Colors.white70)),
+                Text(
+                  widget.t('widget.interval'),
+                  style: const TextStyle(fontSize: 13, color: Colors.white70),
+                ),
                 DropdownButton<int>(
                   value: interval,
                   underline: const SizedBox(),
@@ -418,7 +465,11 @@ class _LiveActivitiesSettingsCardState extends State<_LiveActivitiesSettingsCard
               const SizedBox(height: 6),
               Text(
                 '${examples.length} ${widget.t('widget.examplesRotary')}',
-                style: const TextStyle(fontSize: 11, color: AppTheme.accent, fontWeight: FontWeight.w600),
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: AppTheme.accent,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
 
@@ -436,7 +487,9 @@ class _LiveActivitiesSettingsCardState extends State<_LiveActivitiesSettingsCard
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('⚡ Live Activity de prueba iniciada (5 min).'),
+                              content: const Text(
+                                '🔔 Notificación de prueba enviada inmediatamente.',
+                              ),
                               duration: Duration(seconds: 3),
                             ),
                           );
@@ -447,7 +500,9 @@ class _LiveActivitiesSettingsCardState extends State<_LiveActivitiesSettingsCard
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppTheme.accent,
                   side: const BorderSide(color: AppTheme.accent),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
             ),
@@ -464,12 +519,20 @@ class _LiveActivitiesSettingsCardState extends State<_LiveActivitiesSettingsCard
             ),
             child: Row(
               children: [
-                const Icon(Icons.info_outline_rounded, size: 16, color: Colors.white54),
+                const Icon(
+                  Icons.info_outline_rounded,
+                  size: 16,
+                  color: Colors.white54,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     widget.t('widget.tutorial'),
-                    style: const TextStyle(fontSize: 11, color: Colors.white60, height: 1.3),
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: Colors.white60,
+                      height: 1.3,
+                    ),
                   ),
                 ),
               ],
@@ -480,4 +543,3 @@ class _LiveActivitiesSettingsCardState extends State<_LiveActivitiesSettingsCard
     );
   }
 }
-
