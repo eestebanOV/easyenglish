@@ -139,7 +139,7 @@ class LiveActivityService {
     try {
       await init();
       final result = await _channel.invokeMethod('startSessionNow', {
-        'exampleIndex': ?exampleIndex,
+        'exampleIndex': exampleIndex,
       });
       return result?['success'] == true;
     } catch (e) {

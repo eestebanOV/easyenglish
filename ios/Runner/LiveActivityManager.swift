@@ -30,8 +30,42 @@ public class LiveActivityManager: NSObject {
     private let keyLastSessionDate = "live_activity_last_session_date"
     private let keyCardId = "live_activity_card_id"
 
-    private var defaults: UserDefaults? {
-        return UserDefaults(suiteName: appGroupId)
+    private var defaults: UserDefaults {
+        return UserDefaults(suiteName: appGroupId) ?? UserDefaults.standard
+    }
+
+    private func saveToDefaults<T>(_ value: T?, forKey key: String) {
+        if let val = value {
+            UserDefaults(suiteName: appGroupId)?.set(val, forKey: key)
+            UserDefaults.standard.set(val, forKey: key)
+        } else {
+            UserDefaults(suiteName: appGroupId)?.removeObject(forKey: key)
+            UserDefaults.standard.removeObject(forKey: key)
+        }
+        UserDefaults(suiteName: appGroupId)?.synchronize()
+        UserDefaults.standard.synchronize()
+    }
+
+    private func getString(forKey key: String) -> String? {
+        if let val = UserDefaults(suiteName: appGroupId)?.string(forKey: key), !val.isEmpty {
+            return val
+        }
+        return UserDefaults.standard.string(forKey: key)
+    }
+
+    private func getBool(forKey key: String) -> Bool {
+        if let groupDefs = UserDefaults(suiteName: appGroupId), groupDefs.object(forKey: key) != nil {
+            return groupDefs.bool(forKey: key)
+        }
+        return UserDefaults.standard.bool(forKey: key)
+    }
+
+    private func getInt(forKey key: String, defaultValue: Int = 0) -> Int {
+        if let groupDefs = UserDefaults(suiteName: appGroupId), groupDefs.object(forKey: key) != nil {
+            return groupDefs.integer(forKey: key)
+        }
+        let std = UserDefaults.standard.integer(forKey: key)
+        return std != 0 ? std : defaultValue
     }
 
     private override init() {
@@ -58,29 +92,28 @@ public class LiveActivityManager: NSObject {
         cardId: String = ""
     ) -> [String: Any] {
         guard !learningItem.isEmpty, !examples.isEmpty else {
+            print("[LiveActivity] Error: Invalid learning item or examples")
             return ["success": false, "error": "Invalid learning item or examples"]
         }
 
-        // Save Day Configuration
+        // Save Day Configuration across both AppGroup and Standard UserDefaults
         let jsonExamples = (try? JSONEncoder().encode(examples)).flatMap { String(data: $0, encoding: .utf8) } ?? "[]"
-        let defs = defaults
-        defs?.set(true, forKey: keyActive)
-        defs?.set(learningItem, forKey: keyWordEn)
-        defs?.set(translation, forKey: keyWordEs)
-        defs?.set(phonetic, forKey: keyPronunciation)
-        defs?.set(type, forKey: keyType)
-        defs?.set(categoryName, forKey: keyCategory)
-        defs?.set(verbPresent ?? "", forKey: keyVerbPresent)
-        defs?.set(verbPast ?? "", forKey: keyVerbPast)
-        defs?.set(verbParticiple ?? "", forKey: keyVerbParticiple)
-        defs?.set(jsonExamples, forKey: keyExamplesJson)
-        defs?.set(startHour, forKey: keyStartHour)
-        defs?.set(endHour, forKey: keyEndHour)
-        defs?.set(intervalMinutes, forKey: keyIntervalMinutes)
-        defs?.set(durationMinutes, forKey: keyDurationMinutes)
-        defs?.set(0, forKey: keyCurrentExampleIndex)
-        defs?.set(cardId, forKey: keyCardId)
-        defs?.synchronize()
+        saveToDefaults(true, forKey: keyActive)
+        saveToDefaults(learningItem, forKey: keyWordEn)
+        saveToDefaults(translation, forKey: keyWordEs)
+        saveToDefaults(phonetic, forKey: keyPronunciation)
+        saveToDefaults(type, forKey: keyType)
+        saveToDefaults(categoryName, forKey: keyCategory)
+        saveToDefaults(verbPresent ?? "", forKey: keyVerbPresent)
+        saveToDefaults(verbPast ?? "", forKey: keyVerbPast)
+        saveToDefaults(verbParticiple ?? "", forKey: keyVerbParticiple)
+        saveToDefaults(jsonExamples, forKey: keyExamplesJson)
+        saveToDefaults(startHour, forKey: keyStartHour)
+        saveToDefaults(endHour, forKey: keyEndHour)
+        saveToDefaults(intervalMinutes, forKey: keyIntervalMinutes)
+        saveToDefaults(durationMinutes, forKey: keyDurationMinutes)
+        saveToDefaults(0, forKey: keyCurrentExampleIndex)
+        saveToDefaults(cardId, forKey: keyCardId)
 
         // Schedule all notifications & background sessions for the day
         scheduleDaySessions(
@@ -92,9 +125,23 @@ public class LiveActivityManager: NSObject {
             durationMinutes: durationMinutes
         )
 
-        // Start first session immediately if within hours
-        let started = startSession(exampleIndex: 0)
+        // Start first session immediately using explicit parameters
+        let started = triggerLiveActivity(
+            learningItem: learningItem,
+            type: type,
+            translation: translation,
+            phonetic: phonetic,
+            examples: examples,
+            exampleIndex: 0,
+            verbPresent: verbPresent,
+            verbPast: verbPast,
+            verbParticiple: verbParticiple,
+            categoryName: categoryName,
+            durationMinutes: durationMinutes
+        )
         
+        print("[LiveActivity] startDayLearning finished. Immediate start: \(started)")
+
         return [
             "success": true,
             "startedImmediate": started,
@@ -108,24 +155,36 @@ public class LiveActivityManager: NSObject {
     /// Triggers a 5-minute Live Activity session with the specified or next example
     @discardableResult
     public func startSession(exampleIndex: Int? = nil) -> Bool {
-        guard #available(iOS 16.1, *) else { return false }
-        guard ActivityAuthorizationInfo().areActivitiesEnabled else { return false }
+        guard #available(iOS 16.1, *) else {
+            print("[LiveActivity] iOS version < 16.1, Live Activities not supported")
+            return false
+        }
+        guard ActivityAuthorizationInfo().areActivitiesEnabled else {
+            print("[LiveActivity] Live Activities are disabled by user in iOS Settings")
+            return false
+        }
+        guard getBool(forKey: keyActive) else {
+            print("[LiveActivity] Daily learning is not active")
+            return false
+        }
 
-        let defs = defaults
-        guard defs?.bool(forKey: keyActive) == true else { return false }
+        let learningItem = getString(forKey: keyWordEn) ?? ""
+        guard !learningItem.isEmpty else {
+            print("[LiveActivity] No learning item saved in storage")
+            return false
+        }
 
-        let learningItem = defs?.string(forKey: keyWordEn) ?? ""
-        let translation = defs?.string(forKey: keyWordEs) ?? ""
-        let phonetic = defs?.string(forKey: keyPronunciation) ?? ""
-        let type = defs?.string(forKey: keyType) ?? "PHRASE"
-        let categoryName = defs?.string(forKey: keyCategory) ?? "English Every Day"
-        let verbPresent = defs?.string(forKey: keyVerbPresent)
-        let verbPast = defs?.string(forKey: keyVerbPast)
-        let verbParticiple = defs?.string(forKey: keyVerbParticiple)
-        let durationMins = max(1, defs?.integer(forKey: keyDurationMinutes) ?? 5)
+        let translation = getString(forKey: keyWordEs) ?? ""
+        let phonetic = getString(forKey: keyPronunciation) ?? ""
+        let type = getString(forKey: keyType) ?? "PHRASE"
+        let categoryName = getString(forKey: keyCategory) ?? "English Every Day"
+        let verbPresent = getString(forKey: keyVerbPresent)
+        let verbPast = getString(forKey: keyVerbPast)
+        let verbParticiple = getString(forKey: keyVerbParticiple)
+        let durationMins = max(1, getInt(forKey: keyDurationMinutes, defaultValue: 5))
 
         var examples: [String] = []
-        if let jsonStr = defs?.string(forKey: keyExamplesJson),
+        if let jsonStr = getString(forKey: keyExamplesJson),
            let data = jsonStr.data(using: .utf8),
            let list = try? JSONDecoder().decode([String].self, from: data),
            !list.isEmpty {
@@ -134,17 +193,53 @@ public class LiveActivityManager: NSObject {
             examples = ["Take care of yourself."]
         }
 
-        let savedIdx = defs?.integer(forKey: keyCurrentExampleIndex) ?? 0
+        let savedIdx = getInt(forKey: keyCurrentExampleIndex, defaultValue: 0)
         let targetIndex = (exampleIndex ?? savedIdx) % examples.count
-        let activeExample = examples[targetIndex]
 
-        // Advance to next index for the next 30-min session
-        let nextIndex = (targetIndex + 1) % examples.count
-        defs?.set(nextIndex, forKey: keyCurrentExampleIndex)
-        defs?.set(Date().timeIntervalSince1970, forKey: keyLastSessionDate)
-        defs?.synchronize()
+        return triggerLiveActivity(
+            learningItem: learningItem,
+            type: type,
+            translation: translation,
+            phonetic: phonetic,
+            examples: examples,
+            exampleIndex: targetIndex,
+            verbPresent: verbPresent,
+            verbPast: verbPast,
+            verbParticiple: verbParticiple,
+            categoryName: categoryName,
+            durationMinutes: durationMins
+        )
+    }
+
+    private func triggerLiveActivity(
+        learningItem: String,
+        type: String,
+        translation: String,
+        phonetic: String,
+        examples: [String],
+        exampleIndex: Int,
+        verbPresent: String?,
+        verbPast: String?,
+        verbParticiple: String?,
+        categoryName: String,
+        durationMinutes: Int
+    ) -> Bool {
+        guard #available(iOS 16.1, *) else { return false }
+        guard ActivityAuthorizationInfo().areActivitiesEnabled else {
+            print("[LiveActivity] ActivityAuthorizationInfo: areActivitiesEnabled is false")
+            return false
+        }
+
+        let targetIndex = (!examples.isEmpty) ? (exampleIndex % examples.count) : 0
+        let activeExample = (!examples.isEmpty) ? examples[targetIndex] : learningItem
+
+        // Advance to next index for the next interval
+        let nextIndex = (!examples.isEmpty) ? ((targetIndex + 1) % examples.count) : 0
+        saveToDefaults(nextIndex, forKey: keyCurrentExampleIndex)
+        saveToDefaults(Date().timeIntervalSince1970, forKey: keyLastSessionDate)
 
         let now = Date()
+        let durationMins = max(1, durationMinutes)
         let endTime = Calendar.current.date(byAdding: .minute, value: durationMins, to: now) ?? now.addingTimeInterval(Double(durationMins * 60))
 
         let attributes = EnglishLearningAttributes(
@@ -165,7 +260,7 @@ public class LiveActivityManager: NSObject {
         let state = EnglishLearningAttributes.ContentState(
             example: activeExample,
             exampleIndex: targetIndex + 1,
-            totalExamples: examples.count,
+            totalExamples: max(1, examples.count),
             startTime: now,
             endTime: endTime,
             sessionTitle: "Sesión \(timeString)"
@@ -188,7 +283,7 @@ public class LiveActivityManager: NSObject {
                         content: content,
                         pushType: nil
                     )
-                    print("Live Activity started successfully (16.2+): \(activity.id)")
+                    print("[LiveActivity] Started successfully (iOS 16.2+): \(activity.id)")
                     DispatchQueue.main.asyncAfter(deadline: .now() + Double(durationMins * 60)) {
                         Task {
                             await activity.end(using: state, dismissalPolicy: .after(endTime))
@@ -200,7 +295,7 @@ public class LiveActivityManager: NSObject {
                         contentState: state,
                         pushType: nil
                     )
-                    print("Live Activity started successfully (16.1): \(activity.id)")
+                    print("[LiveActivity] Started successfully (iOS 16.1): \(activity.id)")
                     DispatchQueue.main.asyncAfter(deadline: .now() + Double(durationMins * 60)) {
                         Task {
                             await activity.end(using: state, dismissalPolicy: .after(endTime))
@@ -208,7 +303,7 @@ public class LiveActivityManager: NSObject {
                     }
                 }
             } catch {
-                print("Error starting Live Activity: \(error.localizedDescription)")
+                print("[LiveActivity] Error starting Activity: \(error.localizedDescription)")
             }
         }
 
