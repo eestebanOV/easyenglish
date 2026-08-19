@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		A1B2C3012DC9AD0100C4905E /* EnglishLearningAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3022DC9AD0100C4905E /* EnglishLearningAttributes.swift */; };
 		A1B2C3032DC9AD0100C4905E /* LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3042DC9AD0100C4905E /* LiveActivityManager.swift */; };
+		A1B2C3052DC9AD0100C4905E /* LocalNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3062DC9AD0100C4905E /* LocalNotificationManager.swift */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C807B294A618700263BE5 /* RunnerTests.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
@@ -65,6 +66,7 @@
 /* Begin PBXFileReference section */
 		A1B2C3022DC9AD0100C4905E /* EnglishLearningAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnglishLearningAttributes.swift; sourceTree = "<group>"; };
 		A1B2C3042DC9AD0100C4905E /* LiveActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityManager.swift; sourceTree = "<group>"; };
+		A1B2C3062DC9AD0100C4905E /* LocalNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotificationManager.swift; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		331C807B294A618700263BE5 /* RunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerTests.swift; sourceTree = "<group>"; };
@@ -164,6 +166,7 @@
 			children = (
 				A1B2C3022DC9AD0100C4905E /* EnglishLearningAttributes.swift */,
 				A1B2C3042DC9AD0100C4905E /* LiveActivityManager.swift */,
+				A1B2C3062DC9AD0100C4905E /* LocalNotificationManager.swift */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FD1CF9000F007C117D /* Assets.xcassets */,
 				97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */,
@@ -363,6 +366,7 @@
 			files = (
 				A1B2C3012DC9AD0100C4905E /* EnglishLearningAttributes.swift in Sources */,
 				A1B2C3032DC9AD0100C4905E /* LiveActivityManager.swift in Sources */,
+				A1B2C3052DC9AD0100C4905E /* LocalNotificationManager.swift in Sources */,
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 				7884E8682EC3CC0700C636F2 /* SceneDelegate.swift in Sources */,
