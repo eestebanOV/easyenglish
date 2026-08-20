@@ -32,12 +32,31 @@ import AVFAudio
             print("[AVAudioSession] Error al configurar: \(error.localizedDescription)")
         }
 
+        // MARK: - UNUserNotificationCenter Delegate (CRÍTICO: setear ANTES que cualquier plugin Flutter)
+        // El delegado debe setearse UNA VEZ al arranque; si flutter_tts o flutter_local_notifications
+        // sobrescriben el delegado perderemos el evento willPresent y las notificaciones en foreground
+        // aparecerán MUTADAS (sin banner ni sonido).
+        let nc = UNUserNotificationCenter.current()
+        LocalNotificationManager.shared.installNotificationDelegate()
+        nc.requestAuthorization(options: [.alert, .sound, .badge, .provisional]) { granted, err in
+            if let err = err {
+                print("[AppDelegate] UNUserNotification auth error: \(err.localizedDescription)")
+            } else {
+                print("[AppDelegate] UNUserNotification auth granted=\(granted)")
+            }
+        }
+        // Opcional: definir categoría LEARNING_CATEGORY por si en el futuro queremos acciones
+        let learnCategory = UNNotificationCategory(
+            identifier: "LEARNING_CATEGORY",
+            actions: [],
+            intentIdentifiers: [],
+            options: [.hiddenPreviewsShowTitle, .hiddenPreviewsShowSubtitle]
+        )
+        nc.setNotificationCategories([learnCategory])
+
         if let controller = window?.rootViewController as? FlutterViewController {
             setupDailyLearningChannel(binaryMessenger: controller.binaryMessenger)
         }
-
-        UNUserNotificationCenter.current().delegate = LocalNotificationManager.shared
-        LocalNotificationManager.shared.requestAuthorizationIfNeeded()
 
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }

@@ -1,5 +1,6 @@
 import Foundation
 import UserNotifications
+import UIKit
 
 public class LocalNotificationManager: NSObject {
     public static let shared = LocalNotificationManager()
@@ -65,26 +66,53 @@ public class LocalNotificationManager: NSObject {
 
     private override init() {
         super.init()
-        UNUserNotificationCenter.current().delegate = self
     }
 
-    public func requestAuthorizationIfNeeded(completion: ((_ granted: Bool) -> Void)? = nil) {
+    public func installNotificationDelegate() {
+        let center = UNUserNotificationCenter.current()
+        center.delegate = self
+        print("[LocalNotifications] UNUserNotificationCenter delegate instalado: LocalNotificationManager.shared")
+    }
+
+    // MARK: - Helpers asíncronos (completion)
+    private func withAuthorizedCenter(_ work: @escaping (_ center: UNUserNotificationCenter) -> Void, onDenied: (() -> Void)? = nil) {
         let center = UNUserNotificationCenter.current()
         center.getNotificationSettings { settings in
-            if settings.authorizationStatus == .notDetermined {
-                center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
-                    DispatchQueue.main.async { completion?(granted) }
+            switch settings.authorizationStatus {
+            case .authorized, .provisional:
+                DispatchQueue.main.async { work(center) }
+            case .notDetermined:
+                center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, err in
+                    if let err = err {
+                        print("[LocalNotifications] Auth error: \(err.localizedDescription)")
+                    }
+                    DispatchQueue.main.async {
+                        if granted {
+                            work(center)
+                        } else {
+                            onDenied?()
+                        }
+                    }
                 }
-            } else {
-                let granted = settings.authorizationStatus == .authorized || settings.authorizationStatus == .provisional
-                DispatchQueue.main.async { completion?(granted) }
+            case .denied, .ephemeral:
+                print("[LocalNotifications] Permiso de notificaciones DENEGADO. El usuario debe activarlo en Ajustes > EasyEnglish > Notificaciones")
+                DispatchQueue.main.async { onDenied?() }
+            @unknown default:
+                DispatchQueue.main.async { onDenied?() }
             }
         }
     }
 
-    // MARK: - Public API for Flutter / Native
+    public func requestAuthorizationIfNeeded(completion: ((_ granted: Bool) -> Void)? = nil) {
+        withAuthorizedCenter({ _ in
+            DispatchQueue.main.async { completion?(true) }
+        }, onDenied: {
+            DispatchQueue.main.async { completion?(false) }
+        })
+    }
 
-    /// Start a full day of local notifications with rotating examples for the selected word.
+    // MARK: - Public API
+
     public func startDayLearning(
         learningItem: String,
         type: String,
@@ -102,7 +130,7 @@ public class LocalNotificationManager: NSObject {
     ) -> [String: Any] {
         guard !learningItem.isEmpty, !examples.isEmpty else {
             print("[LocalNotifications] Error: Invalid learning item or examples")
-            return ["success": false, "error": "Invalid learning item or examples"]
+            return ["success": false, "error": "Invalid learning item or examples", "pendingNotifications": 0]
         }
 
         let jsonExamples = (try? JSONEncoder().encode(examples)).flatMap { String(data: $0, encoding: .utf8) } ?? "[]"
@@ -123,139 +151,55 @@ public class LocalNotificationManager: NSObject {
         saveToDefaults(Date().timeIntervalSince1970, forKey: keyLastSessionDate)
         saveToDefaults(cardId, forKey: keyCardId)
 
-        var scheduledCount = 0
-        let group = DispatchGroup()
-        group.enter()
+        let scheduledSem = DispatchSemaphore(value: 0)
+        var finalScheduled = 0
+        var authorizationGranted = false
 
-        requestAuthorizationIfNeeded { granted in
-            defer { group.leave() }
-            guard granted else {
-                print("[LocalNotifications] Authorization denied by user")
-                return
+        withAuthorizedCenter({ center in
+            authorizationGranted = true
+            self.clearScheduledDailyNotifications(center: center) {
+                self.scheduleDayNotificationsInternal(
+                    center: center,
+                    learningItem: learningItem,
+                    translation: translation,
+                    phonetic: phonetic,
+                    type: type,
+                    examples: examples,
+                    startHour: startHour,
+                    endHour: endHour,
+                    intervalMinutes: intervalMinutes
+                ) { _, err in
+                    if let err = err {
+                        print("[LocalNotifications] Error al añadir notification request: \(err.localizedDescription)")
+                    }
+                } onComplete: { scheduledCount in
+                    finalScheduled = scheduledCount
+                    self.logPendingNotificationRequests(center: center, context: "startDayLearning completion") {
+                        scheduledSem.signal()
+                    }
+                }
             }
+        }, onDenied: {
+            scheduledSem.signal()
+        })
 
-            scheduledCount = self.scheduleDayNotifications(
-                learningItem: learningItem,
-                translation: translation,
-                phonetic: phonetic,
-                type: type,
-                examples: examples,
-                startHour: startHour,
-                endHour: endHour,
-                intervalMinutes: intervalMinutes
-            )
-        }
+        // Esperamos síncronamente hasta 6 s para asegurar que Flutter reciba el count real
+        _ = scheduledSem.wait(timeout: .now() + 6.0)
 
-        _ = group.wait(timeout: .now() + 5.0)
-
-        print("[LocalNotifications] startDayLearning finished. Scheduled ~\(scheduledCount) notifications for '\(learningItem)' every \(intervalMinutes) min.")
+        print("[LocalNotifications] startDayLearning. scheduled=\(finalScheduled). autorizado=\(authorizationGranted). item='\(learningItem)', interval=\(intervalMinutes)min, start=\(startHour), end=\(endHour)")
 
         return [
-            "success": true,
+            "success": authorizationGranted,
+            "authorized": authorizationGranted,
             "learningItem": learningItem,
             "totalExamples": examples.count,
             "intervalMinutes": intervalMinutes,
             "startHour": startHour,
-            "endHour": endHour
+            "endHour": endHour,
+            "pendingNotifications": finalScheduled
         ]
     }
 
-    /// Schedules all notifications for the current day. Returns the number of scheduled notifications.
-    @discardableResult
-    private func scheduleDayNotifications(
-        learningItem: String,
-        translation: String,
-        phonetic: String,
-        type: String,
-        examples: [String],
-        startHour: Int,
-        endHour: Int,
-        intervalMinutes: Int
-    ) -> Int {
-        let center = UNUserNotificationCenter.current()
-
-        let pendingIdsToRemove = center.getPendingNotificationRequests { requests in
-            let ids = requests
-                .map { $0.identifier }
-                .filter { $0.hasPrefix(self.notificationPrefixId) }
-            center.removePendingNotificationRequests(withIdentifiers: ids)
-        }
-
-        let calendar = Calendar.current
-        let now = Date()
-        let safeInterval = max(5, intervalMinutes)
-
-        var scheduledCount = 0
-        var exampleCounter = 0
-
-        let totalMinutesInWindow = ((endHour - startHour) * 60)
-        let slots = totalMinutesInWindow / safeInterval
-
-        for slot in 0...slots {
-            let offsetMinutes = slot * safeInterval
-            let hourOffset = offsetMinutes / 60
-            let minuteOffset = offsetMinutes % 60
-
-            let hour = startHour + hourOffset
-            let minute = minuteOffset
-
-            if hour > endHour || (hour == endHour && minute > 0) { break }
-
-            let exampleText = examples[exampleCounter % examples.count]
-            exampleCounter += 1
-
-            var dateComponents = DateComponents()
-            dateComponents.hour = hour
-            dateComponents.minute = minute
-
-            let identifier = "\(notificationPrefixId)\(hour)_\(minute)_\(slot)"
-
-            let content = UNMutableNotificationContent()
-            content.title = "📚 \(learningItem)"
-            let subtitleBase = translation.isEmpty ? "" : "— \(translation)"
-            let pronunciationPart = phonetic.isEmpty ? "" : "  \(phonetic)"
-            content.subtitle = "\(subtitleBase)\(pronunciationPart)"
-            content.body = "Ejemplo \(exampleCounter)/\(examples.count): \"\(exampleText)\""
-            content.sound = .default
-            content.userInfo = [
-                "action": "daily_learning_notification",
-                "learningItem": learningItem,
-                "translation": translation,
-                "example": exampleText,
-                "exampleIndex": exampleCounter - 1,
-                "totalExamples": examples.count
-            ]
-            content.threadIdentifier = "easyenglish_daily_learning"
-            content.categoryIdentifier = "LEARNING_CATEGORY"
-
-            // Only schedule slots that are in the future from 'now' today (avoid immediate past duplicates)
-            if let scheduledDate = calendar.nextDate(
-                after: calendar.startOfDay(for: now),
-                matching: dateComponents,
-                matchingPolicy: .nextTime
-            ) {
-                if scheduledDate <= now {
-                    continue
-                }
-
-                let triggerComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: scheduledDate)
-                let trigger = UNCalendarNotificationTrigger(dateMatching: triggerComponents, repeats: false)
-                let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
-
-                center.add(request) { err in
-                    if let err = err {
-                        print("[LocalNotifications] Error scheduling \(identifier): \(err.localizedDescription)")
-                    }
-                }
-                scheduledCount += 1
-            }
-        }
-
-        saveToDefaults(0, forKey: keyCurrentExampleIndex)
-        return scheduledCount
-    }
-
-    /// Trigger an immediate local notification now (for testing / manual session).
     public func triggerImmediateNotification(exampleIndex: Int? = nil) -> [String: Any] {
         guard getBool(forKey: keyActive) else {
             return ["success": false, "error": "Daily learning is not active"]
@@ -264,7 +208,6 @@ public class LocalNotificationManager: NSObject {
         let learningItem = getString(forKey: keyWordEn) ?? ""
         let translation = getString(forKey: keyWordEs) ?? ""
         let phonetic = getString(forKey: keyPronunciation) ?? ""
-        let type = getString(forKey: keyType) ?? ""
 
         var examples: [String] = []
         if let jsonStr = getString(forKey: keyExamplesJson),
@@ -287,6 +230,7 @@ public class LocalNotificationManager: NSObject {
         content.subtitle = "\(subtitleBase)\(pronunciationPart)"
         content.body = "Ejemplo \(targetIndex + 1)/\(examples.count): \"\(exampleText)\""
         content.sound = .default
+        content.badge = UIApplication.shared.applicationIconBadgeNumber + 1 as NSNumber
         content.userInfo = [
             "action": "manual_learning_notification",
             "learningItem": learningItem,
@@ -295,36 +239,50 @@ public class LocalNotificationManager: NSObject {
             "totalExamples": examples.count
         ]
         content.threadIdentifier = "easyenglish_daily_learning"
+        content.categoryIdentifier = "LEARNING_CATEGORY"
 
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-        let request = UNNotificationRequest(
-            identifier: "\(notificationPrefixId)immediate_\(Date().timeIntervalSince1970)",
-            content: content,
-            trigger: trigger
-        )
+        var success = false
+        let sem = DispatchSemaphore(value: 0)
 
-        UNUserNotificationCenter.current().add(request) { err in
-            if let err = err {
-                print("[LocalNotifications] Immediate error: \(err.localizedDescription)")
+        withAuthorizedCenter({ center in
+            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+            let request = UNNotificationRequest(
+                identifier: "\(self.notificationPrefixId)immediate_\(Date().timeIntervalSince1970)",
+                content: content,
+                trigger: trigger
+            )
+            DispatchQueue.main.async {
+                print("[LocalNotifications] Intentando programar inmediata id=\(request.identifier)")
+                center.add(request) { err in
+                    if let err = err {
+                        print("[LocalNotifications] Immediate error: \(err.localizedDescription)")
+                        success = false
+                    } else {
+                        print("[LocalNotifications] Notificación inmediata programada correctamente id=\(request.identifier)")
+                        success = true
+                    }
+                    sem.signal()
+                }
             }
-        }
+        }, onDenied: {
+            success = false
+            sem.signal()
+        })
+
+        _ = sem.wait(timeout: .now() + 4.0)
 
         let nextIndex = (targetIndex + 1) % examples.count
         saveToDefaults(nextIndex, forKey: keyCurrentExampleIndex)
 
-        return ["success": true, "example": exampleText, "index": targetIndex]
+        return ["success": success, "example": exampleText, "index": targetIndex, "authorized": success]
     }
 
-    /// Cancels all scheduled local notifications and clears day-learning state.
     public func stopDayLearning() {
-        let center = UNUserNotificationCenter.current()
-        center.getPendingNotificationRequests { requests in
-            let ids = requests
-                .map { $0.identifier }
-                .filter { $0.hasPrefix(self.notificationPrefixId) }
-            center.removePendingNotificationRequests(withIdentifiers: ids)
-            center.removeDeliveredNotifications(withIdentifiers: ids)
-        }
+        withAuthorizedCenter({ center in
+            self.clearScheduledDailyNotifications(center: center) {
+                print("[LocalNotifications] stopDayLearning: notificaciones programadas canceladas")
+            }
+        })
 
         let defs = defaults
         defs.set(false, forKey: keyActive)
@@ -334,9 +292,13 @@ public class LocalNotificationManager: NSObject {
         defs.set("[]", forKey: keyExamplesJson)
         defs.set("", forKey: keyCardId)
         defs.synchronize()
+
+        // Limpiamos también el badge
+        DispatchQueue.main.async {
+            UIApplication.shared.applicationIconBadgeNumber = 0
+        }
     }
 
-    /// Retrieves current state for Flutter UI.
     public func getActiveState() -> [String: Any] {
         let defs = defaults
         let isActive = defs.bool(forKey: keyActive)
@@ -362,9 +324,10 @@ public class LocalNotificationManager: NSObject {
         let semaphore = DispatchSemaphore(value: 0)
         UNUserNotificationCenter.current().getPendingNotificationRequests { requests in
             pendingCount = requests.filter { $0.identifier.hasPrefix(self.notificationPrefixId) }.count
+            print("[LocalNotifications] getActiveState: \(pendingCount) notificaciones programadas pendientes")
             semaphore.signal()
         }
-        _ = semaphore.wait(timeout: .now() + 1.0)
+        _ = semaphore.wait(timeout: .now() + 1.5)
 
         return [
             "isActive": isActive,
@@ -384,16 +347,166 @@ public class LocalNotificationManager: NSObject {
             "pendingNotifications": pendingCount
         ]
     }
+
+    // MARK: - Private Helpers (seguros)
+
+    private func clearScheduledDailyNotifications(center: UNUserNotificationCenter, done: @escaping () -> Void) {
+        center.getPendingNotificationRequests { requests in
+            let ids = requests
+                .map { $0.identifier }
+                .filter { $0.hasPrefix(self.notificationPrefixId) }
+            if !ids.isEmpty {
+                center.removePendingNotificationRequests(withIdentifiers: ids)
+                center.removeDeliveredNotifications(withIdentifiers: ids)
+                print("[LocalNotifications] Canceladas \(ids.count) notificaciones previas con prefijo \(self.notificationPrefixId)")
+            }
+            DispatchQueue.main.async { done() }
+        }
+    }
+
+    private func logPendingNotificationRequests(
+        center: UNUserNotificationCenter,
+        context: String,
+        done: (() -> Void)? = nil
+    ) {
+        center.getPendingNotificationRequests { requests in
+            let ids = requests
+                .map { $0.identifier }
+                .filter { $0.hasPrefix(self.notificationPrefixId) }
+                .sorted()
+            print("[LocalNotifications] \(context): pendingIds=\(ids), scheduledCount=\(ids.count)")
+            DispatchQueue.main.async { done?() }
+        }
+    }
+
+    private func scheduleDayNotificationsInternal(
+        center: UNUserNotificationCenter,
+        learningItem: String,
+        translation: String,
+        phonetic: String,
+        type: String,
+        examples: [String],
+        startHour: Int,
+        endHour: Int,
+        intervalMinutes: Int,
+        onPerRequestError: @escaping (_ identifier: String, _ error: Error?) -> Void,
+        onComplete: @escaping (_ scheduledCount: Int) -> Void
+    ) {
+        let calendar = Calendar.current
+        let now = Date()
+        let safeInterval = max(5, intervalMinutes)
+
+        var exampleCounter = 0
+        var requestsToSchedule: [(identifier: String, request: UNNotificationRequest, scheduledDate: Date)] = []
+
+        let totalMinutesInWindow = ((endHour - startHour) * 60)
+        let slots = totalMinutesInWindow / safeInterval
+
+        for slot in 0...slots {
+            let offsetMinutes = slot * safeInterval
+            let hourOffset = offsetMinutes / 60
+            let minuteOffset = offsetMinutes % 60
+
+            let hour = startHour + hourOffset
+            let minute = minuteOffset
+
+            if hour > endHour || (hour == endHour && minute > 0) { break }
+
+            let exampleText = examples[exampleCounter % examples.count]
+            exampleCounter += 1
+
+            var dateComponents = DateComponents()
+            dateComponents.calendar = calendar
+            dateComponents.timeZone = .current
+            dateComponents.hour = hour
+            dateComponents.minute = minute
+
+            let identifier = "\(notificationPrefixId)\(hour)_\(minute)_\(slot)"
+
+            let content = UNMutableNotificationContent()
+            content.title = "📚 \(learningItem)"
+            let subtitleBase = translation.isEmpty ? "" : "— \(translation)"
+            let pronunciationPart = phonetic.isEmpty ? "" : "  \(phonetic)"
+            content.subtitle = "\(subtitleBase)\(pronunciationPart)"
+            content.body = "Ejemplo \(exampleCounter)/\(examples.count): \"\(exampleText)\""
+            content.sound = .default
+            content.userInfo = [
+                "action": "daily_learning_notification",
+                "learningItem": learningItem,
+                "translation": translation,
+                "example": exampleText,
+                "exampleIndex": exampleCounter - 1,
+                "totalExamples": examples.count
+            ]
+            content.threadIdentifier = "easyenglish_daily_learning"
+            content.categoryIdentifier = "LEARNING_CATEGORY"
+
+            if let scheduledDate = calendar.nextDate(
+                after: calendar.startOfDay(for: now),
+                matching: dateComponents,
+                matchingPolicy: .nextTime
+            ) {
+                if scheduledDate <= now {
+                    continue
+                }
+
+                var triggerComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: scheduledDate)
+                triggerComponents.calendar = calendar
+                triggerComponents.timeZone = .current
+                let trigger = UNCalendarNotificationTrigger(dateMatching: triggerComponents, repeats: false)
+                let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+                requestsToSchedule.append((identifier: identifier, request: request, scheduledDate: scheduledDate))
+            }
+        }
+
+        saveToDefaults(0, forKey: keyCurrentExampleIndex)
+
+        if requestsToSchedule.isEmpty {
+            print("[LocalNotifications] scheduleDayNotificationsInternal: 0 notificaciones candidatas para programar.")
+            onComplete(0)
+            return
+        }
+
+        let completionLock = NSLock()
+        let group = DispatchGroup()
+        var scheduledCount = 0
+
+        for entry in requestsToSchedule {
+            group.enter()
+            print("[LocalNotifications] Scheduling request id=\(entry.identifier) date=\(entry.scheduledDate) userInfo=\(entry.request.content.userInfo)")
+            DispatchQueue.main.async {
+                center.add(entry.request) { err in
+                    completionLock.lock()
+                    if let err = err {
+                        print("[LocalNotifications] Error scheduling \(entry.identifier): \(err.localizedDescription)")
+                    } else {
+                        scheduledCount += 1
+                        print("[LocalNotifications] Scheduled OK id=\(entry.identifier)")
+                    }
+                    completionLock.unlock()
+                    onPerRequestError(entry.identifier, err)
+                    group.leave()
+                }
+            }
+        }
+
+        group.notify(queue: .main) {
+            print("[LocalNotifications] scheduleDayNotificationsInternal: \(scheduledCount) notificaciones programadas correctamente.")
+            onComplete(scheduledCount)
+        }
+    }
 }
 
 // MARK: - UNUserNotificationCenterDelegate
 extension LocalNotificationManager: UNUserNotificationCenterDelegate {
+    // ENSEÑAMOS LA NOTIFICACIÓN INCLUSO SI EL USUARIO TIENE LA APP EN PRIMER PLANO
     public func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
-        completionHandler([.banner, .list, .sound, .badge])
+        print("[LocalNotifications] willPresent notification id=\(notification.request.identifier) title=\(notification.request.content.title)")
+        completionHandler([.banner, .sound])
     }
 
     public func userNotificationCenter(
@@ -401,6 +514,8 @@ extension LocalNotificationManager: UNUserNotificationCenterDelegate {
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
+        let info = response.notification.request.content.userInfo
+        print("[LocalNotifications] didReceive response id=\(response.notification.request.identifier), action=\(info["action"] ?? "")")
         completionHandler()
     }
 }
