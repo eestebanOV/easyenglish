@@ -90,7 +90,7 @@ import AVFAudio
                 let intervalMinutes = args["intervalMinutes"] as? Int ?? 30
                 let cardId = args["cardId"] as? String ?? ""
 
-                LocalNotificationManager.shared.startDayLearning(
+                let response = LocalNotificationManager.shared.startDayLearning(
                     learningItem: learningItem,
                     type: type,
                     translation: translation,
@@ -104,16 +104,14 @@ import AVFAudio
                     endHour: endHour,
                     intervalMinutes: intervalMinutes,
                     cardId: cardId
-                ) { response in
-                    result(response)
-                }
+                )
+                result(response)
 
             case "startSessionNow":
                 let args = call.arguments as? [String: Any]
                 let exampleIndex = args?["exampleIndex"] as? Int
-                LocalNotificationManager.shared.triggerImmediateNotification(exampleIndex: exampleIndex) { response in
-                    result(response)
-                }
+                let response = LocalNotificationManager.shared.triggerImmediateNotification(exampleIndex: exampleIndex)
+                result(response)
 
             case "endCurrentActivity":
                 LocalNotificationManager.shared.stopDayLearning()
@@ -124,9 +122,16 @@ import AVFAudio
                 result(["success": true])
 
             case "getActiveState":
-                LocalNotificationManager.shared.getActiveState { state in
-                    result(state)
-                }
+                let state = LocalNotificationManager.shared.getActiveState()
+                result(state)
+
+            case "getDebugLogs":
+                let logs = LocalNotificationManager.shared.getDebugLogs()
+                result(logs)
+
+            case "clearDebugLogs":
+                LocalNotificationManager.shared.clearDebugLogs()
+                result(["success": true])
 
             default:
                 result(FlutterMethodNotImplemented)

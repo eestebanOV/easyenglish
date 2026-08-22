@@ -23,6 +23,8 @@ public class LocalNotificationManager: NSObject {
     private let keyCurrentExampleIndex = "live_activity_current_example_index"
     private let keyLastSessionDate = "live_activity_last_session_date"
     private let keyCardId = "live_activity_card_id"
+    private let keyDebugLogs = "local_notifications_debug_logs"
+    private let maxDebugLogLines = 100
 
     private let notificationPrefixId = "easyenglish_daily_"
 
@@ -68,6 +70,37 @@ public class LocalNotificationManager: NSObject {
         super.init()
     }
 
+    private func debugLog(_ message: String) {
+        let timestamp = DateFormatter.localizedString(
+            from: Date(), dateStyle: .none, timeStyle: .medium
+        )
+        let line = "[\(timestamp)] \(message)"
+        print("[LocalNotifications] \(message)")
+
+        var logs = getDebugLogs()
+        logs.append(line)
+        if logs.count > maxDebugLogLines {
+            logs.removeFirst(logs.count - maxDebugLogLines)
+        }
+        if let data = try? JSONEncoder().encode(logs),
+           let json = String(data: data, encoding: .utf8) {
+            saveToDefaults(json, forKey: keyDebugLogs)
+        }
+    }
+
+    public func getDebugLogs() -> [String] {
+        guard let jsonStr = getString(forKey: keyDebugLogs),
+              let data = jsonStr.data(using: .utf8),
+              let logs = try? JSONDecoder().decode([String].self, from: data) else {
+            return []
+        }
+        return logs
+    }
+
+    public func clearDebugLogs() {
+        saveToDefaults("[]", forKey: keyDebugLogs)
+    }
+
     public func installNotificationDelegate() {
         let center = UNUserNotificationCenter.current()
         center.delegate = self
@@ -80,11 +113,15 @@ public class LocalNotificationManager: NSObject {
         center.getNotificationSettings { settings in
             switch settings.authorizationStatus {
             case .authorized, .provisional:
+                self.debugLog("Autorización: authorized/provisional, procediendo")
                 DispatchQueue.main.async { work(center) }
             case .notDetermined:
+                self.debugLog("Autorización: notDetermined, solicitando permiso al usuario")
                 center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, err in
                     if let err = err {
-                        print("[LocalNotifications] Auth error: \(err.localizedDescription)")
+                        self.debugLog("ERROR requestAuthorization: \(err.localizedDescription)")
+                    } else {
+                        self.debugLog("requestAuthorization granted=\(granted)")
                     }
                     DispatchQueue.main.async {
                         if granted {
@@ -95,9 +132,10 @@ public class LocalNotificationManager: NSObject {
                     }
                 }
             case .denied, .ephemeral:
-                print("[LocalNotifications] Permiso de notificaciones DENEGADO. El usuario debe activarlo en Ajustes > EasyEnglish > Notificaciones")
+                self.debugLog("Autorización: DENEGADA")
                 DispatchQueue.main.async { onDenied?() }
             @unknown default:
+                self.debugLog("Autorización: estado desconocido (default)")
                 DispatchQueue.main.async { onDenied?() }
             }
         }
@@ -126,15 +164,11 @@ public class LocalNotificationManager: NSObject {
         startHour: Int = 8,
         endHour: Int = 22,
         intervalMinutes: Int = 30,
-        cardId: String = "",
-        completion: @escaping ([String: Any]) -> Void
-    ) {
+        cardId: String = ""
+    ) -> [String: Any] {
         guard !learningItem.isEmpty, !examples.isEmpty else {
             print("[LocalNotifications] Error: Invalid learning item or examples")
-            DispatchQueue.main.async {
-                completion(["success": false, "error": "Invalid learning item or examples", "pendingNotifications": 0])
-            }
-            return
+            return ["success": false, "error": "Invalid learning item or examples", "pendingNotifications": 0]
         }
 
         let jsonExamples = (try? JSONEncoder().encode(examples)).flatMap { String(data: $0, encoding: .utf8) } ?? "[]"
@@ -155,21 +189,12 @@ public class LocalNotificationManager: NSObject {
         saveToDefaults(Date().timeIntervalSince1970, forKey: keyLastSessionDate)
         saveToDefaults(cardId, forKey: keyCardId)
 
-        let responseBuilder: (_ authorized: Bool, _ pending: Int) -> [String: Any] = { authorized, pending in
-            print("[LocalNotifications] startDayLearning. scheduled=\(pending). autorizado=\(authorized). item='\(learningItem)', interval=\(intervalMinutes)min, start=\(startHour), end=\(endHour)")
-            return [
-                "success": authorized,
-                "authorized": authorized,
-                "learningItem": learningItem,
-                "totalExamples": examples.count,
-                "intervalMinutes": intervalMinutes,
-                "startHour": startHour,
-                "endHour": endHour,
-                "pendingNotifications": pending
-            ]
-        }
+        let scheduledSem = DispatchSemaphore(value: 0)
+        var finalScheduled = 0
+        var authorizationGranted = false
 
         withAuthorizedCenter({ center in
+            authorizationGranted = true
             self.clearScheduledDailyNotifications(center: center) {
                 self.scheduleDayNotificationsInternal(
                     center: center,
@@ -186,29 +211,37 @@ public class LocalNotificationManager: NSObject {
                         print("[LocalNotifications] Error al añadir notification request: \(err.localizedDescription)")
                     }
                 } onComplete: { scheduledCount in
+                    finalScheduled = scheduledCount
                     self.logPendingNotificationRequests(center: center, context: "startDayLearning completion") {
-                        DispatchQueue.main.async {
-                            completion(responseBuilder(true, scheduledCount))
-                        }
+                        scheduledSem.signal()
                     }
                 }
             }
         }, onDenied: {
-            DispatchQueue.main.async {
-                completion(responseBuilder(false, 0))
-            }
+            scheduledSem.signal()
         })
+
+        // Esperamos síncronamente hasta 6 s para asegurar que Flutter reciba el count real
+        _ = scheduledSem.wait(timeout: .now() + 6.0)
+
+        print("[LocalNotifications] startDayLearning. scheduled=\(finalScheduled). autorizado=\(authorizationGranted). item='\(learningItem)', interval=\(intervalMinutes)min, start=\(startHour), end=\(endHour)")
+
+        return [
+            "success": authorizationGranted,
+            "authorized": authorizationGranted,
+            "learningItem": learningItem,
+            "totalExamples": examples.count,
+            "intervalMinutes": intervalMinutes,
+            "startHour": startHour,
+            "endHour": endHour,
+            "pendingNotifications": finalScheduled
+        ]
     }
 
-    public func triggerImmediateNotification(
-        exampleIndex: Int? = nil,
-        completion: @escaping ([String: Any]) -> Void
-    ) {
+    public func triggerImmediateNotification(exampleIndex: Int? = nil) -> [String: Any] {
         guard getBool(forKey: keyActive) else {
-            DispatchQueue.main.async {
-                completion(["success": false, "error": "Daily learning is not active", "authorized": false])
-            }
-            return
+            debugLog("ABORTADO: Daily learning is not active")
+            return ["success": false, "error": "Daily learning is not active"]
         }
 
         let learningItem = getString(forKey: keyWordEn) ?? ""
@@ -222,10 +255,8 @@ public class LocalNotificationManager: NSObject {
            !list.isEmpty {
             examples = list
         } else {
-            DispatchQueue.main.async {
-                completion(["success": false, "error": "No examples saved", "authorized": false])
-            }
-            return
+            debugLog("ABORTADO: No examples saved")
+            return ["success": false, "error": "No examples saved"]
         }
 
         let savedIdx = getInt(forKey: keyCurrentExampleIndex, defaultValue: 0)
@@ -250,18 +281,8 @@ public class LocalNotificationManager: NSObject {
         content.threadIdentifier = "easyenglish_daily_learning"
         content.categoryIdentifier = "LEARNING_CATEGORY"
 
-        let finish: (_ success: Bool) -> Void = { success in
-            let nextIndex = (targetIndex + 1) % examples.count
-            self.saveToDefaults(nextIndex, forKey: self.keyCurrentExampleIndex)
-            DispatchQueue.main.async {
-                completion([
-                    "success": success,
-                    "example": exampleText,
-                    "index": targetIndex,
-                    "authorized": success
-                ])
-            }
-        }
+        var success = false
+        let sem = DispatchSemaphore(value: 0)
 
         withAuthorizedCenter({ center in
             let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
@@ -270,19 +291,34 @@ public class LocalNotificationManager: NSObject {
                 content: content,
                 trigger: trigger
             )
-            print("[LocalNotifications] Intentando programar inmediata id=\(request.identifier)")
-            center.add(request) { err in
-                if let err = err {
-                    print("[LocalNotifications] Immediate error: \(err.localizedDescription)")
-                    finish(false)
-                } else {
-                    print("[LocalNotifications] Notificación inmediata programada correctamente id=\(request.identifier)")
-                    finish(true)
+            DispatchQueue.main.async {
+                self.debugLog("Intentando programar inmediata id=\(request.identifier)")
+                center.add(request) { err in
+                    if let err = err {
+                        self.debugLog("ERROR al programar: \(err.localizedDescription)")
+                        success = false
+                    } else {
+                        self.debugLog("OK: notificación programada id=\(request.identifier), disparará en 1s")
+                        success = true
+                    }
+                    sem.signal()
                 }
             }
         }, onDenied: {
-            finish(false)
+            self.debugLog("triggerImmediateNotification: onDenied llamado (permisos denegados)")
+            success = false
+            sem.signal()
         })
+
+        _ = sem.wait(timeout: .now() + 4.0)
+        if !success {
+            debugLog("triggerImmediateNotification result: success=false (posible timeout o denegado)")
+        }
+
+        let nextIndex = (targetIndex + 1) % examples.count
+        saveToDefaults(nextIndex, forKey: keyCurrentExampleIndex)
+
+        return ["success": success, "example": exampleText, "index": targetIndex, "authorized": success]
     }
 
     public func stopDayLearning() {
@@ -301,12 +337,13 @@ public class LocalNotificationManager: NSObject {
         defs.set("", forKey: keyCardId)
         defs.synchronize()
 
+        // Limpiamos también el badge
         DispatchQueue.main.async {
             UIApplication.shared.applicationIconBadgeNumber = 0
         }
     }
 
-    public func getActiveState(completion: @escaping ([String: Any]) -> Void) {
+    public func getActiveState() -> [String: Any] {
         let defs = defaults
         let isActive = defs.bool(forKey: keyActive)
         let wordEn = defs.string(forKey: keyWordEn) ?? ""
@@ -327,29 +364,32 @@ public class LocalNotificationManager: NSObject {
             examples = list
         }
 
+        var pendingCount = 0
+        let semaphore = DispatchSemaphore(value: 0)
         UNUserNotificationCenter.current().getPendingNotificationRequests { requests in
-            let pendingCount = requests.filter { $0.identifier.hasPrefix(self.notificationPrefixId) }.count
+            pendingCount = requests.filter { $0.identifier.hasPrefix(self.notificationPrefixId) }.count
             print("[LocalNotifications] getActiveState: \(pendingCount) notificaciones programadas pendientes")
-            DispatchQueue.main.async {
-                completion([
-                    "isActive": isActive,
-                    "isCurrentlyLive": false,
-                    "wordEn": wordEn,
-                    "wordEs": wordEs,
-                    "phonetic": phonetic,
-                    "type": type,
-                    "category": category,
-                    "examples": examples,
-                    "startHour": startHour,
-                    "endHour": endHour,
-                    "intervalMinutes": intervalMins,
-                    "durationMinutes": 0,
-                    "currentExampleIndex": currentIdx,
-                    "cardId": cardId,
-                    "pendingNotifications": pendingCount
-                ])
-            }
+            semaphore.signal()
         }
+        _ = semaphore.wait(timeout: .now() + 1.5)
+
+        return [
+            "isActive": isActive,
+            "isCurrentlyLive": false,
+            "wordEn": wordEn,
+            "wordEs": wordEs,
+            "phonetic": phonetic,
+            "type": type,
+            "category": category,
+            "examples": examples,
+            "startHour": startHour,
+            "endHour": endHour,
+            "intervalMinutes": intervalMins,
+            "durationMinutes": 0,
+            "currentExampleIndex": currentIdx,
+            "cardId": cardId,
+            "pendingNotifications": pendingCount
+        ]
     }
 
     // MARK: - Private Helpers (seguros)
@@ -503,13 +543,12 @@ public class LocalNotificationManager: NSObject {
 
 // MARK: - UNUserNotificationCenterDelegate
 extension LocalNotificationManager: UNUserNotificationCenterDelegate {
-    // ENSEÑAMOS LA NOTIFICACIÓN INCLUSO SI EL USUARIO TIENE LA APP EN PRIMER PLANO
     public func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
-        print("[LocalNotifications] willPresent notification id=\(notification.request.identifier) title=\(notification.request.content.title)")
+        debugLog("willPresent DISPARADO para id=\(notification.request.identifier) title=\(notification.request.content.title)")
         completionHandler([.banner, .sound])
     }
 
@@ -519,7 +558,7 @@ extension LocalNotificationManager: UNUserNotificationCenterDelegate {
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
         let info = response.notification.request.content.userInfo
-        print("[LocalNotifications] didReceive response id=\(response.notification.request.identifier), action=\(info["action"] ?? "")")
+        debugLog("didReceive (usuario tocó la notificación) id=\(response.notification.request.identifier), action=\(info["action"] ?? "")")
         completionHandler()
     }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../core/constants.dart';
@@ -301,6 +302,124 @@ class _LiveActivitiesSettingsCardState
     return '${minutes ~/ 60} ${widget.t('widget.interval.hours')}';
   }
 
+  Future<void> _showDebugLogsDialog() async {
+    final logs = await _liveService.getDebugLogs();
+    if (!mounted) return;
+
+    showDialog<void>(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          backgroundColor: AppTheme.darkCard,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+          title: Row(
+            children: [
+              const Icon(
+                Icons.bug_report_rounded,
+                color: Colors.orangeAccent,
+                size: 22,
+              ),
+              const SizedBox(width: 10),
+              const Text(
+                'Debug Logs — Notificaciones',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 400,
+            child: logs.isEmpty
+                ? const Center(
+                    child: Text(
+                      'No hay logs todavía.\n\n1. Presiona "Limpiar logs"\n2. Presiona "Probar ahora"\n3. Espera 3s\n4. Vuelve aquí.',
+                      style: TextStyle(
+                        color: Colors.white54,
+                        fontSize: 13,
+                        height: 1.5,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: logs.length,
+                    itemBuilder: (_, i) {
+                      final line = logs[i];
+                      final isError =
+                          line.contains('ERROR') ||
+                          line.contains('ABORTADO') ||
+                          line.contains('DENEGADA');
+                      final isWillPresent = line.contains('willPresent');
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 2),
+                        child: SelectableText(
+                          line,
+                          style: TextStyle(
+                            fontSize: 11.5,
+                            fontFamily: 'monospace',
+                            color: isWillPresent
+                                ? Colors.lightGreenAccent
+                                : isError
+                                ? AppTheme.error
+                                : Colors.white.withValues(alpha: 0.9),
+                            height: 1.35,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Cerrar'),
+            ),
+            TextButton.icon(
+              onPressed: () async {
+                final messenger = ScaffoldMessenger.of(context);
+                await _liveService.clearDebugLogs();
+                if (context.mounted) {
+                  Navigator.of(ctx).pop();
+                  messenger.showSnackBar(
+                    const SnackBar(
+                      content: Text('🧹 Logs limpiados.'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
+              },
+              icon: const Icon(Icons.cleaning_services_rounded, size: 16),
+              label: const Text('Limpiar'),
+            ),
+            if (logs.isNotEmpty)
+              TextButton.icon(
+                onPressed: () {
+                  final joined = logs.join('\n');
+                  Clipboard.setData(ClipboardData(text: joined));
+                  if (ctx.mounted) {
+                    ScaffoldMessenger.of(ctx).showSnackBar(
+                      const SnackBar(
+                        content: Text('📋 Logs copiados al portapapeles.'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                },
+                icon: const Icon(Icons.copy_rounded, size: 16),
+                label: const Text('Copiar todo'),
+              ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -487,7 +606,7 @@ class _LiveActivitiesSettingsCardState
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: const Text(
+                              content: Text(
                                 '🔔 Notificación de prueba enviada inmediatamente.',
                               ),
                               duration: Duration(seconds: 3),
@@ -505,6 +624,66 @@ class _LiveActivitiesSettingsCardState
                   ),
                 ),
               ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: _showDebugLogsDialog,
+                    icon: const Icon(Icons.bug_report_rounded, size: 16),
+                    label: const Text(
+                      'Ver logs',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.orangeAccent,
+                      side: const BorderSide(color: Colors.orangeAccent),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () async {
+                      await _liveService.clearDebugLogs();
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              '🧹 Logs de notificaciones limpiados.',
+                            ),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      }
+                    },
+                    icon: const Icon(Icons.cleaning_services_rounded, size: 16),
+                    label: const Text(
+                      'Limpiar logs',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.white70,
+                      side: const BorderSide(color: Colors.white24),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
 

@@ -1,7 +1,9 @@
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:home_widget/home_widget.dart';
+
 import '../models/flashcard.dart';
 import 'storage_service.dart';
 
@@ -16,7 +18,9 @@ class LiveActivityService {
   factory LiveActivityService() => _instance;
   LiveActivityService._internal();
 
-  static const MethodChannel _channel = MethodChannel('com.easyenglish.app/live_activities');
+  static const MethodChannel _channel = MethodChannel(
+    'com.easyenglish.app/live_activities',
+  );
   static const String appGroupId = 'group.com.easyenglish.app';
   static const String iOSWidgetName = 'EasyEnglishWidget';
   static const String androidWidgetName = 'EasyEnglishWidget';
@@ -75,13 +79,25 @@ class LiveActivityService {
       await Future.wait([
         HomeWidget.saveWidgetData<String>('live_activity_word_en', card.wordEn),
         HomeWidget.saveWidgetData<String>('live_activity_word_es', card.wordEs),
-        HomeWidget.saveWidgetData<String>('live_activity_pronunciation', card.pronunciation),
+        HomeWidget.saveWidgetData<String>(
+          'live_activity_pronunciation',
+          card.pronunciation,
+        ),
         HomeWidget.saveWidgetData<String>('live_activity_type', wordType),
-        HomeWidget.saveWidgetData<String>('live_activity_category', card.categoryId),
-        HomeWidget.saveWidgetData<String>('live_activity_examples_json', examplesJson),
+        HomeWidget.saveWidgetData<String>(
+          'live_activity_category',
+          card.categoryId,
+        ),
+        HomeWidget.saveWidgetData<String>(
+          'live_activity_examples_json',
+          examplesJson,
+        ),
         HomeWidget.saveWidgetData<int>('live_activity_start_hour', startHour),
         HomeWidget.saveWidgetData<int>('live_activity_end_hour', endHour),
-        HomeWidget.saveWidgetData<int>('live_activity_interval_minutes', intervalMinutes),
+        HomeWidget.saveWidgetData<int>(
+          'live_activity_interval_minutes',
+          intervalMinutes,
+        ),
         HomeWidget.saveWidgetData<String>('live_activity_card_id', card.id),
       ]);
 
@@ -114,7 +130,9 @@ class LiveActivityService {
         final result = await _channel.invokeMethod('startDayLearning', params);
         debugPrint('Native Notification startDayLearning result: $result');
       } on MissingPluginException {
-        debugPrint('Native Notification method channel not available (simulator/web/android)');
+        debugPrint(
+          'Native Notification method channel not available (simulator/web/android)',
+        );
       } catch (e) {
         debugPrint('Native Notification invoke error: $e');
       }
@@ -143,6 +161,26 @@ class LiveActivityService {
     } catch (e) {
       debugPrint('Error triggering immediate notification: $e');
       return false;
+    }
+  }
+
+  Future<List<String>> getDebugLogs() async {
+    try {
+      await init();
+      final result = await _channel.invokeMethod('getDebugLogs');
+      return List<String>.from(result as List);
+    } catch (e) {
+      debugPrint('Error getDebugLogs: $e');
+      return [];
+    }
+  }
+
+  Future<void> clearDebugLogs() async {
+    try {
+      await init();
+      await _channel.invokeMethod('clearDebugLogs');
+    } catch (e) {
+      debugPrint('Error clearDebugLogs: $e');
     }
   }
 
@@ -183,24 +221,50 @@ class LiveActivityService {
     try {
       await init();
       try {
-        final res = await _channel.invokeMapMethod<String, dynamic>('getActiveState');
-        if (res != null && res['wordEn'] != null && (res['wordEn'] as String).isNotEmpty) {
+        final res = await _channel.invokeMapMethod<String, dynamic>(
+          'getActiveState',
+        );
+        if (res != null &&
+            res['wordEn'] != null &&
+            (res['wordEn'] as String).isNotEmpty) {
           return res;
         }
       } catch (_) {}
 
-      final wordEn = await HomeWidget.getWidgetData<String>('live_activity_word_en');
+      final wordEn = await HomeWidget.getWidgetData<String>(
+        'live_activity_word_en',
+      );
       if (wordEn == null || wordEn.isEmpty) return null;
 
-      final wordEs = await HomeWidget.getWidgetData<String>('live_activity_word_es') ?? '';
-      final phonetic = await HomeWidget.getWidgetData<String>('live_activity_pronunciation') ?? '';
-      final type = await HomeWidget.getWidgetData<String>('live_activity_type') ?? 'PHRASE';
-      final category = await HomeWidget.getWidgetData<String>('live_activity_category') ?? '';
-      final examplesJson = await HomeWidget.getWidgetData<String>('live_activity_examples_json') ?? '[]';
-      final interval = await HomeWidget.getWidgetData<int>('live_activity_interval_minutes') ?? 30;
-      final startHour = await HomeWidget.getWidgetData<int>('live_activity_start_hour') ?? 8;
-      final endHour = await HomeWidget.getWidgetData<int>('live_activity_end_hour') ?? 22;
-      final cardId = await HomeWidget.getWidgetData<String>('live_activity_card_id') ?? '';
+      final wordEs =
+          await HomeWidget.getWidgetData<String>('live_activity_word_es') ?? '';
+      final phonetic =
+          await HomeWidget.getWidgetData<String>(
+            'live_activity_pronunciation',
+          ) ??
+          '';
+      final type =
+          await HomeWidget.getWidgetData<String>('live_activity_type') ??
+          'PHRASE';
+      final category =
+          await HomeWidget.getWidgetData<String>('live_activity_category') ??
+          '';
+      final examplesJson =
+          await HomeWidget.getWidgetData<String>(
+            'live_activity_examples_json',
+          ) ??
+          '[]';
+      final interval =
+          await HomeWidget.getWidgetData<int>(
+            'live_activity_interval_minutes',
+          ) ??
+          30;
+      final startHour =
+          await HomeWidget.getWidgetData<int>('live_activity_start_hour') ?? 8;
+      final endHour =
+          await HomeWidget.getWidgetData<int>('live_activity_end_hour') ?? 22;
+      final cardId =
+          await HomeWidget.getWidgetData<String>('live_activity_card_id') ?? '';
 
       List<String> examples = [];
       try {
@@ -233,13 +297,24 @@ class LiveActivityService {
   String _determineWordType(Flashcard card) {
     if (card.isVerbWithForms) return 'IRREGULAR VERB';
     final cat = card.categoryId.toLowerCase();
-    if (cat.contains('phrasal')) return 'PHRASAL VERB';
-    if (cat.contains('phrase') || cat.contains('idiom') || cat.contains('conversation')) return 'PHRASE';
-    if (cat.contains('verb')) return 'VERB';
+    if (cat.contains('phrasal')) {
+      return 'PHRASAL VERB';
+    }
+    if (cat.contains('phrase') ||
+        cat.contains('idiom') ||
+        cat.contains('conversation')) {
+      return 'PHRASE';
+    }
+    if (cat.contains('verb')) {
+      return 'VERB';
+    }
     return 'VOCABULARY';
   }
 
-  List<String> _generateContextualExamples(Flashcard card, List<String> existing) {
+  List<String> _generateContextualExamples(
+    Flashcard card,
+    List<String> existing,
+  ) {
     final word = card.wordEn.trim();
     final List<String> generated = [];
 
