@@ -5,7 +5,6 @@ import '../providers/flashcard_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/confidence_buttons.dart';
 import '../widgets/flashcard_widget.dart';
-import '../widgets/live_activity_pin_sheet.dart';
 
 class FlashcardSessionScreen extends StatefulWidget {
   final String? categoryId;
@@ -171,15 +170,6 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
           icon: const Icon(Icons.close_rounded),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_active_rounded),
-            tooltip: 'Notificaciones del Día',
-            onPressed: () {
-              LiveActivityPinSheet.show(context, currentCard);
-            },
-          ),
-        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(4),
           child: LinearProgressIndicator(

@@ -8,7 +8,6 @@ import '../providers/settings_provider.dart';
 import '../services/tts_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/flashcard_widget.dart';
-import '../widgets/live_activity_pin_sheet.dart';
 import 'flashcard_session_screen.dart';
 
 class CategoryDetailScreen extends StatefulWidget {
@@ -91,29 +90,6 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                             isFlipped = !isFlipped;
                           });
                         },
-                      ),
-                      const SizedBox(height: 18),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                LiveActivityPinSheet.show(context, card);
-                              },
-                              icon: const Icon(
-                                Icons.notifications_active_rounded,
-                                size: 22,
-                              ),
-                              label: const Text('Notificaciones del Día'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppTheme.accent,
-                                foregroundColor: Colors.white,
-                                minimumSize: const Size(0, 48),
-                              ),
-                            ),
-                          ),
-                        ],
                       ),
                     ],
                   ),
@@ -454,15 +430,6 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(
-                      Icons.notifications_active_rounded,
-                      size: 22,
-                    ),
-                    color: AppTheme.accent,
-                    tooltip: 'Notificaciones del Día',
-                    onPressed: () => LiveActivityPinSheet.show(context, card),
-                  ),
-                  IconButton(
                     icon: const Icon(Icons.volume_up_rounded, size: 22),
                     color: AppTheme.primaryLight,
                     onPressed: () => _ttsService.speak(card.wordEn),
@@ -637,14 +604,6 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                     ],
                   ],
                 ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.notifications_active_rounded, size: 22),
-                color: AppTheme.accent,
-                tooltip: 'Live Activity del Día',
-                onPressed: () {
-                  LiveActivityPinSheet.show(context, card);
-                },
               ),
               if (!isVerbTenses)
                 IconButton(

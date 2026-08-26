@@ -5,16 +5,14 @@ import 'providers/settings_provider.dart';
 import 'screens/splash_screen.dart';
 import 'theme/app_theme.dart';
 
-import 'services/live_activity_service.dart';
 import 'services/storage_service.dart';
-import 'services/widget_service.dart';
+import 'services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
     await StorageService().init();
-    await LiveActivityService().init();
-    await WidgetService().init();
+    await NotificationService().init();
     final settings = SettingsProvider();
     await settings.init();
     runApp(EasyEnglishApp(preloadedSettings: settings));

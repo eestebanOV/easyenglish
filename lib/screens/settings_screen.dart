@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../core/constants.dart';
 import '../providers/flashcard_provider.dart';
 import '../providers/settings_provider.dart';
-import '../services/live_activity_service.dart';
 import '../theme/app_theme.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -133,8 +131,9 @@ class SettingsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 28),
 
+            // Notifications Group
             Text(
-              t('settings.widgetGroup'),
+              t('settings.notifGroup'),
               style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
@@ -144,8 +143,149 @@ class SettingsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
-            // Live Activities Card
-            _LiveActivitiesSettingsCard(t: t),
+            // Notification Daily Reminder Switch
+            Container(
+              decoration: BoxDecoration(
+                color: AppTheme.darkCard,
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                border: Border.all(color: AppTheme.darkBorder),
+              ),
+              child: Column(
+                children: [
+                  SwitchListTile(
+                    secondary: const Icon(
+                      Icons.notifications_active_rounded,
+                      color: AppTheme.primaryLight,
+                    ),
+                    title: Text(t('settings.notif.title')),
+                    subtitle: Text(t('settings.notif.subtitle')),
+                    value: settings.notificationsEnabled,
+                    activeTrackColor: AppTheme.primaryLight,
+                    onChanged: (val) => settings.toggleNotifications(val),
+                  ),
+                  if (settings.notificationsEnabled) ...[
+                    const Divider(color: AppTheme.darkBorder, height: 1),
+                    ListTile(
+                      leading: const Icon(
+                        Icons.access_time_rounded,
+                        color: AppTheme.accent,
+                      ),
+                      title: Text(t('settings.notif.time')),
+                      subtitle: Text(
+                        settings.reminderTime.format(context),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.accent,
+                        ),
+                      ),
+                      trailing: const Icon(
+                        Icons.chevron_right_rounded,
+                        color: Colors.white38,
+                      ),
+                      onTap: () async {
+                        final picked = await showTimePicker(
+                          context: context,
+                          initialTime: settings.reminderTime,
+                          builder: (context, child) {
+                            return Theme(
+                              data: Theme.of(context).copyWith(
+                                colorScheme: const ColorScheme.dark(
+                                  primary: AppTheme.primaryLight,
+                                  onPrimary: Colors.white,
+                                  surface: AppTheme.darkCard,
+                                  onSurface: Colors.white,
+                                ),
+                              ),
+                              child: child!,
+                            );
+                          },
+                        );
+                        if (picked != null) {
+                          await settings.setReminderTime(picked);
+                        }
+                      },
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Notification Testing Cards
+            Container(
+              decoration: BoxDecoration(
+                color: AppTheme.darkCard,
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                border: Border.all(color: AppTheme.darkBorder),
+              ),
+              child: Column(
+                children: [
+                  ListTile(
+                    leading: const Icon(
+                      Icons.bolt_rounded,
+                      color: Colors.amber,
+                    ),
+                    title: Text(t('settings.notif.testInstant')),
+                    subtitle: const Text('Dispara una notificación ahora mismo'),
+                    trailing: const Icon(
+                      Icons.play_arrow_rounded,
+                      color: Colors.amber,
+                    ),
+                    onTap: () async {
+                      await settings.sendTestInstantNotification();
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(t('settings.notif.sentInstant')),
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                  const Divider(color: AppTheme.darkBorder, height: 1),
+                  ListTile(
+                    leading: const Icon(
+                      Icons.timer_outlined,
+                      color: Colors.cyanAccent,
+                    ),
+                    title: Text(t('settings.notif.testScheduled')),
+                    subtitle: const Text('Lanza notificación en 3, 2, 1...'),
+                    trailing: const Icon(
+                      Icons.schedule_rounded,
+                      color: Colors.cyanAccent,
+                    ),
+                    onTap: () async {
+                      await settings.sendTestScheduledNotification();
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(t('settings.notif.scheduledSent')),
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                  const Divider(color: AppTheme.darkBorder, height: 1),
+                  ListTile(
+                    leading: const Icon(
+                      Icons.settings_suggest_rounded,
+                      color: Colors.white70,
+                    ),
+                    title: Text(t('settings.notif.openSettings')),
+                    subtitle: const Text('Abrir ajustes del sistema si fue rechazada'),
+                    trailing: const Icon(
+                      Icons.open_in_new_rounded,
+                      color: Colors.white38,
+                    ),
+                    onTap: () async {
+                      await settings.openNotificationSettings();
+                    },
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(height: 28),
 
             Text(
@@ -247,7 +387,7 @@ class SettingsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Algoritmo de repetición espaciada SM-2 y Notificaciones Locales para iOS.',
+                    'Aprende inglés con repetición espaciada inteligente y pronunciación nativa.',
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.white.withValues(alpha: 0.6),
@@ -258,466 +398,6 @@ class SettingsScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _LiveActivitiesSettingsCard extends StatefulWidget {
-  final String Function(String) t;
-  const _LiveActivitiesSettingsCard({required this.t});
-
-  @override
-  State<_LiveActivitiesSettingsCard> createState() =>
-      _LiveActivitiesSettingsCardState();
-}
-
-class _LiveActivitiesSettingsCardState
-    extends State<_LiveActivitiesSettingsCard> {
-  final LiveActivityService _liveService = LiveActivityService();
-  Map<String, dynamic>? _liveData;
-  bool _isLoading = true;
-  bool _isTesting = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadData();
-  }
-
-  Future<void> _loadData() async {
-    setState(() => _isLoading = true);
-    final data = await _liveService.getActiveState();
-    if (mounted) {
-      setState(() {
-        _liveData = data;
-        _isLoading = false;
-      });
-    }
-  }
-
-  String _formatInterval(int minutes) {
-    if (minutes < 60) return '$minutes ${widget.t('widget.interval.min')}';
-    if (minutes == 60) return '1 ${widget.t('widget.interval.hour')}';
-    return '${minutes ~/ 60} ${widget.t('widget.interval.hours')}';
-  }
-
-  Future<void> _showDebugLogsDialog() async {
-    final logs = await _liveService.getDebugLogs();
-    if (!mounted) return;
-
-    showDialog<void>(
-      context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          backgroundColor: AppTheme.darkCard,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
-          ),
-          title: Row(
-            children: [
-              const Icon(
-                Icons.bug_report_rounded,
-                color: Colors.orangeAccent,
-                size: 22,
-              ),
-              const SizedBox(width: 10),
-              const Text(
-                'Debug Logs — Notificaciones',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ],
-          ),
-          content: SizedBox(
-            width: double.maxFinite,
-            height: 400,
-            child: logs.isEmpty
-                ? const Center(
-                    child: Text(
-                      'No hay logs todavía.\n\n1. Presiona "Limpiar logs"\n2. Presiona "Probar ahora"\n3. Espera 3s\n4. Vuelve aquí.',
-                      style: TextStyle(
-                        color: Colors.white54,
-                        fontSize: 13,
-                        height: 1.5,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  )
-                : ListView.builder(
-                    itemCount: logs.length,
-                    itemBuilder: (_, i) {
-                      final line = logs[i];
-                      final isError =
-                          line.contains('ERROR') ||
-                          line.contains('ABORTADO') ||
-                          line.contains('DENEGADA');
-                      final isWillPresent = line.contains('willPresent');
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2),
-                        child: SelectableText(
-                          line,
-                          style: TextStyle(
-                            fontSize: 11.5,
-                            fontFamily: 'monospace',
-                            color: isWillPresent
-                                ? Colors.lightGreenAccent
-                                : isError
-                                ? AppTheme.error
-                                : Colors.white.withValues(alpha: 0.9),
-                            height: 1.35,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('Cerrar'),
-            ),
-            TextButton.icon(
-              onPressed: () async {
-                final messenger = ScaffoldMessenger.of(context);
-                await _liveService.clearDebugLogs();
-                if (context.mounted) {
-                  Navigator.of(ctx).pop();
-                  messenger.showSnackBar(
-                    const SnackBar(
-                      content: Text('🧹 Logs limpiados.'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                }
-              },
-              icon: const Icon(Icons.cleaning_services_rounded, size: 16),
-              label: const Text('Limpiar'),
-            ),
-            if (logs.isNotEmpty)
-              TextButton.icon(
-                onPressed: () {
-                  final joined = logs.join('\n');
-                  Clipboard.setData(ClipboardData(text: joined));
-                  if (ctx.mounted) {
-                    ScaffoldMessenger.of(ctx).showSnackBar(
-                      const SnackBar(
-                        content: Text('📋 Logs copiados al portapapeles.'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  }
-                },
-                icon: const Icon(Icons.copy_rounded, size: 16),
-                label: const Text('Copiar todo'),
-              ),
-          ],
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_isLoading) {
-      return Container(
-        height: 100,
-        decoration: BoxDecoration(
-          color: AppTheme.darkCard,
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        ),
-        child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-      );
-    }
-
-    final hasWord =
-        _liveData != null && (_liveData!['wordEn'] as String).isNotEmpty;
-    final wordEn = _liveData?['wordEn'] ?? widget.t('widget.noWord.title');
-    final wordEs = _liveData?['wordEs'] ?? '';
-    final type = _liveData?['type'] ?? 'PHRASE';
-    final interval = _liveData?['intervalMinutes'] as int? ?? 30;
-    final List<String> examples =
-        (_liveData?['examples'] as List<dynamic>?)
-            ?.map((e) => e.toString())
-            .toList() ??
-        [];
-
-    return Container(
-      decoration: BoxDecoration(
-        color: AppTheme.darkCard,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        border: Border.all(
-          color: hasWord
-              ? AppTheme.accent.withValues(alpha: 0.35)
-              : AppTheme.darkBorder,
-        ),
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppTheme.accent.withValues(alpha: 0.18),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(
-                  Icons.notifications_active_rounded,
-                  color: AppTheme.accent,
-                  size: 22,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            hasWord ? wordEn : widget.t('widget.noWord.title'),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        if (hasWord) ...[
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppTheme.accent.withValues(alpha: 0.18),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              type,
-                              style: const TextStyle(
-                                fontSize: 9,
-                                fontWeight: FontWeight.w800,
-                                color: AppTheme.accent,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                    if (hasWord && wordEs.isNotEmpty)
-                      Text(
-                        wordEs,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.white.withValues(alpha: 0.7),
-                        ),
-                      )
-                    else if (!hasWord)
-                      Text(
-                        widget.t('widget.noWord.hint'),
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.white.withValues(alpha: 0.6),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              if (hasWord)
-                IconButton(
-                  icon: const Icon(
-                    Icons.delete_outline_rounded,
-                    color: Colors.white54,
-                    size: 20,
-                  ),
-                  tooltip: widget.t('widget.delete.hint'),
-                  onPressed: () async {
-                    await _liveService.stopDayLearning();
-                    await _loadData();
-                  },
-                ),
-            ],
-          ),
-          if (hasWord) ...[
-            const SizedBox(height: 14),
-            const Divider(color: Colors.white12, height: 1),
-            const SizedBox(height: 14),
-
-            // Interval Selector Row
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  widget.t('widget.interval'),
-                  style: const TextStyle(fontSize: 13, color: Colors.white70),
-                ),
-                DropdownButton<int>(
-                  value: interval,
-                  underline: const SizedBox(),
-                  dropdownColor: AppTheme.darkCard,
-                  items: LiveActivityService.availableIntervals.map((mins) {
-                    return DropdownMenuItem<int>(
-                      value: mins,
-                      child: Text(_formatInterval(mins)),
-                    );
-                  }).toList(),
-                  onChanged: (newInterval) async {
-                    if (newInterval != null) {
-                      // Update interval setting
-                      await _loadData();
-                    }
-                  },
-                ),
-              ],
-            ),
-
-            if (examples.isNotEmpty) ...[
-              const SizedBox(height: 6),
-              Text(
-                '${examples.length} ${widget.t('widget.examplesRotary')}',
-                style: const TextStyle(
-                  fontSize: 11,
-                  color: AppTheme.accent,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-
-            const SizedBox(height: 12),
-            // Test session button
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: _isTesting
-                    ? null
-                    : () async {
-                        setState(() => _isTesting = true);
-                        await _liveService.startSessionNow();
-                        setState(() => _isTesting = false);
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                '🔔 Notificación de prueba enviada inmediatamente.',
-                              ),
-                              duration: Duration(seconds: 3),
-                            ),
-                          );
-                        }
-                      },
-                icon: const Icon(Icons.play_arrow_rounded, size: 18),
-                label: Text(widget.t('widget.testSession')),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppTheme.accent,
-                  side: const BorderSide(color: AppTheme.accent),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: _showDebugLogsDialog,
-                    icon: const Icon(Icons.bug_report_rounded, size: 16),
-                    label: const Text(
-                      'Ver logs',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.orangeAccent,
-                      side: const BorderSide(color: Colors.orangeAccent),
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () async {
-                      await _liveService.clearDebugLogs();
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              '🧹 Logs de notificaciones limpiados.',
-                            ),
-                            duration: Duration(seconds: 2),
-                          ),
-                        );
-                      }
-                    },
-                    icon: const Icon(Icons.cleaning_services_rounded, size: 16),
-                    label: const Text(
-                      'Limpiar logs',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.white70,
-                      side: const BorderSide(color: Colors.white24),
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-
-          const SizedBox(height: 12),
-          // How it works note
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.04),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.white10),
-            ),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.info_outline_rounded,
-                  size: 16,
-                  color: Colors.white54,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    widget.t('widget.tutorial'),
-                    style: const TextStyle(
-                      fontSize: 11,
-                      color: Colors.white60,
-                      height: 1.3,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -32,6 +32,9 @@ class AppConstants {
   static const String keySoundEnabled = 'sound_enabled';
   static const String keyLanguage = 'language_code';
   static const String keyOnboardingComplete = 'onboarding_complete';
+  static const String keyNotificationsEnabled = 'notifications_enabled';
+  static const String keyNotificationHour = 'notification_hour';
+  static const String keyNotificationMinute = 'notification_minute';
   static const String keyStreakDays = 'streak_days';
   static const String keyLastStudyDate = 'last_study_date';
   static const String keyTotalCardsLearned = 'total_cards_learned';

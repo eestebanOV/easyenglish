@@ -3,21 +3,28 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../core/constants.dart';
 import '../services/storage_service.dart';
+import '../services/notification_service.dart';
 
 class SettingsProvider extends ChangeNotifier {
   final StorageService _storage = StorageService();
+  final NotificationService _notificationService = NotificationService();
 
   bool _isDarkMode = true;
   bool _soundEnabled = true;
   int _dailyGoal = AppConstants.defaultDailyGoal;
   bool _isOnboardingCompleted = false;
   String _languageCode = 'es';
+  bool _notificationsEnabled = true;
+  int _reminderHour = 20;
+  int _reminderMinute = 0;
 
   bool get isDarkMode => _isDarkMode;
   bool get soundEnabled => _soundEnabled;
   int get dailyGoal => _dailyGoal;
   bool get isOnboardingCompleted => _isOnboardingCompleted;
   String get languageCode => _languageCode;
+  bool get notificationsEnabled => _notificationsEnabled;
+  TimeOfDay get reminderTime => TimeOfDay(hour: _reminderHour, minute: _reminderMinute);
 
   Locale get locale => Locale(_languageCode);
 
@@ -95,7 +102,6 @@ class SettingsProvider extends ChangeNotifier {
 
       // Category detail
       'cat.learned.checked': 'APRENDIDO',
-      'cat.pin.tooltip': 'Fijar en Widget',
       'cat.search': 'Buscar...',
 
       // Flashcard
@@ -117,7 +123,24 @@ class SettingsProvider extends ChangeNotifier {
       'settings.dailyGoal.subtitle': 'palabras por día',
       'settings.sound.title': 'Pronunciación automática',
       'settings.sound.subtitle': 'Audio por voz TTS nativo',
-      'settings.widgetGroup': 'NOTIFICACIONES LOCALES (iOS)',
+
+      // Notifications
+      'settings.notifGroup': 'RECORDATORIOS Y NOTIFICACIONES',
+      'settings.notif.title': 'Recordatorio diario de estudio',
+      'settings.notif.subtitle': 'Recibe un aviso para mantener tu racha',
+      'settings.notif.time': 'Hora del recordatorio',
+      'settings.notif.testInstant': 'Notificación instantánea (Prueba)',
+      'settings.notif.testScheduled': 'Notificación programada en 3s (Prueba)',
+      'settings.notif.instantTitle': '¡Momento de practicar inglés! 🚀',
+      'settings.notif.instantBody': 'Tu meta diaria te espera. ¡Vamos a aprender unas palabras!',
+      'settings.notif.scheduledTitle': 'Recordatorio en 3 segundos ⏰',
+      'settings.notif.scheduledBody': '¡Excelente! Las notificaciones programadas funcionan a la perfección.',
+      'settings.notif.dailyTitle': 'Hora de tu sesión de EasyEnglish 📚',
+      'settings.notif.dailyBody': 'Dedica 5 minutos hoy para mantener activa tu racha de aprendizaje.',
+      'settings.notif.openSettings': 'Configurar permisos de notificación',
+      'settings.notif.sentInstant': '¡Notificación enviada!',
+      'settings.notif.scheduledSent': '¡Notificación programada en 3 segundos!',
+
       'settings.dataGroup': 'DATOS Y ALMACENAMIENTO',
       'settings.language.title': 'Idioma de la app',
       'settings.language.subtitle': 'Elige el idioma de la interfaz',
@@ -130,18 +153,6 @@ class SettingsProvider extends ChangeNotifier {
       'settings.aboutGroup': 'ACERCA DE',
       'settings.reset.success': 'Progreso reiniciado correctamente',
 
-      // Notificaciones Locales / Widget
-      'widget.noWord.title': 'Palabra del Día (Notificaciones)',
-      'widget.noWord.hint': 'Selecciona una palabra desde las categorías para activar notificaciones locales',
-      'widget.interval': 'Frecuencia de notificaciones:',
-      'widget.interval.min': 'min',
-      'widget.interval.hour': 'hora',
-      'widget.interval.hours': 'horas',
-      'widget.examplesRotary': 'ejemplos rotativos para el día',
-      'widget.delete.hint': 'Desactivar Notificaciones',
-      'widget.tutorial': 'Cada X minutos recibirás una notificación local con un ejemplo nuevo para tu palabra del día. No necesitas cuenta Apple Developer de pago.',
-      'widget.testSession': 'Probar notificación ahora',
-
       // Onboarding
       'onb.back': 'Atrás',
       'onb.skip': 'Omitir',
@@ -151,8 +162,8 @@ class SettingsProvider extends ChangeNotifier {
       'onb.page1.sub': 'Vocabulario, frases útiles y verbos irregulares con tarjetas interactivas y audio de pronunciación.',
       'onb.page2.title': 'Repetición espaciada inteligente',
       'onb.page2.sub': 'Sistema de 3 botones (Difícil / Normal / Fácil) que programa cada tarjeta en el momento ideal para que no olvides nada.',
-      'onb.page3.title': 'Notificaciones Locales en tu iPhone',
-      'onb.page3.sub': 'Aprende una palabra diaria mediante notificaciones con nuevos ejemplos cada X minutos. Sin cuenta Developer ni push/APNs.',
+      'onb.page3.title': 'Tu Meta Diaria',
+      'onb.page3.sub': 'Elige cuántas palabras nuevas deseas dominar cada día.',
 
       // Splash
       'splash.loading': 'Cargando EasyEnglish...',
@@ -223,7 +234,6 @@ class SettingsProvider extends ChangeNotifier {
 
       // Category detail
       'cat.learned.checked': 'LEARNED',
-      'cat.pin.tooltip': 'Pin to Widget',
       'cat.search': 'Search...',
 
       // Flashcard
@@ -245,7 +255,24 @@ class SettingsProvider extends ChangeNotifier {
       'settings.dailyGoal.subtitle': 'words per day',
       'settings.sound.title': 'Auto pronunciation',
       'settings.sound.subtitle': 'Native TTS voice audio',
-      'settings.widgetGroup': 'NOTIFICACIONES LOCALES (iOS)',
+
+      // Notifications
+      'settings.notifGroup': 'REMINDERS & NOTIFICATIONS',
+      'settings.notif.title': 'Daily study reminder',
+      'settings.notif.subtitle': 'Get a reminder to keep your streak active',
+      'settings.notif.time': 'Reminder time',
+      'settings.notif.testInstant': 'Instant notification (Test)',
+      'settings.notif.testScheduled': 'Scheduled notification in 3s (Test)',
+      'settings.notif.instantTitle': 'Time to practice English! 🚀',
+      'settings.notif.instantBody': 'Your daily goal is waiting. Let\'s learn some words!',
+      'settings.notif.scheduledTitle': 'Reminder in 3 seconds ⏰',
+      'settings.notif.scheduledBody': 'Great! Scheduled notifications are working perfectly.',
+      'settings.notif.dailyTitle': 'Time for your EasyEnglish session 📚',
+      'settings.notif.dailyBody': 'Spend 5 minutes today to keep your learning streak going.',
+      'settings.notif.openSettings': 'Manage notification permissions',
+      'settings.notif.sentInstant': 'Notification sent!',
+      'settings.notif.scheduledSent': 'Notification scheduled in 3 seconds!',
+
       'settings.dataGroup': 'DATA & STORAGE',
       'settings.language.title': 'App language',
       'settings.language.subtitle': 'Choose the interface language',
@@ -258,18 +285,6 @@ class SettingsProvider extends ChangeNotifier {
       'settings.aboutGroup': 'ABOUT',
       'settings.reset.success': 'Progress reset successfully',
 
-      // Local Notifications / Widget
-      'widget.noWord.title': 'Word of the Day (Notifications)',
-      'widget.noWord.hint': 'Pick a word from any category to activate scheduled local notifications on your iPhone.',
-      'widget.interval': 'Notification frequency:',
-      'widget.interval.min': 'min',
-      'widget.interval.hour': 'hour',
-      'widget.interval.hours': 'hours',
-      'widget.examplesRotary': 'daily rotating examples configured',
-      'widget.delete.hint': 'Turn off Notifications',
-      'widget.tutorial': 'Every X minutes you will receive a local notification with a fresh example for your daily word. No paid Apple Developer account or push/APNs required.',
-      'widget.testSession': 'Test notification now',
-
       // Onboarding
       'onb.back': 'Back',
       'onb.skip': 'Skip',
@@ -279,8 +294,8 @@ class SettingsProvider extends ChangeNotifier {
       'onb.page1.sub': 'Vocabulary, useful phrases and irregular verbs with interactive cards and pronunciation audio.',
       'onb.page2.title': 'Smart spaced repetition',
       'onb.page2.sub': '3-button system (Hard / Good / Easy) that schedules each card at the perfect time so you never forget.',
-      'onb.page3.title': 'Local Notifications on iPhone',
-      'onb.page3.sub': 'Learn a daily word through notifications with fresh examples rotating every X minutes. No Developer account or push/APNs required.',
+      'onb.page3.title': 'Your Daily Goal',
+      'onb.page3.sub': 'Choose how many new words you want to master every day.',
 
       // Splash
       'splash.loading': 'Loading EasyEnglish...',
@@ -315,10 +330,85 @@ class SettingsProvider extends ChangeNotifier {
         AppConstants.keyLanguage,
         defaultValue: 'es',
       );
+      _notificationsEnabled = _storage.getBool(
+        AppConstants.keyNotificationsEnabled,
+        defaultValue: true,
+      );
+      _reminderHour = _storage.getInt(
+        AppConstants.keyNotificationHour,
+        defaultValue: 20,
+      );
+      _reminderMinute = _storage.getInt(
+        AppConstants.keyNotificationMinute,
+        defaultValue: 0,
+      );
+
+      // Setup scheduled daily reminder if enabled
+      if (_notificationsEnabled) {
+        _syncDailyReminder();
+      }
     } catch (e) {
       debugPrint('SettingsProvider init error: $e');
     }
     notifyListeners();
+  }
+
+  Future<void> _syncDailyReminder() async {
+    if (_notificationsEnabled) {
+      await _notificationService.scheduleDailyReminder(
+        id: 1001,
+        title: translate('settings.notif.dailyTitle'),
+        body: translate('settings.notif.dailyBody'),
+        hour: _reminderHour,
+        minute: _reminderMinute,
+      );
+    } else {
+      await _notificationService.cancelNotification(1001);
+    }
+  }
+
+  Future<void> toggleNotifications(bool value) async {
+    _notificationsEnabled = value;
+    await _storage.setBool(AppConstants.keyNotificationsEnabled, value);
+    if (value) {
+      await _notificationService.requestPermissions();
+      await _syncDailyReminder();
+    } else {
+      await _notificationService.cancelNotification(1001);
+    }
+    notifyListeners();
+  }
+
+  Future<void> setReminderTime(TimeOfDay time) async {
+    _reminderHour = time.hour;
+    _reminderMinute = time.minute;
+    await _storage.setInt(AppConstants.keyNotificationHour, time.hour);
+    await _storage.setInt(AppConstants.keyNotificationMinute, time.minute);
+    if (_notificationsEnabled) {
+      await _syncDailyReminder();
+    }
+    notifyListeners();
+  }
+
+  Future<void> sendTestInstantNotification() async {
+    await _notificationService.showInstantNotification(
+      id: 0,
+      title: translate('settings.notif.instantTitle'),
+      body: translate('settings.notif.instantBody'),
+    );
+  }
+
+  Future<void> sendTestScheduledNotification() async {
+    await _notificationService.scheduleNotification(
+      id: 999,
+      title: translate('settings.notif.scheduledTitle'),
+      body: translate('settings.notif.scheduledBody'),
+      delay: const Duration(seconds: 3),
+    );
+  }
+
+  Future<void> openNotificationSettings() async {
+    await _notificationService.openNotificationSettings();
   }
 
   Future<void> toggleDarkMode(bool value) async {
@@ -344,6 +434,9 @@ class SettingsProvider extends ChangeNotifier {
     if (code == _languageCode) return;
     _languageCode = code;
     await _storage.setString(AppConstants.keyLanguage, code);
+    if (_notificationsEnabled) {
+      await _syncDailyReminder();
+    }
     notifyListeners();
   }
 
@@ -353,3 +446,4 @@ class SettingsProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+
