@@ -35,6 +35,7 @@ class AppConstants {
   static const String keyNotificationsEnabled = 'notifications_enabled';
   static const String keyNotificationHour = 'notification_hour';
   static const String keyNotificationMinute = 'notification_minute';
+  static const String keyItemNotificationConfig = 'item_notification_config';
   static const String keyStreakDays = 'streak_days';
   static const String keyLastStudyDate = 'last_study_date';
   static const String keyTotalCardsLearned = 'total_cards_learned';

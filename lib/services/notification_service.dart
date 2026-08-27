@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
@@ -307,6 +307,76 @@ class NotificationService {
           '[NotificationService] Day $weekday reminder scheduled at $hour:$minute (id: $id)');
     } catch (e) {
       debugPrint('[NotificationService] Error scheduling weekly reminder: $e');
+    }
+  }
+
+  /// Schedules multiple daily notifications for a specific item, assigning a unique rotating example per slot
+  Future<void> scheduleMultipleItemNotifications({
+    required int baseId,
+    required String wordEn,
+    required String wordEs,
+    required List<String> examples,
+    required List<TimeOfDay> times,
+    int startExampleIndex = 0,
+  }) async {
+    if (times.isEmpty || examples.isEmpty) return;
+
+    // Sort times chronologically for a clean daily schedule
+    final sortedTimes = List<TimeOfDay>.from(times)
+      ..sort((a, b) => (a.hour * 60 + a.minute).compareTo(b.hour * 60 + b.minute));
+
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+
+    for (int i = 0; i < sortedTimes.length; i++) {
+      final slotTime = sortedTimes[i];
+      final int notificationId = baseId + i;
+      final int exampleIndex = (startExampleIndex + i) % examples.length;
+      final String exampleText = examples[exampleIndex];
+
+      tz.TZDateTime scheduledDate = tz.TZDateTime(
+        tz.local,
+        now.year,
+        now.month,
+        now.day,
+        slotTime.hour,
+        slotTime.minute,
+      );
+
+      if (scheduledDate.isBefore(now)) {
+        scheduledDate = scheduledDate.add(const Duration(days: 1));
+      }
+
+      final details = _notificationDetails(
+        channelId: channelIdReminders,
+        channelName: channelNameReminders,
+        channelDescription: channelDescReminders,
+      );
+
+      final String title = '$wordEn ($wordEs)';
+      final String body = 'Ejemplo: "$exampleText"';
+
+      await _notificationsPlugin.zonedSchedule(
+        notificationId,
+        title,
+        body,
+        scheduledDate,
+        details,
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time,
+        payload: 'item_notification_$wordEn',
+      );
+
+      debugPrint(
+          '[NotificationService] Scheduled item slot $i (ID: $notificationId) at ${slotTime.hour}:${slotTime.minute.toString().padLeft(2, '0')} -> Example [$exampleIndex]: "$exampleText"');
+    }
+  }
+
+  /// Cancels a range of notification IDs (for item notification slots)
+  Future<void> cancelNotificationRange(int baseId, int count) async {
+    for (int i = 0; i < count; i++) {
+      await cancelNotification(baseId + i);
     }
   }
 

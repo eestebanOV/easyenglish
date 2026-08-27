@@ -98,4 +98,17 @@ class StorageService {
   Future<void> setString(String key, String value) async {
     await _settingsBox?.put(key, value);
   }
+
+  Map<dynamic, dynamic>? getMap(String key) {
+    if (_settingsBox == null) return null;
+    final data = _settingsBox!.get(key);
+    if (data is Map) {
+      return data;
+    }
+    return null;
+  }
+
+  Future<void> setMap(String key, Map<String, dynamic> value) async {
+    await _settingsBox?.put(key, value);
+  }
 }

@@ -5,6 +5,9 @@ import '../core/constants.dart';
 import '../services/storage_service.dart';
 import '../services/notification_service.dart';
 
+import '../models/item_notification_config.dart';
+import '../models/flashcard.dart';
+
 class SettingsProvider extends ChangeNotifier {
   final StorageService _storage = StorageService();
   final NotificationService _notificationService = NotificationService();
@@ -17,6 +20,7 @@ class SettingsProvider extends ChangeNotifier {
   bool _notificationsEnabled = true;
   int _reminderHour = 20;
   int _reminderMinute = 0;
+  ItemNotificationConfig? _itemNotificationConfig;
 
   bool get isDarkMode => _isDarkMode;
   bool get soundEnabled => _soundEnabled;
@@ -25,6 +29,7 @@ class SettingsProvider extends ChangeNotifier {
   String get languageCode => _languageCode;
   bool get notificationsEnabled => _notificationsEnabled;
   TimeOfDay get reminderTime => TimeOfDay(hour: _reminderHour, minute: _reminderMinute);
+  ItemNotificationConfig? get itemNotificationConfig => _itemNotificationConfig;
 
   Locale get locale => Locale(_languageCode);
 
@@ -140,6 +145,20 @@ class SettingsProvider extends ChangeNotifier {
       'settings.notif.openSettings': 'Configurar permisos de notificación',
       'settings.notif.sentInstant': '¡Notificación enviada!',
       'settings.notif.scheduledSent': '¡Notificación programada en 3 segundos!',
+
+      // Item Specific Notifications
+      'settings.itemNotif.group': 'PALABRA FIJADA PARA NOTIFICACIONES',
+      'settings.itemNotif.desc': 'Recibe múltiples avisos al día de un ítem elegido con ejemplos rotativos sin repetir.',
+      'settings.itemNotif.noCard': 'Ningún ítem seleccionado. Entra a una categoría y pulsa "Fijar para Notificaciones" o selecciona uno aquí.',
+      'settings.itemNotif.selectedCard': 'Ítem fijado:',
+      'settings.itemNotif.selectCard': 'Seleccionar Ítem',
+      'settings.itemNotif.changeCard': 'Cambiar',
+      'settings.itemNotif.times': 'Horarios del día (rotará un ejemplo en cada horario):',
+      'settings.itemNotif.addTime': 'Agregar Horario',
+      'settings.itemNotif.examplesCount': 'ejemplos disponibles en rotación round-robin',
+      'settings.itemNotif.enabled': 'Activar notificaciones de esta palabra',
+      'settings.itemNotif.saved': '¡Horarios y palabra guardados en el sistema de notificaciones!',
+      'settings.itemNotif.testNow': 'Probar ejemplo actual (Notificación)',
 
       'settings.dataGroup': 'DATOS Y ALMACENAMIENTO',
       'settings.language.title': 'Idioma de la app',
@@ -273,6 +292,20 @@ class SettingsProvider extends ChangeNotifier {
       'settings.notif.sentInstant': 'Notification sent!',
       'settings.notif.scheduledSent': 'Notification scheduled in 3 seconds!',
 
+      // Item Specific Notifications
+      'settings.itemNotif.group': 'PINNED ITEM FOR NOTIFICATIONS',
+      'settings.itemNotif.desc': 'Get multiple reminders throughout the day for a chosen item with non-repeating rotating examples.',
+      'settings.itemNotif.noCard': 'No item pinned. Go to any category and tap "Pin for Notifications" or select one here.',
+      'settings.itemNotif.selectedCard': 'Pinned item:',
+      'settings.itemNotif.selectCard': 'Select Item',
+      'settings.itemNotif.changeCard': 'Change',
+      'settings.itemNotif.times': 'Daily notification times (each slot gets a unique rotating example):',
+      'settings.itemNotif.addTime': 'Add Time',
+      'settings.itemNotif.examplesCount': 'examples available in round-robin cycle',
+      'settings.itemNotif.enabled': 'Enable notifications for this item',
+      'settings.itemNotif.saved': 'Times and item scheduled in notification system!',
+      'settings.itemNotif.testNow': 'Test current example (Notification)',
+
       'settings.dataGroup': 'DATA & STORAGE',
       'settings.language.title': 'App language',
       'settings.language.subtitle': 'Choose the interface language',
@@ -343,9 +376,20 @@ class SettingsProvider extends ChangeNotifier {
         defaultValue: 0,
       );
 
+      // Load item notification config if present
+      final itemMap = _storage.getMap(AppConstants.keyItemNotificationConfig);
+      if (itemMap != null) {
+        _itemNotificationConfig = ItemNotificationConfig.fromMap(itemMap);
+      }
+
       // Setup scheduled daily reminder if enabled
       if (_notificationsEnabled) {
         _syncDailyReminder();
+      }
+
+      // Setup scheduled item notifications if enabled
+      if (_itemNotificationConfig != null && _itemNotificationConfig!.isEnabled) {
+        _syncItemNotifications();
       }
     } catch (e) {
       debugPrint('SettingsProvider init error: $e');
@@ -365,6 +409,157 @@ class SettingsProvider extends ChangeNotifier {
     } else {
       await _notificationService.cancelNotification(1001);
     }
+  }
+
+  Future<void> _syncItemNotifications() async {
+    // Base ID 2000 for item slots (cancels up to 20 slots)
+    await _notificationService.cancelNotificationRange(2000, 20);
+
+    if (_itemNotificationConfig != null &&
+        _itemNotificationConfig!.isEnabled &&
+        _itemNotificationConfig!.times.isNotEmpty &&
+        _itemNotificationConfig!.examples.isNotEmpty) {
+      await _notificationService.scheduleMultipleItemNotifications(
+        baseId: 2000,
+        wordEn: _itemNotificationConfig!.wordEn,
+        wordEs: _itemNotificationConfig!.wordEs,
+        examples: _itemNotificationConfig!.examples,
+        times: _itemNotificationConfig!.times,
+        startExampleIndex: _itemNotificationConfig!.currentExampleIndex,
+      );
+    }
+  }
+
+  /// Sets a specific flashcard as the pinned item for multiple daily notifications
+  Future<void> setItemForNotifications(Flashcard card) async {
+    List<String> allExamples = List<String>.from(card.allExamples);
+    // Ensure there are at least 3 distinct examples for rotation
+    if (allExamples.length < 3) {
+      if (card.isVerbWithForms) {
+        allExamples.add('Present: ${card.present} | Past: ${card.past} | Participle: ${card.participle}');
+      }
+      if (card.hasStructure) {
+        allExamples.add('Estructura: ${card.structure}');
+      }
+      if (card.exampleEs.isNotEmpty && !allExamples.contains(card.exampleEs)) {
+        allExamples.add('Traducción: "${card.exampleEs}"');
+      }
+    }
+
+    final defaultTimes = _itemNotificationConfig?.times.isNotEmpty == true
+        ? _itemNotificationConfig!.times
+        : const [
+            TimeOfDay(hour: 9, minute: 0),
+            TimeOfDay(hour: 14, minute: 0),
+            TimeOfDay(hour: 19, minute: 0),
+          ];
+
+    _itemNotificationConfig = ItemNotificationConfig(
+      cardId: card.id,
+      categoryId: card.categoryId,
+      wordEn: card.wordEn,
+      wordEs: card.wordEs,
+      examples: allExamples,
+      times: defaultTimes,
+      currentExampleIndex: 0,
+      isEnabled: true,
+    );
+
+    await _storage.setMap(
+      AppConstants.keyItemNotificationConfig,
+      _itemNotificationConfig!.toMap(),
+    );
+
+    await _notificationService.requestPermissions();
+    await _syncItemNotifications();
+    notifyListeners();
+  }
+
+  /// Toggles whether notifications for the pinned item are active
+  Future<void> toggleItemNotifications(bool value) async {
+    if (_itemNotificationConfig == null) return;
+    _itemNotificationConfig = _itemNotificationConfig!.copyWith(isEnabled: value);
+    await _storage.setMap(
+      AppConstants.keyItemNotificationConfig,
+      _itemNotificationConfig!.toMap(),
+    );
+
+    if (value) {
+      await _notificationService.requestPermissions();
+      await _syncItemNotifications();
+    } else {
+      await _notificationService.cancelNotificationRange(2000, 20);
+    }
+    notifyListeners();
+  }
+
+  /// Adds a new daily time slot for the pinned item
+  Future<void> addItemNotificationTime(TimeOfDay time) async {
+    if (_itemNotificationConfig == null) return;
+    final currentTimes = List<TimeOfDay>.from(_itemNotificationConfig!.times);
+    // Avoid exact duplicate time
+    if (!currentTimes.any((t) => t.hour == time.hour && t.minute == time.minute)) {
+      currentTimes.add(time);
+      currentTimes.sort((a, b) => (a.hour * 60 + a.minute).compareTo(b.hour * 60 + b.minute));
+      _itemNotificationConfig = _itemNotificationConfig!.copyWith(times: currentTimes);
+      await _storage.setMap(
+        AppConstants.keyItemNotificationConfig,
+        _itemNotificationConfig!.toMap(),
+      );
+      if (_itemNotificationConfig!.isEnabled) {
+        await _syncItemNotifications();
+      }
+      notifyListeners();
+    }
+  }
+
+  /// Removes a daily time slot for the pinned item by index
+  Future<void> removeItemNotificationTime(int index) async {
+    if (_itemNotificationConfig == null) return;
+    final currentTimes = List<TimeOfDay>.from(_itemNotificationConfig!.times);
+    if (index >= 0 && index < currentTimes.length) {
+      currentTimes.removeAt(index);
+      _itemNotificationConfig = _itemNotificationConfig!.copyWith(times: currentTimes);
+      await _storage.setMap(
+        AppConstants.keyItemNotificationConfig,
+        _itemNotificationConfig!.toMap(),
+      );
+      if (_itemNotificationConfig!.isEnabled) {
+        await _syncItemNotifications();
+      }
+      notifyListeners();
+    }
+  }
+
+  /// Advances rotation pointer (round-robin)
+  Future<void> advanceItemExampleRotation() async {
+    if (_itemNotificationConfig == null || _itemNotificationConfig!.examples.isEmpty) return;
+    final nextIndex = (_itemNotificationConfig!.currentExampleIndex + 1) %
+        _itemNotificationConfig!.examples.length;
+    _itemNotificationConfig = _itemNotificationConfig!.copyWith(
+      currentExampleIndex: nextIndex,
+    );
+    await _storage.setMap(
+      AppConstants.keyItemNotificationConfig,
+      _itemNotificationConfig!.toMap(),
+    );
+    if (_itemNotificationConfig!.isEnabled) {
+      await _syncItemNotifications();
+    }
+    notifyListeners();
+  }
+
+  /// Sends an immediate test notification with the current rotating example of the pinned item
+  Future<void> sendTestItemNotification() async {
+    if (_itemNotificationConfig == null || _itemNotificationConfig!.examples.isEmpty) return;
+    final example = _itemNotificationConfig!.examples[
+        _itemNotificationConfig!.currentExampleIndex %
+            _itemNotificationConfig!.examples.length];
+    await _notificationService.showInstantNotification(
+      id: 2999,
+      title: '${_itemNotificationConfig!.wordEn} (${_itemNotificationConfig!.wordEs})',
+      body: 'Ejemplo: "$example"',
+    );
   }
 
   Future<void> toggleNotifications(bool value) async {
@@ -436,6 +631,9 @@ class SettingsProvider extends ChangeNotifier {
     await _storage.setString(AppConstants.keyLanguage, code);
     if (_notificationsEnabled) {
       await _syncDailyReminder();
+    }
+    if (_itemNotificationConfig != null && _itemNotificationConfig!.isEnabled) {
+      await _syncItemNotifications();
     }
     notifyListeners();
   }

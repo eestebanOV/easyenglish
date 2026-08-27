@@ -40,6 +40,9 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
       builder: (ctx) {
         return StatefulBuilder(
           builder: (context, setModalState) {
+            final settings = context.read<SettingsProvider>();
+            final isPinned = settings.itemNotificationConfig?.cardId == card.id &&
+                settings.itemNotificationConfig?.isEnabled == true;
             return Padding(
               padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -90,6 +93,64 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                             isFlipped = !isFlipped;
                           });
                         },
+                      ),
+                      const SizedBox(height: 16),
+                      // Pin for Notifications button
+                      SizedBox(
+                        width: double.infinity,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          child: ElevatedButton.icon(
+                            onPressed: () async {
+                              await settings.setItemForNotifications(card);
+                              if (context.mounted) {
+                                Navigator.of(context).pop();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Row(
+                                      children: [
+                                        const Icon(Icons.push_pin_rounded, color: Colors.white, size: 18),
+                                        const SizedBox(width: 10),
+                                        Expanded(
+                                          child: Text(
+                                            '"${card.wordEn}" ${settings.translate('settings.itemNotif.saved')}',
+                                            style: const TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    duration: const Duration(seconds: 3),
+                                    backgroundColor: AppTheme.primaryLight,
+                                  ),
+                                );
+                              }
+                            },
+                            icon: Icon(
+                              isPinned ? Icons.push_pin_rounded : Icons.push_pin_outlined,
+                              size: 20,
+                            ),
+                            label: Text(
+                              isPinned
+                                  ? '📌 Ya fijada para notificaciones'
+                                  : '📌 Fijar para Notificaciones',
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: isPinned
+                                  ? AppTheme.primaryLight.withValues(alpha: 0.2)
+                                  : AppTheme.primaryLight,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                                side: BorderSide(
+                                  color: AppTheme.primaryLight.withValues(alpha: 0.6),
+                                ),
+                              ),
+                              elevation: isPinned ? 0 : 3,
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
