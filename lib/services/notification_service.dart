@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz_data;
@@ -29,6 +30,9 @@ class NotificationService {
   static const String channelNameInstant = 'Instant Notifications';
   static const String channelDescInstant = 'Instant test and milestone notifications';
 
+  /// Category identifier for iOS Notification Content Extension
+  static const String categoryIdItemNotification = 'ITEM_NOTIFICATION_CATEGORY';
+
   /// Initializes timezone data, notification settings and requests permissions for iOS and Android
   Future<void> init() async {
     if (_isInitialized) return;
@@ -55,15 +59,22 @@ class NotificationService {
       const AndroidInitializationSettings androidSettings =
           AndroidInitializationSettings('@mipmap/ic_launcher');
 
-      // 3. iOS / Darwin Initialization Settings (triggers iOS permission prompt on launch)
-      const DarwinInitializationSettings iosSettings =
-          DarwinInitializationSettings(
+      // 3. iOS / Darwin Initialization Settings (registers categories for Content Extension)
+      final DarwinInitializationSettings iosSettings = DarwinInitializationSettings(
         requestAlertPermission: true,
         requestBadgePermission: true,
         requestSoundPermission: true,
+        notificationCategories: [
+          DarwinNotificationCategory(
+            categoryIdItemNotification,
+            options: {
+              DarwinNotificationCategoryOption.customDismissAction,
+            },
+          ),
+        ],
       );
 
-      const InitializationSettings initSettings = InitializationSettings(
+      final InitializationSettings initSettings = InitializationSettings(
         android: androidSettings,
         iOS: iosSettings,
       );
@@ -128,6 +139,7 @@ class NotificationService {
     required String channelDescription,
     Importance importance = Importance.max,
     Priority priority = Priority.high,
+    String? categoryIdentifier,
   }) {
     final AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
       channelId,
@@ -138,10 +150,11 @@ class NotificationService {
       showWhen: true,
     );
 
-    const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+    final DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
+      categoryIdentifier: categoryIdentifier,
     );
 
     return NotificationDetails(
@@ -156,12 +169,14 @@ class NotificationService {
     required String title,
     required String body,
     String? payload,
+    String? categoryIdentifier,
   }) async {
     try {
       final details = _notificationDetails(
         channelId: channelIdInstant,
         channelName: channelNameInstant,
         channelDescription: channelDescInstant,
+        categoryIdentifier: categoryIdentifier,
       );
 
       await _notificationsPlugin.show(
@@ -376,6 +391,7 @@ class NotificationService {
         channelId: channelIdReminders,
         channelName: channelNameReminders,
         channelDescription: channelDescReminders,
+        categoryIdentifier: categoryIdItemNotification,
       );
 
       final String title = '$wordEn ($wordEs)';
@@ -385,6 +401,13 @@ class NotificationService {
       }
       bodyBuffer.write('💡 Ejemplo: "$exampleText"');
       final String body = bodyBuffer.toString();
+
+      final String jsonPayload = jsonEncode({
+        'wordEn': wordEn,
+        'wordEs': wordEs,
+        'example': exampleText,
+        'grammarFormula': grammarFormula ?? '',
+      });
 
       await _notificationsPlugin.zonedSchedule(
         notificationId,
@@ -396,7 +419,7 @@ class NotificationService {
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
         matchDateTimeComponents: DateTimeComponents.time,
-        payload: 'item_notification_$wordEn',
+        payload: jsonPayload,
       );
 
       debugPrint(
