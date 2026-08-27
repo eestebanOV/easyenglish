@@ -38,7 +38,14 @@ class AppConstants {
   static const String keyItemNotificationConfig = 'item_notification_config';
   static const String keyStreakDays = 'streak_days';
   static const String keyLastStudyDate = 'last_study_date';
-  static const String keyTotalCardsLearned = 'total_cards_learned';
   static const String keyTotalReviews = 'total_reviews';
   static const String keyBestStreak = 'best_streak';
+
+  // Notification generation constants
+  static const List<int> notificationIntervalOptions = [15, 30, 60, 120];
+  static const int defaultNotificationInterval = 30; // minutes
+  static const int notificationDefaultStartHour = 8;
+  static const int notificationDefaultStartMinute = 0;
+  static const int notificationDayEndHour = 23;
+  static const int notificationDayEndMinute = 30;
 }

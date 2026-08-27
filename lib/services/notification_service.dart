@@ -5,6 +5,8 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:app_settings/app_settings.dart';
 
+import '../core/constants.dart';
+
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
   factory NotificationService() => _instance;
@@ -310,11 +312,35 @@ class NotificationService {
     }
   }
 
+  /// Generates a list of TimeOfDay slots every [intervalMinutes] from [startTime] until [endHour]:[endMinute]
+  static List<TimeOfDay> generateTimeSlots({
+    required TimeOfDay startTime,
+    required int intervalMinutes,
+    int endHour = AppConstants.notificationDayEndHour,
+    int endMinute = AppConstants.notificationDayEndMinute,
+  }) {
+    final List<TimeOfDay> result = [];
+    int currentMinutes = startTime.hour * 60 + startTime.minute;
+    final int limitMinutes = endHour * 60 + endMinute;
+
+    final step = intervalMinutes > 0 ? intervalMinutes : 30;
+
+    while (currentMinutes <= limitMinutes && result.length < 64) {
+      final hour = currentMinutes ~/ 60;
+      final minute = currentMinutes % 60;
+      result.add(TimeOfDay(hour: hour, minute: minute));
+      currentMinutes += step;
+    }
+
+    return result;
+  }
+
   /// Schedules multiple daily notifications for a specific item, assigning a unique rotating example per slot
   Future<void> scheduleMultipleItemNotifications({
     required int baseId,
     required String wordEn,
     required String wordEs,
+    String? grammarFormula,
     required List<String> examples,
     required List<TimeOfDay> times,
     int startExampleIndex = 0,
@@ -353,7 +379,12 @@ class NotificationService {
       );
 
       final String title = '$wordEn ($wordEs)';
-      final String body = 'Ejemplo: "$exampleText"';
+      final StringBuffer bodyBuffer = StringBuffer();
+      if (grammarFormula != null && grammarFormula.trim().isNotEmpty) {
+        bodyBuffer.writeln('📐 Fórmula: $grammarFormula');
+      }
+      bodyBuffer.write('💡 Ejemplo: "$exampleText"');
+      final String body = bodyBuffer.toString();
 
       await _notificationsPlugin.zonedSchedule(
         notificationId,
@@ -369,7 +400,7 @@ class NotificationService {
       );
 
       debugPrint(
-          '[NotificationService] Scheduled item slot $i (ID: $notificationId) at ${slotTime.hour}:${slotTime.minute.toString().padLeft(2, '0')} -> Example [$exampleIndex]: "$exampleText"');
+          '[NotificationService] Scheduled item slot $i (ID: $notificationId) at ${slotTime.hour}:${slotTime.minute.toString().padLeft(2, '0')} -> Formula: $grammarFormula | Example [$exampleIndex]: "$exampleText"');
     }
   }
 

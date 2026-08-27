@@ -155,10 +155,18 @@ class SettingsProvider extends ChangeNotifier {
       'settings.itemNotif.changeCard': 'Cambiar',
       'settings.itemNotif.times': 'Horarios del día (rotará un ejemplo en cada horario):',
       'settings.itemNotif.addTime': 'Agregar Horario',
+      'settings.itemNotif.editTime': 'Editar Horario',
+      'settings.itemNotif.autoGenerate': 'Generar cada',
+      'settings.itemNotif.interval': 'Intervalo',
+      'settings.itemNotif.startTime': 'Hora de inicio',
+      'settings.itemNotif.regenerate': 'Regenerar horarios del día',
+      'settings.itemNotif.grammarFormula': 'Fórmula Gramatical',
       'settings.itemNotif.examplesCount': 'ejemplos disponibles en rotación round-robin',
       'settings.itemNotif.enabled': 'Activar notificaciones de esta palabra',
       'settings.itemNotif.saved': '¡Horarios y palabra guardados en el sistema de notificaciones!',
       'settings.itemNotif.testNow': 'Probar ejemplo actual (Notificación)',
+      'settings.itemNotif.tapToExpand': 'Toca para ver u ocultar horarios programados',
+      'settings.itemNotif.slotsSummary': 'notificaciones programadas',
 
       'settings.dataGroup': 'DATOS Y ALMACENAMIENTO',
       'settings.language.title': 'Idioma de la app',
@@ -301,10 +309,18 @@ class SettingsProvider extends ChangeNotifier {
       'settings.itemNotif.changeCard': 'Change',
       'settings.itemNotif.times': 'Daily notification times (each slot gets a unique rotating example):',
       'settings.itemNotif.addTime': 'Add Time',
+      'settings.itemNotif.editTime': 'Edit Time',
+      'settings.itemNotif.autoGenerate': 'Generate every',
+      'settings.itemNotif.interval': 'Interval',
+      'settings.itemNotif.startTime': 'Start time',
+      'settings.itemNotif.regenerate': 'Regenerate daily schedule',
+      'settings.itemNotif.grammarFormula': 'Grammar Formula',
       'settings.itemNotif.examplesCount': 'examples available in round-robin cycle',
       'settings.itemNotif.enabled': 'Enable notifications for this item',
       'settings.itemNotif.saved': 'Times and item scheduled in notification system!',
       'settings.itemNotif.testNow': 'Test current example (Notification)',
+      'settings.itemNotif.tapToExpand': 'Tap to view or hide scheduled times',
+      'settings.itemNotif.slotsSummary': 'scheduled notifications',
 
       'settings.dataGroup': 'DATA & STORAGE',
       'settings.language.title': 'App language',
@@ -412,8 +428,8 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   Future<void> _syncItemNotifications() async {
-    // Base ID 2000 for item slots (cancels up to 20 slots)
-    await _notificationService.cancelNotificationRange(2000, 20);
+    // Base ID 2000 for item slots (cancels up to 64 slots)
+    await _notificationService.cancelNotificationRange(2000, 64);
 
     if (_itemNotificationConfig != null &&
         _itemNotificationConfig!.isEnabled &&
@@ -423,6 +439,7 @@ class SettingsProvider extends ChangeNotifier {
         baseId: 2000,
         wordEn: _itemNotificationConfig!.wordEn,
         wordEs: _itemNotificationConfig!.wordEs,
+        grammarFormula: _itemNotificationConfig!.grammarFormula,
         examples: _itemNotificationConfig!.examples,
         times: _itemNotificationConfig!.times,
         startExampleIndex: _itemNotificationConfig!.currentExampleIndex,
@@ -431,7 +448,11 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   /// Sets a specific flashcard as the pinned item for multiple daily notifications
-  Future<void> setItemForNotifications(Flashcard card) async {
+  Future<void> setItemForNotifications(
+    Flashcard card, {
+    TimeOfDay? startTime,
+    int? intervalMinutes,
+  }) async {
     List<String> allExamples = List<String>.from(card.allExamples);
     // Ensure there are at least 3 distinct examples for rotation
     if (allExamples.length < 3) {
@@ -446,21 +467,33 @@ class SettingsProvider extends ChangeNotifier {
       }
     }
 
-    final defaultTimes = _itemNotificationConfig?.times.isNotEmpty == true
-        ? _itemNotificationConfig!.times
-        : const [
-            TimeOfDay(hour: 9, minute: 0),
-            TimeOfDay(hour: 14, minute: 0),
-            TimeOfDay(hour: 19, minute: 0),
-          ];
+    final selectedInterval = intervalMinutes ??
+        _itemNotificationConfig?.intervalMinutes ??
+        AppConstants.defaultNotificationInterval;
+
+    final selectedStart = startTime ??
+        (_itemNotificationConfig?.times.isNotEmpty == true
+            ? _itemNotificationConfig!.times.first
+            : const TimeOfDay(
+                hour: AppConstants.notificationDefaultStartHour,
+                minute: AppConstants.notificationDefaultStartMinute,
+              ));
+
+    // Automatically generate scheduled times from selected start time to end of day
+    final autoTimes = NotificationService.generateTimeSlots(
+      startTime: selectedStart,
+      intervalMinutes: selectedInterval,
+    );
 
     _itemNotificationConfig = ItemNotificationConfig(
       cardId: card.id,
       categoryId: card.categoryId,
       wordEn: card.wordEn,
       wordEs: card.wordEs,
+      grammarFormula: card.hasStructure ? card.structure : null,
       examples: allExamples,
-      times: defaultTimes,
+      times: autoTimes,
+      intervalMinutes: selectedInterval,
       currentExampleIndex: 0,
       isEnabled: true,
     );
@@ -473,6 +506,47 @@ class SettingsProvider extends ChangeNotifier {
     await _notificationService.requestPermissions();
     await _syncItemNotifications();
     notifyListeners();
+  }
+
+  /// Regenerates the daily time slots using the given [startTime] and [intervalMinutes]
+  Future<void> generateAutoTimes({
+    TimeOfDay? startTime,
+    int? intervalMinutes,
+  }) async {
+    if (_itemNotificationConfig == null) return;
+    final selectedInterval = intervalMinutes ?? _itemNotificationConfig!.intervalMinutes;
+    final selectedStart = startTime ??
+        (_itemNotificationConfig!.times.isNotEmpty
+            ? _itemNotificationConfig!.times.first
+            : const TimeOfDay(
+                hour: AppConstants.notificationDefaultStartHour,
+                minute: AppConstants.notificationDefaultStartMinute,
+              ));
+
+    final generatedTimes = NotificationService.generateTimeSlots(
+      startTime: selectedStart,
+      intervalMinutes: selectedInterval,
+    );
+
+    _itemNotificationConfig = _itemNotificationConfig!.copyWith(
+      times: generatedTimes,
+      intervalMinutes: selectedInterval,
+    );
+
+    await _storage.setMap(
+      AppConstants.keyItemNotificationConfig,
+      _itemNotificationConfig!.toMap(),
+    );
+
+    if (_itemNotificationConfig!.isEnabled) {
+      await _syncItemNotifications();
+    }
+    notifyListeners();
+  }
+
+  /// Updates the interval and regenerates schedule
+  Future<void> updateItemNotificationInterval(int newIntervalMinutes) async {
+    await generateAutoTimes(intervalMinutes: newIntervalMinutes);
   }
 
   /// Toggles whether notifications for the pinned item are active
@@ -488,9 +562,28 @@ class SettingsProvider extends ChangeNotifier {
       await _notificationService.requestPermissions();
       await _syncItemNotifications();
     } else {
-      await _notificationService.cancelNotificationRange(2000, 20);
+      await _notificationService.cancelNotificationRange(2000, 64);
     }
     notifyListeners();
+  }
+
+  /// Updates a specific time slot without resetting the rotation index
+  Future<void> updateItemNotificationTime(int index, TimeOfDay newTime) async {
+    if (_itemNotificationConfig == null) return;
+    final currentTimes = List<TimeOfDay>.from(_itemNotificationConfig!.times);
+    if (index >= 0 && index < currentTimes.length) {
+      currentTimes[index] = newTime;
+      currentTimes.sort((a, b) => (a.hour * 60 + a.minute).compareTo(b.hour * 60 + b.minute));
+      _itemNotificationConfig = _itemNotificationConfig!.copyWith(times: currentTimes);
+      await _storage.setMap(
+        AppConstants.keyItemNotificationConfig,
+        _itemNotificationConfig!.toMap(),
+      );
+      if (_itemNotificationConfig!.isEnabled) {
+        await _syncItemNotifications();
+      }
+      notifyListeners();
+    }
   }
 
   /// Adds a new daily time slot for the pinned item
@@ -555,10 +648,16 @@ class SettingsProvider extends ChangeNotifier {
     final example = _itemNotificationConfig!.examples[
         _itemNotificationConfig!.currentExampleIndex %
             _itemNotificationConfig!.examples.length];
+    final StringBuffer bodyBuffer = StringBuffer();
+    if (_itemNotificationConfig!.hasGrammarFormula) {
+      bodyBuffer.writeln('📐 Fórmula: ${_itemNotificationConfig!.grammarFormula}');
+    }
+    bodyBuffer.write('💡 Ejemplo: "$example"');
+
     await _notificationService.showInstantNotification(
       id: 2999,
       title: '${_itemNotificationConfig!.wordEn} (${_itemNotificationConfig!.wordEs})',
-      body: 'Ejemplo: "$example"',
+      body: bodyBuffer.toString(),
     );
   }
 

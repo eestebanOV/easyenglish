@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/constants.dart';
 
 /// Configuration for item-based daily notifications with rotating examples
 class ItemNotificationConfig {
@@ -6,8 +7,10 @@ class ItemNotificationConfig {
   final String categoryId;
   final String wordEn;
   final String wordEs;
+  final String? grammarFormula;
   final List<String> examples;
   final List<TimeOfDay> times;
+  final int intervalMinutes;
   final int currentExampleIndex;
   final bool isEnabled;
 
@@ -16,19 +19,25 @@ class ItemNotificationConfig {
     required this.categoryId,
     required this.wordEn,
     required this.wordEs,
+    this.grammarFormula,
     required this.examples,
     required this.times,
+    this.intervalMinutes = AppConstants.defaultNotificationInterval,
     this.currentExampleIndex = 0,
     this.isEnabled = true,
   });
+
+  bool get hasGrammarFormula => grammarFormula != null && grammarFormula!.trim().isNotEmpty;
 
   ItemNotificationConfig copyWith({
     String? cardId,
     String? categoryId,
     String? wordEn,
     String? wordEs,
+    String? grammarFormula,
     List<String>? examples,
     List<TimeOfDay>? times,
+    int? intervalMinutes,
     int? currentExampleIndex,
     bool? isEnabled,
   }) {
@@ -37,8 +46,10 @@ class ItemNotificationConfig {
       categoryId: categoryId ?? this.categoryId,
       wordEn: wordEn ?? this.wordEn,
       wordEs: wordEs ?? this.wordEs,
+      grammarFormula: grammarFormula ?? this.grammarFormula,
       examples: examples ?? this.examples,
       times: times ?? this.times,
+      intervalMinutes: intervalMinutes ?? this.intervalMinutes,
       currentExampleIndex: currentExampleIndex ?? this.currentExampleIndex,
       isEnabled: isEnabled ?? this.isEnabled,
     );
@@ -50,8 +61,10 @@ class ItemNotificationConfig {
       'categoryId': categoryId,
       'wordEn': wordEn,
       'wordEs': wordEs,
+      'grammarFormula': grammarFormula,
       'examples': examples,
       'times': times.map((t) => {'hour': t.hour, 'minute': t.minute}).toList(),
+      'intervalMinutes': intervalMinutes,
       'currentExampleIndex': currentExampleIndex,
       'isEnabled': isEnabled,
     };
@@ -74,9 +87,9 @@ class ItemNotificationConfig {
 
     if (loadedTimes.isEmpty) {
       loadedTimes = const [
+        TimeOfDay(hour: 8, minute: 0),
+        TimeOfDay(hour: 8, minute: 30),
         TimeOfDay(hour: 9, minute: 0),
-        TimeOfDay(hour: 14, minute: 0),
-        TimeOfDay(hour: 20, minute: 0),
       ];
     }
 
@@ -90,8 +103,10 @@ class ItemNotificationConfig {
       categoryId: map['categoryId'] as String? ?? '',
       wordEn: map['wordEn'] as String? ?? '',
       wordEs: map['wordEs'] as String? ?? '',
+      grammarFormula: map['grammarFormula'] as String?,
       examples: loadedExamples,
       times: loadedTimes,
+      intervalMinutes: map['intervalMinutes'] as int? ?? AppConstants.defaultNotificationInterval,
       currentExampleIndex: map['currentExampleIndex'] as int? ?? 0,
       isEnabled: map['isEnabled'] as bool? ?? true,
     );

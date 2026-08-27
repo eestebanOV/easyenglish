@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/constants.dart';
 import '../models/category.dart';
 import '../models/flashcard.dart';
 import '../providers/flashcard_provider.dart';
 import '../providers/settings_provider.dart';
+import '../services/notification_service.dart';
 import '../services/tts_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/flashcard_widget.dart';
@@ -29,6 +31,250 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _showPinNotificationDialog(BuildContext context, Flashcard card, SettingsProvider settings) {
+    TimeOfDay selectedStart = const TimeOfDay(
+      hour: AppConstants.notificationDefaultStartHour,
+      minute: AppConstants.notificationDefaultStartMinute,
+    );
+    int selectedInterval = settings.itemNotificationConfig?.intervalMinutes ??
+        AppConstants.defaultNotificationInterval;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (dialogContext, setDialogState) {
+            final count = NotificationService.generateTimeSlots(
+              startTime: selectedStart,
+              intervalMinutes: selectedInterval,
+            ).length;
+
+            return Padding(
+              padding: EdgeInsets.only(bottom: MediaQuery.of(dialogContext).viewInsets.bottom),
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: AppTheme.darkCard,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                ),
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: Colors.white24,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [AppTheme.primaryLight, AppTheme.accent],
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(Icons.push_pin_rounded, color: Colors.white, size: 20),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                card.wordEn,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Text(
+                                card.wordEs,
+                                style: const TextStyle(fontSize: 13, color: Colors.white60),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (card.hasStructure) ...[
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.purple.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.purpleAccent.withValues(alpha: 0.3)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.architecture_rounded, size: 16, color: Colors.purpleAccent),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                '📐 Fórmula: ${card.structure}',
+                                style: const TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 18),
+                    const Text(
+                      'HORA DE INICIO DEL DÍA',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.1,
+                        color: Colors.white54,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    InkWell(
+                      borderRadius: BorderRadius.circular(10),
+                      onTap: () async {
+                        final picked = await showTimePicker(
+                          context: dialogContext,
+                          initialTime: selectedStart,
+                          builder: (context, child) => Theme(
+                            data: Theme.of(context).copyWith(
+                              colorScheme: const ColorScheme.dark(
+                                primary: AppTheme.primaryLight,
+                                onPrimary: Colors.white,
+                                surface: AppTheme.darkCard,
+                                onSurface: Colors.white,
+                              ),
+                            ),
+                            child: child!,
+                          ),
+                        );
+                        if (picked != null) {
+                          setDialogState(() {
+                            selectedStart = picked;
+                          });
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.white12),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              selectedStart.format(context),
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const Icon(Icons.access_time_rounded, color: AppTheme.primaryLight, size: 18),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    const Text(
+                      'INTERVALO DE REPETICIÓN',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.1,
+                        color: Colors.white54,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      children: AppConstants.notificationIntervalOptions.map((interval) {
+                        final isSel = selectedInterval == interval;
+                        final label = interval >= 60 ? '${interval ~/ 60} h' : '$interval min';
+                        return ChoiceChip(
+                          label: Text(label),
+                          selected: isSel,
+                          selectedColor: AppTheme.primaryLight,
+                          backgroundColor: Colors.white.withValues(alpha: 0.05),
+                          onSelected: (sel) {
+                            if (sel) {
+                              setDialogState(() {
+                                selectedInterval = interval;
+                              });
+                            }
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      '⚡ Se programarán $count notificaciones rotativas a lo largo del día.',
+                      style: const TextStyle(fontSize: 12, color: Colors.white54),
+                    ),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          await settings.setItemForNotifications(
+                            card,
+                            startTime: selectedStart,
+                            intervalMinutes: selectedInterval,
+                          );
+                          if (dialogContext.mounted) {
+                            Navigator.of(dialogContext).pop();
+                          }
+                          if (context.mounted) {
+                            Navigator.of(context).pop();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  '📌 "${card.wordEn}" programada: $count avisos cada $selectedInterval min',
+                                ),
+                                backgroundColor: AppTheme.primaryLight,
+                                duration: const Duration(seconds: 3),
+                              ),
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppTheme.primaryLight,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          'Programar Notificaciones',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   void _openCardModal(Flashcard card) {
@@ -101,29 +347,8 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
                           child: ElevatedButton.icon(
-                            onPressed: () async {
-                              await settings.setItemForNotifications(card);
-                              if (context.mounted) {
-                                Navigator.of(context).pop();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Row(
-                                      children: [
-                                        const Icon(Icons.push_pin_rounded, color: Colors.white, size: 18),
-                                        const SizedBox(width: 10),
-                                        Expanded(
-                                          child: Text(
-                                            '"${card.wordEn}" ${settings.translate('settings.itemNotif.saved')}',
-                                            style: const TextStyle(color: Colors.white),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    duration: const Duration(seconds: 3),
-                                    backgroundColor: AppTheme.primaryLight,
-                                  ),
-                                );
-                              }
+                            onPressed: () {
+                              _showPinNotificationDialog(context, card, settings);
                             },
                             icon: Icon(
                               isPinned ? Icons.push_pin_rounded : Icons.push_pin_outlined,
@@ -131,13 +356,13 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                             ),
                             label: Text(
                               isPinned
-                                  ? '📌 Ya fijada para notificaciones'
+                                  ? '📌 Configurar Notificaciones (Fijada)'
                                   : '📌 Fijar para Notificaciones',
                               style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: isPinned
-                                  ? AppTheme.primaryLight.withValues(alpha: 0.2)
+                                  ? AppTheme.primaryLight.withValues(alpha: 0.25)
                                   : AppTheme.primaryLight,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 14),
@@ -162,6 +387,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
       },
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
