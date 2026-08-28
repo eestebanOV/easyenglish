@@ -4,6 +4,7 @@ import '../providers/settings_provider.dart';
 import '../theme/app_theme.dart';
 import 'home_screen.dart';
 import 'categories_screen.dart';
+import 'quiz_setup_screen.dart';
 import 'stats_screen.dart';
 import 'settings_screen.dart';
 
@@ -30,6 +31,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     final List<Widget> screens = [
       HomeScreen(onNavigateTab: _onTabTapped),
       const CategoriesScreen(),
+      const QuizSetupScreen(),
       const StatsScreen(),
       const SettingsScreen(),
     ];
@@ -55,8 +57,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           backgroundColor: AppTheme.darkSurface,
           selectedItemColor: AppTheme.accent,
           unselectedItemColor: Colors.white38,
-          selectedFontSize: 12,
-          unselectedFontSize: 12,
+          selectedFontSize: 11,
+          unselectedFontSize: 11,
           type: BottomNavigationBarType.fixed,
           elevation: 0,
           items: [
@@ -67,6 +69,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             BottomNavigationBarItem(
               icon: const Icon(Icons.grid_view_rounded),
               label: t('nav.categories'),
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.quiz_rounded),
+              label: 'Quiz',
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.bar_chart_rounded),

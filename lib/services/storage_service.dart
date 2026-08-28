@@ -102,13 +102,28 @@ class StorageService {
   Map<dynamic, dynamic>? getMap(String key) {
     if (_settingsBox == null) return null;
     final data = _settingsBox!.get(key);
-    if (data is Map) {
-      return data;
-    }
+    if (data is Map) return data;
     return null;
   }
 
-  Future<void> setMap(String key, Map<String, dynamic> value) async {
+  Future<void> setMap(String key, Map<dynamic, dynamic> value) async {
     await _settingsBox?.put(key, value);
+  }
+
+  // --- Quiz Suggestions ---
+  List<Map<String, dynamic>> getRawQuizSuggestions() {
+    if (_settingsBox == null) return [];
+    final data = _settingsBox!.get(AppConstants.keyQuizSuggestions);
+    if (data is List) {
+      return data
+          .whereType<Map>()
+          .map((m) => Map<String, dynamic>.from(m))
+          .toList();
+    }
+    return [];
+  }
+
+  Future<void> saveRawQuizSuggestions(List<Map<String, dynamic>> suggestions) async {
+    await _settingsBox?.put(AppConstants.keyQuizSuggestions, suggestions);
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/flashcard_provider.dart';
+import 'providers/quiz_provider.dart';
 import 'providers/settings_provider.dart';
 import 'screens/splash_screen.dart';
 import 'theme/app_theme.dart';
@@ -22,7 +23,6 @@ void main() async {
   }
 }
 
-
 class EasyEnglishApp extends StatelessWidget {
   final SettingsProvider? preloadedSettings;
   const EasyEnglishApp({super.key, this.preloadedSettings});
@@ -33,6 +33,7 @@ class EasyEnglishApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => FlashcardProvider()),
         ChangeNotifierProvider(create: (_) => preloadedSettings ?? SettingsProvider()),
+        ChangeNotifierProvider(create: (_) => QuizProvider()..init()),
       ],
       child: Consumer<SettingsProvider>(
         builder: (context, settings, _) {

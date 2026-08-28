@@ -25,6 +25,7 @@ class AppConstants {
   static const String cardProgressBox = 'card_progress';
   static const String userStatsBox = 'user_stats';
   static const String settingsBox = 'settings';
+  static const String quizSuggestionsBox = 'quiz_suggestions';
   
   // Settings keys
   static const String keyDailyGoal = 'daily_goal';
@@ -40,6 +41,8 @@ class AppConstants {
   static const String keyLastStudyDate = 'last_study_date';
   static const String keyTotalReviews = 'total_reviews';
   static const String keyBestStreak = 'best_streak';
+  static const String keyQuizSuggestions = 'quiz_suggestions_list';
+  static const String keyQuizStats = 'quiz_stats';
 
   // Notification generation constants
   static const List<int> notificationIntervalOptions = [15, 30, 60, 120];
@@ -48,4 +51,8 @@ class AppConstants {
   static const int notificationDefaultStartMinute = 0;
   static const int notificationDayEndHour = 23;
   static const int notificationDayEndMinute = 30;
+
+  // Quiz size options
+  static const List<int> quizSizeOptions = [5, 10, 15, 20];
+  static const int defaultQuizSize = 10;
 }
