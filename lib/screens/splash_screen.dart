@@ -83,7 +83,7 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     final t = context.watch<SettingsProvider>().translate;
     return Scaffold(
-      backgroundColor: AppTheme.darkBg,
+      backgroundColor: context.bg,
       body: Center(
         child: FadeTransition(
           opacity: _fadeAnimation,
@@ -93,16 +93,16 @@ class _SplashScreenState extends State<SplashScreen>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  width: 110,
-                  height: 110,
+                  width: 100,
+                  height: 100,
                   decoration: BoxDecoration(
                     gradient: AppTheme.primaryGradient,
-                    borderRadius: BorderRadius.circular(28),
+                    borderRadius: BorderRadius.circular(26),
                     boxShadow: [
                       BoxShadow(
-                        color: AppTheme.primary.withValues(alpha: 0.5),
-                        blurRadius: 30,
-                        offset: const Offset(0, 10),
+                        color: AppTheme.primary.withValues(alpha: 0.35),
+                        blurRadius: 24,
+                        offset: const Offset(0, 8),
                       ),
                     ],
                   ),
@@ -110,7 +110,7 @@ class _SplashScreenState extends State<SplashScreen>
                     child: Text(
                       'EE',
                       style: TextStyle(
-                        fontSize: 44,
+                        fontSize: 40,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                         letterSpacing: 1,
@@ -121,10 +121,10 @@ class _SplashScreenState extends State<SplashScreen>
                 const SizedBox(height: 24),
                 Text(
                   t('app.title'),
-                  style: const TextStyle(
-                    fontSize: 32,
+                  style: TextStyle(
+                    fontSize: 30,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: context.textPrimary,
                     letterSpacing: -0.5,
                   ),
                 ),
@@ -132,17 +132,17 @@ class _SplashScreenState extends State<SplashScreen>
                 Text(
                   t('splash.loading'),
                   style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.white.withValues(alpha: 0.6),
+                    fontSize: 14,
+                    color: context.textSecondary,
                   ),
                 ),
-                const SizedBox(height: 48),
+                const SizedBox(height: 40),
                 const SizedBox(
                   width: 24,
                   height: 24,
                   child: CircularProgressIndicator(
                     strokeWidth: 2.5,
-                    valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accent),
+                    valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primary),
                   ),
                 ),
               ],

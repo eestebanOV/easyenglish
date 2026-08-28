@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'flashcard.dart';
 
 /// Formats of quiz questions available
@@ -13,15 +14,15 @@ extension QuizQuestionTypeExtension on QuizQuestionType {
   String get displayNameEs {
     switch (this) {
       case QuizQuestionType.multipleChoice:
-        return '🎯 Opción Múltiple';
+        return 'Opción Múltiple';
       case QuizQuestionType.buildSentence:
-        return '🧩 Construir Oración';
+        return 'Construir Oración';
       case QuizQuestionType.speedQuiz:
-        return '⚡ Speed Quiz';
+        return 'Speed Quiz';
       case QuizQuestionType.situation:
-        return '🎭 Situacional';
+        return 'Situacional';
       case QuizQuestionType.findError:
-        return '🔎 Encuentra el Error';
+        return 'Encuentra el Error';
     }
   }
 
@@ -52,6 +53,21 @@ extension QuizQuestionTypeExtension on QuizQuestionType {
         return 'SITUACIONAL';
       case QuizQuestionType.findError:
         return 'CORREGIR ERROR';
+    }
+  }
+
+  IconData get icon {
+    switch (this) {
+      case QuizQuestionType.multipleChoice:
+        return Icons.radio_button_checked_rounded;
+      case QuizQuestionType.buildSentence:
+        return Icons.sort_rounded;
+      case QuizQuestionType.speedQuiz:
+        return Icons.bolt_rounded;
+      case QuizQuestionType.situation:
+        return Icons.chat_bubble_outline_rounded;
+      case QuizQuestionType.findError:
+        return Icons.find_replace_rounded;
     }
   }
 }

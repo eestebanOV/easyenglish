@@ -16,36 +16,34 @@ class CategoriesScreen extends StatelessWidget {
     final categories = flashcardProvider.categories;
 
     return Scaffold(
-      backgroundColor: AppTheme.darkBg,
+      backgroundColor: context.bg,
       appBar: AppBar(
         title: Text(t('cats.title')),
         automaticallyImplyLeading: false,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: ListView.separated(
-            itemCount: categories.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 12),
-            itemBuilder: (context, index) {
-              final category = categories[index];
-              final mastery = flashcardProvider.getCategoryMastery(category.id);
+        child: ListView.separated(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+          itemCount: categories.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 12),
+          itemBuilder: (context, index) {
+            final category = categories[index];
+            final mastery = flashcardProvider.getCategoryMastery(category.id);
 
-              return CategoryCard(
-                category: category,
-                masteryPercentage: mastery,
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => CategoryDetailScreen(
-                        category: category,
-                      ),
+            return CategoryCard(
+              category: category,
+              masteryPercentage: mastery,
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => CategoryDetailScreen(
+                      category: category,
                     ),
-                  );
-                },
-              );
-            },
-          ),
+                  ),
+                );
+              },
+            );
+          },
         ),
       ),
     );

@@ -4,6 +4,7 @@ import '../models/flashcard.dart';
 import '../models/quiz_suggestion.dart';
 import '../providers/flashcard_provider.dart';
 import '../providers/quiz_provider.dart';
+import '../providers/settings_provider.dart';
 import '../services/tts_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/flashcard_widget.dart';
@@ -23,6 +24,8 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
   Widget build(BuildContext context) {
     final quiz = context.watch<QuizProvider>();
     final flashcards = context.watch<FlashcardProvider>();
+    final settings = context.watch<SettingsProvider>();
+    final t = settings.translate;
 
     List<QuizSuggestion> displayed = quiz.suggestions;
     if (_filter == 'pending') {
@@ -32,26 +35,24 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
     }
 
     return Scaffold(
-      backgroundColor: AppTheme.darkBg,
+      backgroundColor: context.bg,
       appBar: AppBar(
-        backgroundColor: AppTheme.darkSurface,
-        elevation: 0,
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.lightbulb_rounded, color: Colors.amberAccent, size: 22),
-            SizedBox(width: 8),
+            const Icon(Icons.lightbulb_rounded, color: AppTheme.accentAmber, size: 22),
+            const SizedBox(width: 8),
             Text(
-              'Sugerencias de Repaso',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+              t('suggestions.title'),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
             ),
           ],
         ),
         actions: [
           if (quiz.suggestions.isNotEmpty)
             IconButton(
-              tooltip: 'Limpiar todo el historial',
-              icon: const Icon(Icons.delete_sweep_outlined, color: Colors.white60),
-              onPressed: () => _confirmClearAll(context, quiz),
+              tooltip: t('suggestions.clearAll.title'),
+              icon: Icon(Icons.delete_sweep_outlined, color: context.textSecondary),
+              onPressed: () => _confirmClearAll(context, quiz, t),
             ),
         ],
       ),
@@ -60,15 +61,15 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
           children: [
             // Filter Bar
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              color: AppTheme.darkSurface,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              color: context.surface,
               child: Row(
                 children: [
-                  _buildFilterChip('Pendientes (${quiz.pendingSuggestions.length})', 'pending'),
+                  _buildFilterChip('${t('suggestions.filter.pending')} (${quiz.pendingSuggestions.length})', 'pending'),
                   const SizedBox(width: 8),
-                  _buildFilterChip('Todas (${quiz.suggestions.length})', 'all'),
+                  _buildFilterChip('${t('suggestions.filter.all')} (${quiz.suggestions.length})', 'all'),
                   const SizedBox(width: 8),
-                  _buildFilterChip('Dominadas (${quiz.resolvedSuggestions.length})', 'resolved'),
+                  _buildFilterChip('${t('suggestions.filter.resolved')} (${quiz.resolvedSuggestions.length})', 'resolved'),
                 ],
               ),
             ),
@@ -76,7 +77,7 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
             // Suggestions List or Empty State
             Expanded(
               child: displayed.isEmpty
-                  ? _buildEmptyState()
+                  ? _buildEmptyState(context, t)
                   : ListView.builder(
                       padding: const EdgeInsets.all(16),
                       itemCount: displayed.length,
@@ -95,7 +96,7 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
                             structure: item.grammarFormula,
                           ),
                         );
-                        return _buildSuggestionCard(context, quiz, item, card);
+                        return _buildSuggestionCard(context, quiz, item, card, t);
                       },
                     ),
             ),
@@ -113,13 +114,13 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
         style: TextStyle(
           fontSize: 12,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          color: isSelected ? Colors.white : Colors.white60,
+          color: isSelected ? Colors.white : context.textSecondary,
         ),
       ),
       selected: isSelected,
-      selectedColor: AppTheme.primaryLight,
-      backgroundColor: Colors.white.withValues(alpha: 0.05),
-      side: BorderSide(color: isSelected ? AppTheme.primaryLight : Colors.white12),
+      selectedColor: AppTheme.primary,
+      backgroundColor: context.cardBg,
+      side: BorderSide(color: isSelected ? AppTheme.primary : context.border),
       onSelected: (sel) {
         if (sel) {
           setState(() {
@@ -135,6 +136,7 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
     QuizProvider quiz,
     QuizSuggestion item,
     Flashcard card,
+    String Function(String) t,
   ) {
     final category = context
         .read<FlashcardProvider>()
@@ -142,22 +144,23 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
         .firstWhere((c) => c.id == item.categoryId, orElse: () => context.read<FlashcardProvider>().categories.first);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 14),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: AppTheme.darkCard,
-        borderRadius: BorderRadius.circular(16),
+        color: context.cardBg,
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         border: Border.all(
           color: item.isResolved
-              ? Colors.greenAccent.withValues(alpha: 0.3)
-              : AppTheme.primaryLight.withValues(alpha: 0.35),
+              ? AppTheme.success.withValues(alpha: 0.4)
+              : context.border,
         ),
+        boxShadow: context.cardShadow,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 14, 12, 10),
+            padding: const EdgeInsets.fromLTRB(16, 14, 12, 8),
             child: Row(
               children: [
                 Expanded(
@@ -169,16 +172,16 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
                           Flexible(
                             child: Text(
                               item.wordEn,
-                              style: const TextStyle(
-                                fontSize: 17,
+                              style: TextStyle(
+                                fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: context.textPrimary,
                               ),
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 6),
                           IconButton(
-                            icon: const Icon(Icons.volume_up_rounded, size: 18, color: AppTheme.accent),
+                            icon: const Icon(Icons.volume_up_rounded, size: 18, color: AppTheme.primary),
                             onPressed: () => _ttsService.speak(item.wordEn),
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(),
@@ -187,7 +190,7 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
                       ),
                       Text(
                         item.wordEs,
-                        style: const TextStyle(fontSize: 13, color: Colors.white60),
+                        style: TextStyle(fontSize: 13, color: context.textSecondary),
                       ),
                     ],
                   ),
@@ -198,13 +201,13 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: item.failCount > 1
-                        ? Colors.red.withValues(alpha: 0.2)
-                        : Colors.orange.withValues(alpha: 0.2),
+                        ? AppTheme.error.withValues(alpha: context.isDark ? 0.2 : 0.1)
+                        : AppTheme.accentAmber.withValues(alpha: context.isDark ? 0.2 : 0.1),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color: item.failCount > 1
-                          ? Colors.redAccent.withValues(alpha: 0.5)
-                          : Colors.orangeAccent.withValues(alpha: 0.5),
+                          ? AppTheme.error.withValues(alpha: 0.4)
+                          : AppTheme.accentAmber.withValues(alpha: 0.4),
                     ),
                   ),
                   child: Row(
@@ -213,15 +216,15 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
                       Icon(
                         Icons.warning_amber_rounded,
                         size: 13,
-                        color: item.failCount > 1 ? Colors.redAccent : Colors.orangeAccent,
+                        color: item.failCount > 1 ? AppTheme.error : AppTheme.accentAmber,
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        'Fallado ${item.failCount}x',
+                        '${t('suggestions.failedTimes')} ${item.failCount}x',
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
-                          color: item.failCount > 1 ? Colors.redAccent : Colors.orangeAccent,
+                          color: item.failCount > 1 ? AppTheme.error : AppTheme.accentAmber,
                         ),
                       ),
                     ],
@@ -239,22 +242,22 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.04),
+                  color: context.cardSecondary,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.white10),
+                  border: Border.all(color: context.border),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       '“${item.example}”',
-                      style: const TextStyle(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w500),
+                      style: TextStyle(fontSize: 13, color: context.textPrimary, fontWeight: FontWeight.w500),
                     ),
                     if (item.exampleEs.isNotEmpty) ...[
                       const SizedBox(height: 4),
                       Text(
                         item.exampleEs,
-                        style: const TextStyle(fontSize: 12, color: Colors.white54),
+                        style: TextStyle(fontSize: 12, color: context.textSecondary),
                       ),
                     ],
                   ],
@@ -269,18 +272,18 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Colors.purple.withValues(alpha: 0.15),
+                  color: AppTheme.accentPurple.withValues(alpha: context.isDark ? 0.15 : 0.1),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.purpleAccent.withValues(alpha: 0.3)),
+                  border: Border.all(color: AppTheme.accentPurple.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.architecture_rounded, size: 14, color: Colors.purpleAccent),
+                    const Icon(Icons.architecture_rounded, size: 14, color: AppTheme.accentPurple),
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
-                        'Fórmula: ${item.grammarFormula}',
-                        style: const TextStyle(fontSize: 11, color: Colors.white70),
+                        '${t('suggestions.formula')}: ${item.grammarFormula}',
+                        style: TextStyle(fontSize: 11, color: context.textPrimary),
                       ),
                     ),
                   ],
@@ -288,11 +291,11 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
               ),
             ),
 
-          const Divider(color: AppTheme.darkBorder, height: 16),
+          Divider(color: context.border, height: 16),
 
           // Action Buttons
           Padding(
-            padding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -300,9 +303,9 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
                 TextButton.icon(
                   onPressed: () => _openCardModal(context, card, category),
                   icon: const Icon(Icons.menu_book_rounded, size: 16),
-                  label: const Text('Repasar Tarjeta', style: TextStyle(fontSize: 12)),
+                  label: Text(t('suggestions.reviewCard'), style: const TextStyle(fontSize: 12)),
                   style: TextButton.styleFrom(
-                    foregroundColor: AppTheme.primaryLight,
+                    foregroundColor: AppTheme.primary,
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                   ),
                 ),
@@ -311,18 +314,18 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
                   children: [
                     // Mark as Resolved
                     IconButton(
-                      tooltip: item.isResolved ? 'Marcar como pendiente' : 'Marcar como dominado',
+                      tooltip: item.isResolved ? t('suggestions.markPending') : t('suggestions.markResolved'),
                       icon: Icon(
                         item.isResolved ? Icons.check_circle_rounded : Icons.check_circle_outline_rounded,
-                        color: item.isResolved ? Colors.greenAccent : Colors.white38,
+                        color: item.isResolved ? AppTheme.success : context.textSecondary,
                         size: 20,
                       ),
                       onPressed: () => quiz.toggleSuggestionResolved(item.cardId),
                     ),
                     // Delete
                     IconButton(
-                      tooltip: 'Eliminar sugerencia',
-                      icon: const Icon(Icons.close_rounded, color: Colors.white38, size: 20),
+                      tooltip: t('suggestions.delete'),
+                      icon: Icon(Icons.close_rounded, color: context.textSecondary, size: 20),
                       onPressed: () => quiz.removeSuggestion(item.cardId),
                     ),
                   ],
@@ -347,9 +350,10 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
             return Padding(
               padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
               child: Container(
-                decoration: const BoxDecoration(
-                  color: AppTheme.darkBg,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                decoration: BoxDecoration(
+                  color: context.bg,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                  border: Border.all(color: context.border),
                 ),
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
                 child: SingleChildScrollView(
@@ -361,7 +365,7 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
                         width: 40,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: Colors.white24,
+                          color: context.textSecondary.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -404,7 +408,7 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context, String Function(String) t) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -412,25 +416,25 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 80,
-              height: 80,
+              width: 76,
+              height: 76,
               decoration: BoxDecoration(
-                color: Colors.amber.withValues(alpha: 0.1),
+                color: AppTheme.accentAmber.withValues(alpha: context.isDark ? 0.12 : 0.08),
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.amberAccent.withValues(alpha: 0.3)),
+                border: Border.all(color: AppTheme.accentAmber.withValues(alpha: 0.3)),
               ),
-              child: const Icon(Icons.lightbulb_outline_rounded, size: 40, color: Colors.amberAccent),
+              child: const Icon(Icons.lightbulb_outline_rounded, size: 36, color: AppTheme.accentAmber),
             ),
             const SizedBox(height: 18),
-            const Text(
-              '¡Sin sugerencias pendientes!',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+            Text(
+              t('suggestions.empty.title'),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: context.textPrimary),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Cuando falles preguntas en los Quizzes, aparecerán aquí para que puedas repasarlas y dominarlas.',
+            Text(
+              t('suggestions.empty.body'),
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 13, color: Colors.white54, height: 1.4),
+              style: TextStyle(fontSize: 13, color: context.textSecondary, height: 1.4),
             ),
           ],
         ),
@@ -438,18 +442,21 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
     );
   }
 
-  Future<void> _confirmClearAll(BuildContext context, QuizProvider quiz) async {
+  Future<void> _confirmClearAll(BuildContext context, QuizProvider quiz, String Function(String) t) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppTheme.darkCard,
-        title: const Text('¿Limpiar todas las sugerencias?'),
-        content: const Text('Se borrará la lista de ítems recomendados para repasar.'),
+        backgroundColor: context.cardBg,
+        title: Text(t('suggestions.clearAll.title'), style: TextStyle(color: context.textPrimary)),
+        content: Text(t('suggestions.clearAll.body'), style: TextStyle(color: context.textSecondary)),
         actions: [
-          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Cancelar')),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(t('suggestions.clearAll.cancel')),
+          ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Limpiar', style: TextStyle(color: AppTheme.error)),
+            child: Text(t('suggestions.clearAll.confirm'), style: const TextStyle(color: AppTheme.error)),
           ),
         ],
       ),

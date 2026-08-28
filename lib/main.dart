@@ -42,7 +42,7 @@ class EasyEnglishApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
-            themeMode: settings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+            themeMode: settings.themeMode,
             locale: settings.locale,
             supportedLocales: settings.supportedLocales,
             localizationsDelegates: settings.localizationsDelegates,

@@ -397,9 +397,9 @@ class NotificationService {
       final String title = '$wordEn ($wordEs)';
       final StringBuffer bodyBuffer = StringBuffer();
       if (grammarFormula != null && grammarFormula.trim().isNotEmpty) {
-        bodyBuffer.writeln('📐 Fórmula: $grammarFormula');
+        bodyBuffer.writeln('Fórmula: $grammarFormula');
       }
-      bodyBuffer.write('💡 Ejemplo: "$exampleText"');
+      bodyBuffer.write('Ejemplo: "$exampleText"');
       final String body = bodyBuffer.toString();
 
       final String jsonPayload = jsonEncode({

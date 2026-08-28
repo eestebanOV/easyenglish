@@ -30,6 +30,7 @@ class AppConstants {
   // Settings keys
   static const String keyDailyGoal = 'daily_goal';
   static const String keyDarkMode = 'dark_mode';
+  static const String keyThemeMode = 'theme_mode'; // 'light', 'dark', 'system'
   static const String keySoundEnabled = 'sound_enabled';
   static const String keyLanguage = 'language_code';
   static const String keyOnboardingComplete = 'onboarding_complete';

@@ -30,31 +30,13 @@ class CategoryCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                category.color.withValues(alpha: 0.12),
-                AppTheme.darkCard,
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            color: context.cardBg,
             borderRadius: BorderRadius.circular(AppTheme.radiusLg),
             border: Border.all(
-              color: category.color.withValues(alpha: 0.25),
+              color: category.color.withValues(alpha: context.isDark ? 0.35 : 0.25),
               width: 1.2,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: category.color.withValues(alpha: 0.08),
-                blurRadius: 16,
-                offset: const Offset(0, 6),
-              ),
-              BoxShadow(
-                color: AppTheme.shadowSoft,
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            boxShadow: context.cardShadow,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,10 +48,10 @@ class CategoryCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: category.color.withValues(alpha: 0.2),
+                      color: category.color.withValues(alpha: context.isDark ? 0.2 : 0.12),
                       borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                       border: Border.all(
-                        color: category.color.withValues(alpha: 0.35),
+                        color: category.color.withValues(alpha: 0.3),
                         width: 1,
                       ),
                     ),
@@ -82,17 +64,19 @@ class CategoryCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.06),
+                      color: context.isDark
+                          ? Colors.white.withValues(alpha: 0.06)
+                          : Colors.black.withValues(alpha: 0.04),
                       borderRadius: BorderRadius.circular(AppTheme.radiusRound),
-                      border: Border.all(color: Colors.white10),
+                      border: Border.all(color: context.border),
                     ),
                     child: Text(
-                      category.id == 'phrases' || category.id == 'travel'
-                          ? '${category.cardCount} ${t('cardcount.phrases')}'
-                          : '${category.cardCount} ${t('cardcount.words')}',
-                      style: const TextStyle(
+                      category.id == 'daily_phrases' || category.id == 'phrases'
+                          ? '${category.cardCount} ${t('catcount.phrases')}'
+                          : '${category.cardCount} ${t('catcount.words')}',
+                      style: TextStyle(
                         fontSize: 10,
-                        color: Colors.white70,
+                        color: context.textSecondary,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.2,
                       ),
@@ -103,10 +87,10 @@ class CategoryCard extends StatelessWidget {
               const SizedBox(height: 12),
               Text(
                 isEs ? category.nameEs : category.name,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
-                  color: Colors.white,
+                  color: context.textPrimary,
                   letterSpacing: -0.2,
                 ),
                 maxLines: 1,
@@ -117,7 +101,7 @@ class CategoryCard extends StatelessWidget {
                 isEs ? category.name : category.nameEs,
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: context.textSecondary,
                   fontWeight: FontWeight.w400,
                 ),
                 maxLines: 1,
@@ -129,7 +113,11 @@ class CategoryCard extends StatelessWidget {
                 children: [
                   Text(
                     t('home.dominio'),
-                    style: const TextStyle(fontSize: 10, color: Colors.white54, fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: context.textSecondary,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   Text(
                     '${masteryPercentage.toInt()}%',
@@ -146,7 +134,7 @@ class CategoryCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(4),
                 child: LinearProgressIndicator(
                   value: masteryPercentage / 100,
-                  backgroundColor: Colors.white12,
+                  backgroundColor: context.isDark ? Colors.white12 : Colors.black12,
                   valueColor: AlwaysStoppedAnimation<Color>(category.color),
                   minHeight: 4,
                 ),

@@ -25,8 +25,9 @@ class HomeScreen extends StatelessWidget {
     final t = settingsProvider.translate;
 
     if (flashcardProvider.isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+      return Scaffold(
+        backgroundColor: context.bg,
+        body: const Center(child: CircularProgressIndicator(color: AppTheme.primary)),
       );
     }
 
@@ -37,7 +38,7 @@ class HomeScreen extends StatelessWidget {
     final progress = stats.reviewsToday / (dailyGoal > 0 ? dailyGoal : 1);
 
     return Scaffold(
-      backgroundColor: AppTheme.darkBg,
+      backgroundColor: context.bg,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
@@ -55,15 +56,16 @@ class HomeScreen extends StatelessWidget {
                         t('home.greeting'),
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.white.withValues(alpha: 0.6),
+                          fontWeight: FontWeight.w500,
+                          color: context.textSecondary,
                         ),
                       ),
                       Text(
                         t('home.learnToday'),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          color: context.textPrimary,
                         ),
                       ),
                     ],
@@ -74,28 +76,16 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
               // Daily Goal Card
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF1E2640), Color(0xFF141A29)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(AppTheme.radiusXl),
-                  border: Border.all(
-                    color: AppTheme.primaryLight.withValues(alpha: 0.25),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppTheme.primaryDark.withValues(alpha: 0.2),
-                      blurRadius: 15,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
+                  color: context.cardBg,
+                  borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                  border: Border.all(color: context.border),
+                  boxShadow: context.cardShadow,
                 ),
                 child: Row(
                   children: [
@@ -105,10 +95,10 @@ class HomeScreen extends StatelessWidget {
                         children: [
                           Text(
                             t('home.dailyGoal'),
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              color: context.textPrimary,
                             ),
                           ),
                           const SizedBox(height: 6),
@@ -118,7 +108,7 @@ class HomeScreen extends StatelessWidget {
                                 : t('home.goalDone'),
                             style: TextStyle(
                               fontSize: 13,
-                              color: Colors.white.withValues(alpha: 0.7),
+                              color: context.textSecondary,
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -132,17 +122,20 @@ class HomeScreen extends StatelessWidget {
                                 ),
                               );
                             },
-                            icon: const Icon(Icons.play_arrow_rounded, size: 20),
+                            icon: const Icon(Icons.play_arrow_rounded, size: 18),
                             label: Text(
                               dueCards.isNotEmpty ? t('home.startReview') : t('home.practiceMore'),
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppTheme.accent,
-                              foregroundColor: AppTheme.darkBg,
+                              backgroundColor: AppTheme.primary,
+                              foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 18,
+                                horizontal: 16,
                                 vertical: 10,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                               ),
                             ),
                           ),
@@ -159,40 +152,43 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
 
               // Quick Stats Row
               Row(
                 children: [
                   Expanded(
                     child: _buildMiniStatCard(
+                      context: context,
                       icon: Icons.check_circle_outline_rounded,
                       title: t('home.learned'),
                       value: '${flashcardProvider.totalLearnedCount}',
                       color: AppTheme.success,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: _buildMiniStatCard(
+                      context: context,
                       icon: Icons.star_rounded,
                       title: t('home.mastered'),
                       value: '${flashcardProvider.totalMasteredCount}',
-                      color: AppTheme.warning,
+                      color: AppTheme.accentAmber,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: _buildMiniStatCard(
+                      context: context,
                       icon: Icons.layers_rounded,
                       title: t('home.totalCards'),
                       value: '${flashcardProvider.allCards.length}',
-                      color: AppTheme.primaryLight,
+                      color: AppTheme.primary,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
 
               // Quiz Challenge Card
               InkWell(
@@ -205,53 +201,56 @@ class HomeScreen extends StatelessWidget {
                     );
                   }
                 },
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF2E1C59), Color(0xFF192341)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                    color: context.isDark ? AppTheme.darkCardSecondary : const Color(0xFFF5F3FF),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                    border: Border.all(
+                      color: AppTheme.accentPurple.withValues(alpha: context.isDark ? 0.35 : 0.25),
                     ),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.purpleAccent.withValues(alpha: 0.35)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.purple.withValues(alpha: 0.15),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
+                    boxShadow: context.cardShadow,
                   ),
                   child: Row(
                     children: [
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: Colors.purpleAccent.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(12),
+                          color: AppTheme.accentPurple.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                         ),
-                        child: const Icon(Icons.quiz_rounded, color: Colors.purpleAccent, size: 24),
+                        child: const Icon(Icons.quiz_rounded, color: AppTheme.accentPurple, size: 22),
                       ),
                       const SizedBox(width: 14),
-                      const Expanded(
+                      Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Desafío de Quiz 🎯',
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
+                              t('home.quizChallenge.title'),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 15,
+                                color: context.textPrimary,
+                              ),
                             ),
-                            SizedBox(height: 3),
+                            const SizedBox(height: 2),
                             Text(
-                              'Pon a prueba tu vocabulario con 5 tipos de preguntas interactivas.',
-                              style: TextStyle(fontSize: 12, color: Colors.white70),
+                              t('home.quizChallenge.desc'),
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: context.textSecondary,
+                              ),
                             ),
                           ],
                         ),
                       ),
-                      const Icon(Icons.arrow_forward_ios_rounded, color: Colors.purpleAccent, size: 14),
+                      Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        color: context.textSecondary.withValues(alpha: 0.6),
+                        size: 14,
+                      ),
                     ],
                   ),
                 ),
@@ -264,26 +263,30 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   Text(
                     t('home.categoriesTitle'),
-                    style: const TextStyle(
-                      fontSize: 19,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w700,
+                      color: context.textPrimary,
                     ),
                   ),
                   TextButton(
                     onPressed: () => onNavigateTab?.call(1),
                     child: Text(
                       t('home.viewAll'),
-                      style: const TextStyle(color: AppTheme.primaryLight, fontSize: 13),
+                      style: const TextStyle(
+                        color: AppTheme.primary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
 
               // Horizontal Category List
               SizedBox(
-                height: 215,
+                height: 210,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: categories.take(4).length,
@@ -319,28 +322,30 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildMiniStatCard({
+    required BuildContext context,
     required IconData icon,
     required String title,
     required String value,
     required Color color,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
       decoration: BoxDecoration(
-        color: AppTheme.darkCard,
+        color: context.cardBg,
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        border: Border.all(color: AppTheme.darkBorder),
+        border: Border.all(color: context.border),
+        boxShadow: context.cardShadow,
       ),
       child: Column(
         children: [
-          Icon(icon, color: color, size: 22),
+          Icon(icon, color: color, size: 20),
           const SizedBox(height: 6),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+            style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              color: context.textPrimary,
             ),
           ),
           const SizedBox(height: 2),
@@ -348,8 +353,12 @@ class HomeScreen extends StatelessWidget {
             title,
             style: TextStyle(
               fontSize: 11,
-              color: Colors.white.withValues(alpha: 0.6),
+              fontWeight: FontWeight.w500,
+              color: context.textSecondary,
             ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),

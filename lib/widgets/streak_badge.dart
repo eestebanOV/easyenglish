@@ -15,21 +15,22 @@ class StreakBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     if (compact) {
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: AppTheme.accentOrange.withValues(alpha: 0.15),
+          color: AppTheme.accentAmber.withValues(alpha: context.isDark ? 0.15 : 0.1),
           borderRadius: BorderRadius.circular(AppTheme.radiusRound),
           border: Border.all(
-            color: AppTheme.accentOrange.withValues(alpha: 0.4),
+            color: AppTheme.accentAmber.withValues(alpha: 0.35),
             width: 1,
           ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              '🔥',
-              style: TextStyle(fontSize: 14),
+            const Icon(
+              Icons.local_fire_department_rounded,
+              size: 16,
+              color: AppTheme.accentAmber,
             ),
             const SizedBox(width: 4),
             Text(
@@ -37,7 +38,7 @@ class StreakBadge extends StatelessWidget {
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 13,
-                color: AppTheme.accentOrange,
+                color: AppTheme.accentAmber,
               ),
             ),
           ],
@@ -46,30 +47,32 @@ class StreakBadge extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppTheme.accentOrange.withValues(alpha: 0.2),
-            const Color(0xFFFF9E80).withValues(alpha: 0.1),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: context.cardBg,
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         border: Border.all(
-          color: AppTheme.accentOrange.withValues(alpha: 0.4),
-          width: 1.5,
+          color: AppTheme.accentAmber.withValues(alpha: context.isDark ? 0.35 : 0.25),
+          width: 1.2,
         ),
+        boxShadow: context.cardShadow,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-            '🔥',
-            style: TextStyle(fontSize: 28),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppTheme.accentAmber.withValues(alpha: context.isDark ? 0.15 : 0.1),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            ),
+            child: const Icon(
+              Icons.local_fire_department_rounded,
+              size: 26,
+              color: AppTheme.accentAmber,
+            ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 14),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -79,14 +82,14 @@ class StreakBadge extends StatelessWidget {
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
-                  color: AppTheme.accentOrange,
+                  color: AppTheme.accentAmber,
                 ),
               ),
-              const Text(
+              Text(
                 'Racha de estudio',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.white70,
+                  color: context.textSecondary,
                 ),
               ),
             ],

@@ -4,9 +4,9 @@ import '../core/constants.dart';
 import '../models/quiz_question.dart';
 import '../providers/flashcard_provider.dart';
 import '../providers/quiz_provider.dart';
+import '../providers/settings_provider.dart';
 import '../theme/app_theme.dart';
 import 'quiz_play_screen.dart';
-import 'suggestions_screen.dart';
 
 class QuizSetupScreen extends StatelessWidget {
   const QuizSetupScreen({super.key});
@@ -15,56 +15,25 @@ class QuizSetupScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final flashcards = context.watch<FlashcardProvider>();
     final quiz = context.watch<QuizProvider>();
+    final settings = context.watch<SettingsProvider>();
+    final t = settings.translate;
 
     final allCategories = flashcards.categories;
 
     return Scaffold(
-      backgroundColor: AppTheme.darkBg,
+      backgroundColor: context.bg,
       appBar: AppBar(
-        backgroundColor: AppTheme.darkSurface,
-        elevation: 0,
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.quiz_rounded, color: AppTheme.primaryLight, size: 22),
-            SizedBox(width: 8),
+            const Icon(Icons.quiz_rounded, color: AppTheme.primary, size: 22),
+            const SizedBox(width: 8),
             Text(
-              'Quiz & Desafíos',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              t('quiz.title'),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            tooltip: 'Sugerencias de repaso',
-            icon: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                const Icon(Icons.lightbulb_outline_rounded, color: Colors.amberAccent, size: 24),
-                if (quiz.pendingSuggestions.isNotEmpty)
-                  Positioned(
-                    right: -2,
-                    top: -2,
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: const BoxDecoration(
-                        color: Colors.redAccent,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Text(
-                        '${quiz.pendingSuggestions.length}',
-                        style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const SuggestionsScreen()),
-              );
-            },
-          ),
-        ],
+        actions: const [],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -72,65 +41,17 @@ class QuizSetupScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Suggestions banner if any pending
-              if (quiz.pendingSuggestions.isNotEmpty) ...[
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const SuggestionsScreen()),
-                    );
-                  },
-                  borderRadius: BorderRadius.circular(14),
-                  child: Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.amber.withValues(alpha: 0.15),
-                          Colors.orange.withValues(alpha: 0.10),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: Colors.amberAccent.withValues(alpha: 0.4)),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.lightbulb_rounded, color: Colors.amberAccent, size: 24),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Tienes ítems recomendados para repasar',
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white),
-                              ),
-                              Text(
-                                '${quiz.pendingSuggestions.length} palabras o frases que fallaste en quizzes anteriores.',
-                                style: const TextStyle(fontSize: 11, color: Colors.white60),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.amberAccent),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 22),
-              ],
-
               // 1. Category Selection
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    '1. CATEGORÍAS (MULTI-SELECCIÓN)',
+                  Text(
+                    t('quiz.categories'),
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.2,
-                      color: Colors.white54,
+                      color: context.textSecondary,
                     ),
                   ),
                   TextButton(
@@ -141,10 +62,19 @@ class QuizSetupScreen extends StatelessWidget {
                         quiz.selectAllCategories(allCategories.map((c) => c.id).toList());
                       }
                     },
-                    style: TextButton.styleFrom(padding: EdgeInsets.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
                     child: Text(
-                      quiz.selectedCategoryIds.length == allCategories.length ? 'Desmarcar' : 'Todas',
-                      style: const TextStyle(fontSize: 12, color: AppTheme.primaryLight),
+                      quiz.selectedCategoryIds.length == allCategories.length
+                          ? t('quiz.deselect')
+                          : t('quiz.selectAll'),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppTheme.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ],
@@ -164,17 +94,17 @@ class QuizSetupScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                        color: isSelected ? Colors.white : Colors.white70,
+                        color: isSelected ? Colors.white : context.textSecondary,
                       ),
                     ),
                     selected: isSelected,
-                    selectedColor: cat.color.withValues(alpha: 0.35),
-                    backgroundColor: AppTheme.darkCard,
+                    selectedColor: AppTheme.primary,
+                    backgroundColor: context.cardBg,
                     side: BorderSide(
-                      color: isSelected ? cat.color : AppTheme.darkBorder,
+                      color: isSelected ? AppTheme.primary : context.border,
                       width: isSelected ? 1.5 : 1.0,
                     ),
-                    avatar: isSelected ? Icon(Icons.check, size: 14, color: cat.color) : null,
+                    avatar: isSelected ? const Icon(Icons.check, size: 14, color: Colors.white) : null,
                     onSelected: (val) {
                       quiz.toggleCategory(cat.id);
                     },
@@ -182,32 +112,32 @@ class QuizSetupScreen extends StatelessWidget {
                 }).toList(),
               ),
 
-              const SizedBox(height: 26),
+              const SizedBox(height: 24),
 
               // 2. Question Types
-              const Text(
-                '2. TIPO DE DESAFÍO',
+              Text(
+                t('quiz.typeHeader'),
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.2,
-                  color: Colors.white54,
+                  color: context.textSecondary,
                 ),
               ),
               const SizedBox(height: 10),
 
-              _buildTypeSelector(quiz),
+              _buildTypeSelector(context, quiz, t),
 
-              const SizedBox(height: 26),
+              const SizedBox(height: 24),
 
               // 3. Quiz Size / Length
-              const Text(
-                '3. CANTIDAD DE PREGUNTAS',
+              Text(
+                t('quiz.sizeHeader'),
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.2,
-                  color: Colors.white54,
+                  color: context.textSecondary,
                 ),
               ),
               const SizedBox(height: 10),
@@ -220,16 +150,17 @@ class QuizSetupScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 4),
                       child: InkWell(
                         onTap: () => quiz.setQuizSize(size),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 150),
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           decoration: BoxDecoration(
-                            color: isSelected ? AppTheme.primaryLight : AppTheme.darkCard,
-                            borderRadius: BorderRadius.circular(12),
+                            color: isSelected ? AppTheme.primary : context.cardBg,
+                            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                             border: Border.all(
-                              color: isSelected ? AppTheme.primaryLight : AppTheme.darkBorder,
+                              color: isSelected ? AppTheme.primary : context.border,
                             ),
+                            boxShadow: isSelected ? null : context.cardShadow,
                           ),
                           child: Column(
                             children: [
@@ -238,15 +169,17 @@ class QuizSetupScreen extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
-                                  color: isSelected ? Colors.white : Colors.white70,
+                                  color: isSelected ? Colors.white : context.textPrimary,
                                 ),
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                'preguntas',
+                                t('quiz.questionsUnit'),
                                 style: TextStyle(
                                   fontSize: 10,
-                                  color: isSelected ? Colors.white.withValues(alpha: 0.8) : Colors.white38,
+                                  color: isSelected
+                                      ? Colors.white.withValues(alpha: 0.85)
+                                      : context.textSecondary,
                                 ),
                               ),
                             ],
@@ -258,7 +191,7 @@ class QuizSetupScreen extends StatelessWidget {
                 }).toList(),
               ),
 
-              const SizedBox(height: 36),
+              const SizedBox(height: 32),
 
               // Launch Button
               SizedBox(
@@ -270,19 +203,38 @@ class QuizSetupScreen extends StatelessWidget {
                       MaterialPageRoute(builder: (_) => const QuizPlayScreen()),
                     );
                   },
-                  icon: const Icon(Icons.play_arrow_rounded, size: 24),
+                  icon: const Icon(Icons.play_arrow_rounded, size: 22),
                   label: Text(
-                    'Iniciar Quiz (${quiz.selectedQuizSize} preguntas)',
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    '${t('quiz.start')} (${quiz.selectedQuizSize} ${t('quiz.questionsUnit')})',
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.accent,
+                    backgroundColor: AppTheme.primary,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                    elevation: 4,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusMd)),
+                    elevation: 0,
                   ),
                 ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Info note linking to suggestions tab
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.lightbulb_outline_rounded, size: 14, color: AppTheme.accentAmber),
+                  const SizedBox(width: 6),
+                  Text(
+                    t('quiz.infoNote'),
+                    style: TextStyle(fontSize: 11, color: context.textSecondary),
+                  ),
+                  Text(
+                    t('nav.suggestions'),
+                    style: const TextStyle(fontSize: 11, color: AppTheme.accentAmber, fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
             ],
           ),
@@ -291,87 +243,88 @@ class QuizSetupScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTypeSelector(QuizProvider quiz) {
+  Widget _buildTypeSelector(BuildContext context, QuizProvider quiz, String Function(String) t) {
     final List<Map<String, dynamic>> types = [
       {
         'type': null,
-        'title': '🎲 Mezcla Aleatoria',
-        'subtitle': 'Combina los 5 formatos en una sesión dinámica (Recomendado)',
+        'icon': Icons.shuffle_rounded,
+        'title': t('quiz.type.mixed'),
+        'subtitle': t('quiz.type.mixedDesc'),
       },
       {
         'type': QuizQuestionType.multipleChoice,
-        'title': '🎯 Opción Múltiple',
-        'subtitle': 'Traducción y completar espacios en blanco con 4 opciones',
+        'icon': Icons.radio_button_checked_rounded,
+        'title': t('quiz.type.multipleChoice'),
+        'subtitle': t('quiz.type.multipleChoiceDesc'),
       },
       {
         'type': QuizQuestionType.buildSentence,
-        'title': '🧩 Construir Oración',
-        'subtitle': 'Ordena palabras y fragmentos desordenados',
+        'icon': Icons.sort_rounded,
+        'title': t('quiz.type.buildSentence'),
+        'subtitle': t('quiz.type.buildSentenceDesc'),
       },
       {
         'type': QuizQuestionType.speedQuiz,
-        'title': '⚡ Speed Quiz',
-        'subtitle': 'Contrarreloj veloz (7 segundos por pregunta)',
+        'icon': Icons.bolt_rounded,
+        'title': t('quiz.type.speedQuiz'),
+        'subtitle': t('quiz.type.speedQuizDesc'),
       },
       {
         'type': QuizQuestionType.situation,
-        'title': '🎭 Situacional',
-        'subtitle': 'Elige la frase o tiempo adecuado según el contexto',
+        'icon': Icons.chat_bubble_outline_rounded,
+        'title': t('quiz.type.situation'),
+        'subtitle': t('quiz.type.situationDesc'),
       },
       {
         'type': QuizQuestionType.findError,
-        'title': '🔎 Encuentra el Error',
-        'subtitle': 'Detecta y corrige el fallo gramatical en la oración',
+        'icon': Icons.find_replace_rounded,
+        'title': t('quiz.type.findError'),
+        'subtitle': t('quiz.type.findErrorDesc'),
       },
     ];
 
     return Column(
       children: types.map((item) {
         final QuizQuestionType? type = item['type'] as QuizQuestionType?;
+        final IconData icon = item['icon'] as IconData;
         final isSelected = quiz.selectedQuestionType == type;
 
         return Padding(
           padding: const EdgeInsets.only(bottom: 8),
           child: InkWell(
             onTap: () => quiz.setQuestionType(type),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 150),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: isSelected ? AppTheme.primaryLight.withValues(alpha: 0.15) : AppTheme.darkCard,
-                borderRadius: BorderRadius.circular(12),
+                color: isSelected
+                    ? AppTheme.primary.withValues(alpha: context.isDark ? 0.15 : 0.08)
+                    : context.cardBg,
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                 border: Border.all(
-                  color: isSelected ? AppTheme.primaryLight : AppTheme.darkBorder,
+                  color: isSelected ? AppTheme.primary : context.border,
                   width: isSelected ? 1.5 : 1.0,
                 ),
+                boxShadow: isSelected ? null : context.cardShadow,
               ),
               child: Row(
                 children: [
                   Container(
-                    width: 20,
-                    height: 20,
-                    margin: const EdgeInsets.only(left: 4, right: 12),
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: isSelected ? AppTheme.primaryLight : Colors.white38,
-                        width: 2,
-                      ),
+                      color: isSelected
+                          ? AppTheme.primary.withValues(alpha: 0.15)
+                          : context.cardSecondary,
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    child: isSelected
-                        ? Center(
-                            child: Container(
-                              width: 10,
-                              height: 10,
-                              decoration: const BoxDecoration(
-                                color: AppTheme.primaryLight,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          )
-                        : null,
+                    child: Icon(
+                      icon,
+                      size: 18,
+                      color: isSelected ? AppTheme.primary : context.textSecondary,
+                    ),
                   ),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -381,16 +334,40 @@ class QuizSetupScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                            color: Colors.white,
+                            color: context.textPrimary,
                           ),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           item['subtitle'] as String,
-                          style: const TextStyle(fontSize: 11, color: Colors.white60),
+                          style: TextStyle(fontSize: 11, color: context.textSecondary),
                         ),
                       ],
                     ),
+                  ),
+                  Container(
+                    width: 18,
+                    height: 18,
+                    margin: const EdgeInsets.only(left: 8),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: isSelected ? AppTheme.primary : context.textSecondary.withValues(alpha: 0.4),
+                        width: 2,
+                      ),
+                    ),
+                    child: isSelected
+                        ? Center(
+                            child: Container(
+                              width: 8,
+                              height: 8,
+                              decoration: const BoxDecoration(
+                                color: AppTheme.primary,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          )
+                        : null,
                   ),
                 ],
               ),

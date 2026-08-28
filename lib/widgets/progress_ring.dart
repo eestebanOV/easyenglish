@@ -33,8 +33,8 @@ class ProgressRing extends StatelessWidget {
             child: CircularProgressIndicator(
               value: clampedProgress,
               strokeWidth: 8,
-              backgroundColor: AppTheme.darkBorder,
-              valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.accent),
+              backgroundColor: context.isDark ? AppTheme.darkBorder : const Color(0xFFE2E8F0),
+              valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primary),
               strokeCap: StrokeCap.round,
             ),
           ),
@@ -43,18 +43,18 @@ class ProgressRing extends StatelessWidget {
             children: [
               Text(
                 '$current/$total',
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
-                  color: Colors.white,
+                  color: context.textPrimary,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 label,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 10,
-                  color: Colors.white60,
+                  color: context.textSecondary,
                 ),
               ),
             ],

@@ -13,7 +13,7 @@ class SettingsProvider extends ChangeNotifier {
   final StorageService _storage = StorageService();
   final NotificationService _notificationService = NotificationService();
 
-  bool _isDarkMode = true;
+  ThemeMode _themeMode = ThemeMode.dark;
   bool _soundEnabled = true;
   int _dailyGoal = AppConstants.defaultDailyGoal;
   bool _isOnboardingCompleted = false;
@@ -23,7 +23,11 @@ class SettingsProvider extends ChangeNotifier {
   int _reminderMinute = 0;
   ItemNotificationConfig? _itemNotificationConfig;
 
-  bool get isDarkMode => _isDarkMode;
+  ThemeMode get themeMode => _themeMode;
+  bool get isDarkMode => _themeMode == ThemeMode.dark;
+  bool get isLightMode => _themeMode == ThemeMode.light;
+  bool get isSystemMode => _themeMode == ThemeMode.system;
+
   bool get soundEnabled => _soundEnabled;
   int get dailyGoal => _dailyGoal;
   bool get isOnboardingCompleted => _isOnboardingCompleted;
@@ -44,71 +48,43 @@ class SettingsProvider extends ChangeNotifier {
 
   static const Map<String, Map<String, String>> _strings = {
     'es': {
-      // App
+      // App & Navigation
       'app.title': 'EasyEnglish',
+      'nav.home': 'Inicio',
       'nav.categories': 'Categorías',
+      'nav.quiz': 'Quiz',
+      'nav.suggestions': 'Sugerencias',
       'nav.study': 'Estudiar',
       'nav.progress': 'Progreso',
       'nav.settings': 'Ajustes',
 
-      // Home / Categorías
-      'nav.home': 'Inicio',
-      'home.categories': 'CATEGORÍAS',
-      'home.dominio': 'Dominio',
-      'home.today.title': 'HOY',
-      'home.streak': 'Días seguidos',
-      'home.reviews': 'Revisiones',
-      'home.reviews.empty': '¡Todo al día! No hay tarjetas para repasar.',
-      'home.studyNow': 'Estudiar ahora',
-      'home.startOnboarding': 'Comenzar',
-      'home.welcome.title': 'Bienvenido a EasyEnglish',
-      'home.welcome.subtitle':
-          'Aprende vocabulario y verbos en inglés con repetición espaciada.',
+      // Home
       'home.greeting': '¡Hola!',
       'home.learnToday': 'Aprende hoy',
       'home.dailyGoal': 'Meta Diaria',
       'home.dueCards': 'tarjetas pendientes para hoy',
-      'home.goalDone': '¡Felicidades! Meta completada por hoy 🎉',
+      'home.goalDone': 'Meta diaria completada con éxito',
       'home.startReview': 'Comenzar Repaso',
       'home.practiceMore': 'Practicar Más',
-      'home.categoriesTitle': 'Categorías',
+      'home.categoriesTitle': 'Categorías de Vocabulario',
       'home.viewAll': 'Ver todas',
       'home.learned': 'Aprendidas',
       'home.mastered': 'Dominadas',
       'home.totalCards': 'Total',
-
-      // Stats
-      'stats.title': 'Mi Progreso',
-      'stats.totalReviews': 'Repasos Totales',
-      'stats.bestStreak': 'Mejor Racha',
-      'stats.days': 'días',
-      'stats.distribution': 'Distribución de Vocabulario',
-      'stats.noData': 'Sin datos',
-      'stats.legendMastered': 'Dominadas',
-      'stats.legendLearning': 'En aprendizaje',
-      'stats.legendNew': 'Nuevas',
-      'stats.catProgress': 'Progreso por Categoría',
+      'home.streak': 'Días seguidos',
+      'home.quizChallenge.title': 'Desafío de Quiz',
+      'home.quizChallenge.desc': 'Pon a prueba tu vocabulario con 5 tipos de preguntas dinámicas.',
+      'home.welcome.title': 'Bienvenido a EasyEnglish',
+      'home.welcome.subtitle': 'Aprende vocabulario y verbos en inglés con repetición espaciada.',
 
       // Categories
       'cats.title': 'Categorías de Vocabulario',
-
-      // Category card labels
-      'cardcount.words': 'palabras',
-      'cardcount.phrases': 'frases',
-
-      // SRS
-      'srs.title': 'Repaso',
-      'srs.hard': 'Difícil',
-      'srs.normal': 'Normal',
-      'srs.easy': 'Fácil',
-      'srs.finished.title': '¡Sesión completada!',
-      'srs.finished.subtitle': 'Excelente trabajo. Todas las tarjetas programadas han sido revisadas.',
-      'srs.finished.back': 'Volver al inicio',
-      'srs.steps': 'Tarjeta',
-
-      // Category detail
+      'catcount.words': 'palabras',
+      'catcount.phrases': 'frases',
       'cat.learned.checked': 'APRENDIDO',
-      'cat.search': 'Buscar...',
+      'cat.search': 'Buscar palabra o frase...',
+      'cat.pinForNotif': 'Fijar para Notificaciones',
+      'cat.pinnedSuccess': 'Palabra fijada para notificaciones del día',
 
       // Flashcard
       'card.frontTag': 'PALABRA & TRADUCCIÓN',
@@ -122,8 +98,107 @@ class SettingsProvider extends ChangeNotifier {
       'card.extra.title': 'MÁS EJEMPLOS',
       'card.backHint': 'Toca para volver al frente',
 
+      // SRS Review
+      'srs.title': 'Repaso Espaciado',
+      'srs.hard': 'Difícil',
+      'srs.normal': 'Normal',
+      'srs.easy': 'Fácil',
+      'srs.finished.title': '¡Sesión completada!',
+      'srs.finished.subtitle': 'Excelente trabajo. Todas las tarjetas programadas han sido revisadas.',
+      'srs.finished.back': 'Volver al inicio',
+      'srs.steps': 'Tarjeta',
+
+      // Stats
+      'stats.title': 'Mi Progreso',
+      'stats.totalReviews': 'Repasos Totales',
+      'stats.bestStreak': 'Mejor Racha',
+      'stats.days': 'días',
+      'stats.distribution': 'Distribución de Vocabulario',
+      'stats.noData': 'Sin datos aún',
+      'stats.legendMastered': 'Dominadas',
+      'stats.legendLearning': 'En aprendizaje',
+      'stats.legendNew': 'Nuevas',
+      'stats.catProgress': 'Progreso por Categoría',
+
+      // Quiz Setup
+      'quiz.title': 'Quiz & Desafíos',
+      'quiz.categories': '1. CATEGORÍAS (MULTI-SELECCIÓN)',
+      'quiz.selectAll': 'Todas',
+      'quiz.deselect': 'Desmarcar',
+      'quiz.typeHeader': '2. TIPO DE DESAFÍO',
+      'quiz.sizeHeader': '3. CANTIDAD DE PREGUNTAS',
+      'quiz.questionsUnit': 'preguntas',
+      'quiz.start': 'Iniciar Quiz',
+      'quiz.type.mixed': 'Mezcla Aleatoria',
+      'quiz.type.mixedDesc': 'Combina los 5 formatos en una sesión dinámica (Recomendado)',
+      'quiz.type.multipleChoice': 'Opción Múltiple',
+      'quiz.type.multipleChoiceDesc': 'Traducción y completar espacios en blanco con 4 opciones',
+      'quiz.type.buildSentence': 'Construir Oración',
+      'quiz.type.buildSentenceDesc': 'Ordena palabras y fragmentos desordenados',
+      'quiz.type.speedQuiz': 'Speed Quiz',
+      'quiz.type.speedQuizDesc': 'Contrarreloj veloz (7 segundos por pregunta)',
+      'quiz.type.situation': 'Situacional',
+      'quiz.type.situationDesc': 'Elige la frase o tiempo adecuado según el contexto',
+      'quiz.type.findError': 'Encuentra el Error',
+      'quiz.type.findErrorDesc': 'Detecta y corrige el fallo gramatical en la oración',
+      'quiz.infoNote': 'Las preguntas que falles aparecerán en tu pestaña ',
+
+      // Quiz Play & Feedback
+      'quiz.questionCounter': 'Pregunta',
+      'quiz.checkSentence': 'Comprobar Oración',
+      'quiz.availableWords': 'PALABRAS DISPONIBLES',
+      'quiz.tapToOrder': 'Toca las palabras abajo para ordenarlas aquí',
+      'quiz.correct': '¡Excelente! Respuesta Correcta',
+      'quiz.incorrect': 'Respuesta Incorrecta',
+      'quiz.savedToSuggestions': 'Guardado en Sugerencias para repasar.',
+      'quiz.nextQuestion': 'Siguiente Pregunta',
+      'quiz.viewResults': 'Ver Resultados',
+      'quiz.exitDialog.title': '¿Salir del Quiz?',
+      'quiz.exitDialog.body': 'Si sales ahora, se perderá el progreso de esta sesión.',
+      'quiz.exitDialog.cancel': 'Continuar',
+      'quiz.exitDialog.confirm': 'Salir',
+
+      // Quiz Summary
+      'quiz.results.great': '¡Excelente Dominio!',
+      'quiz.results.good': '¡Buen Trabajo!',
+      'quiz.results.practice': '¡Sigue Practicando!',
+      'quiz.results.subtitle': 'Has completado el quiz de',
+      'quiz.results.score': 'PUNTUACIÓN',
+      'quiz.results.accuracy': 'PRECISIÓN',
+      'quiz.results.bestStreak': 'MEJOR RACHA',
+      'quiz.results.correctCount': 'correctas',
+      'quiz.results.incorrectCount': 'falladas',
+      'quiz.results.itemsSaved': 'ítems agregados a tus Sugerencias para repasar.',
+      'quiz.results.retry': 'Repetir Quiz',
+      'quiz.results.viewSuggestions': 'Ver Sugerencias',
+      'quiz.results.backHome': 'Volver al Inicio',
+
+      // Suggestions
+      'suggestions.title': 'Sugerencias de Repaso',
+      'suggestions.filter.pending': 'Pendientes',
+      'suggestions.filter.all': 'Todas',
+      'suggestions.filter.resolved': 'Dominadas',
+      'suggestions.failedTimes': 'Fallado',
+      'suggestions.formula': 'Fórmula',
+      'suggestions.reviewCard': 'Repasar Tarjeta',
+      'suggestions.markResolved': 'Marcar como dominado',
+      'suggestions.markPending': 'Marcar como pendiente',
+      'suggestions.delete': 'Eliminar sugerencia',
+      'suggestions.empty.title': '¡Sin sugerencias pendientes!',
+      'suggestions.empty.body': 'Cuando falles preguntas en los Quizzes, aparecerán aquí para que puedas repasarlas y dominarlas.',
+      'suggestions.clearAll.title': '¿Limpiar todas las sugerencias?',
+      'suggestions.clearAll.body': 'Se borrará la lista de ítems recomendados para repasar.',
+      'suggestions.clearAll.cancel': 'Cancelar',
+      'suggestions.clearAll.confirm': 'Limpiar',
+
       // Settings
       'settings.title': 'Configuración',
+      'settings.themeGroup': 'APARIENCIA Y TEMA',
+      'settings.theme.title': 'Tema visual',
+      'settings.theme.light': 'Claro',
+      'settings.theme.dark': 'Oscuro',
+      'settings.theme.system': 'Automático',
+      'settings.theme.systemDesc': 'Se adapta automáticamente al tema del sistema',
       'settings.studyGroup': 'PREFERENCIAS DE ESTUDIO',
       'settings.dailyGoal': 'Meta diaria',
       'settings.dailyGoal.subtitle': 'palabras por día',
@@ -137,12 +212,12 @@ class SettingsProvider extends ChangeNotifier {
       'settings.notif.time': 'Hora del recordatorio',
       'settings.notif.testInstant': 'Notificación instantánea (Prueba)',
       'settings.notif.testScheduled': 'Notificación programada en 3s (Prueba)',
-      'settings.notif.instantTitle': '¡Momento de practicar inglés! 🚀',
-      'settings.notif.instantBody': 'Tu meta diaria te espera. ¡Vamos a aprender unas palabras!',
-      'settings.notif.scheduledTitle': 'Recordatorio en 3 segundos ⏰',
-      'settings.notif.scheduledBody': '¡Excelente! Las notificaciones programadas funcionan a la perfección.',
-      'settings.notif.dailyTitle': 'Hora de tu sesión de EasyEnglish 📚',
-      'settings.notif.dailyBody': 'Dedica 5 minutos hoy para mantener activa tu racha de aprendizaje.',
+      'settings.notif.instantTitle': 'Momento de practicar inglés',
+      'settings.notif.instantBody': 'Tu meta diaria te espera. Vamos a aprender unas palabras.',
+      'settings.notif.scheduledTitle': 'Recordatorio programado',
+      'settings.notif.scheduledBody': 'Las notificaciones programadas funcionan correctamente.',
+      'settings.notif.dailyTitle': 'Hora de tu sesión de EasyEnglish',
+      'settings.notif.dailyBody': 'Dedica unos minutos hoy para mantener activa tu racha de aprendizaje.',
       'settings.notif.openSettings': 'Configurar permisos de notificación',
       'settings.notif.sentInstant': '¡Notificación enviada!',
       'settings.notif.scheduledSent': '¡Notificación programada en 3 segundos!',
@@ -170,8 +245,8 @@ class SettingsProvider extends ChangeNotifier {
       'settings.itemNotif.slotsSummary': 'notificaciones programadas',
 
       'settings.dataGroup': 'DATOS Y ALMACENAMIENTO',
-      'settings.language.title': 'Idioma de la app',
-      'settings.language.subtitle': 'Elige el idioma de la interfaz',
+      'settings.language.title': 'Idioma de la interfaz',
+      'settings.language.subtitle': 'Elige el idioma de los menús y botones',
       'settings.reset.title': 'Reiniciar Progreso',
       'settings.reset.subtitle': 'Borrar historial y tarjetas aprendidas',
       'settings.reset.dialog.title': '¿Reiniciar todo el progreso?',
@@ -189,7 +264,7 @@ class SettingsProvider extends ChangeNotifier {
       'onb.page1.title': 'Aprende inglés sin esfuerzo',
       'onb.page1.sub': 'Vocabulario, frases útiles y verbos irregulares con tarjetas interactivas y audio de pronunciación.',
       'onb.page2.title': 'Repetición espaciada inteligente',
-      'onb.page2.sub': 'Sistema de 3 botones (Difícil / Normal / Fácil) que programa cada tarjeta en el momento ideal para que no olvides nada.',
+      'onb.page2.sub': 'Sistema de 3 opciones (Difícil / Normal / Fácil) que programa cada tarjeta en el momento ideal.',
       'onb.page3.title': 'Tu Meta Diaria',
       'onb.page3.sub': 'Elige cuántas palabras nuevas deseas dominar cada día.',
 
@@ -197,72 +272,43 @@ class SettingsProvider extends ChangeNotifier {
       'splash.loading': 'Cargando EasyEnglish...',
     },
     'en': {
-      // App
+      // App & Navigation
       'app.title': 'EasyEnglish',
+      'nav.home': 'Home',
       'nav.categories': 'Categories',
+      'nav.quiz': 'Quiz',
+      'nav.suggestions': 'Suggestions',
       'nav.study': 'Study',
       'nav.progress': 'Progress',
       'nav.settings': 'Settings',
 
-      // Home / Categorías
-      'nav.home': 'Home',
-      'home.categories': 'CATEGORIES',
-      'home.dominio': 'Mastery',
-      'home.today.title': 'TODAY',
-      'home.streak': 'Day streak',
-      'home.reviews': 'Reviews due',
-      'home.reviews.empty': 'All caught up! No cards scheduled today.',
-      'home.studyNow': 'Study now',
-      'home.startOnboarding': 'Get started',
-      'home.welcome.title': 'Welcome to EasyEnglish',
-      'home.welcome.subtitle':
-          'Learn English vocabulary and verbs with spaced repetition.',
+      // Home
       'home.greeting': 'Hi there!',
       'home.learnToday': 'Learn today',
       'home.dailyGoal': 'Daily Goal',
       'home.dueCards': 'cards due today',
-      'home.goalDone': 'Congrats! Daily goal complete 🎉',
+      'home.goalDone': 'Daily goal completed successfully',
       'home.startReview': 'Start Review',
       'home.practiceMore': 'Practice More',
-      'home.categoriesTitle': 'Categories',
+      'home.categoriesTitle': 'Vocabulary Categories',
       'home.viewAll': 'View all',
       'home.learned': 'Learned',
       'home.mastered': 'Mastered',
       'home.totalCards': 'Total',
-
-      // Stats
-      'stats.title': 'My Progress',
-      'stats.totalReviews': 'Total Reviews',
-      'stats.bestStreak': 'Best Streak',
-      'stats.days': 'days',
-      'stats.distribution': 'Vocabulary Distribution',
-      'stats.noData': 'No data',
-      'stats.legendMastered': 'Mastered',
-      'stats.legendLearning': 'In progress',
-      'stats.legendNew': 'New',
-      'stats.catProgress': 'Progress by Category',
+      'home.streak': 'Day streak',
+      'home.quizChallenge.title': 'Quiz Challenge',
+      'home.quizChallenge.desc': 'Test your vocabulary with 5 dynamic question formats.',
+      'home.welcome.title': 'Welcome to EasyEnglish',
+      'home.welcome.subtitle': 'Learn English vocabulary and verbs with spaced repetition.',
 
       // Categories
       'cats.title': 'Vocabulary Categories',
-
-      // Category card labels
-      'cardcount.words': 'words',
-      'cardcount.phrases': 'phrases',
-
-      // SRS
-      'srs.title': 'Review',
-      'srs.hard': 'Hard',
-      'srs.normal': 'Good',
-      'srs.easy': 'Easy',
-      'srs.finished.title': 'Session complete!',
-      'srs.finished.subtitle':
-          'Great job. All scheduled cards have been reviewed.',
-      'srs.finished.back': 'Back to home',
-      'srs.steps': 'Card',
-
-      // Category detail
+      'catcount.words': 'words',
+      'catcount.phrases': 'phrases',
       'cat.learned.checked': 'LEARNED',
-      'cat.search': 'Search...',
+      'cat.search': 'Search word or phrase...',
+      'cat.pinForNotif': 'Pin for Notifications',
+      'cat.pinnedSuccess': 'Word pinned for daily notifications',
 
       // Flashcard
       'card.frontTag': 'WORD & TRANSLATION',
@@ -276,8 +322,107 @@ class SettingsProvider extends ChangeNotifier {
       'card.extra.title': 'MORE EXAMPLES',
       'card.backHint': 'Tap to flip back',
 
+      // SRS Review
+      'srs.title': 'Spaced Review',
+      'srs.hard': 'Hard',
+      'srs.normal': 'Good',
+      'srs.easy': 'Easy',
+      'srs.finished.title': 'Session complete!',
+      'srs.finished.subtitle': 'Great job. All scheduled cards have been reviewed.',
+      'srs.finished.back': 'Back to home',
+      'srs.steps': 'Card',
+
+      // Stats
+      'stats.title': 'My Progress',
+      'stats.totalReviews': 'Total Reviews',
+      'stats.bestStreak': 'Best Streak',
+      'stats.days': 'days',
+      'stats.distribution': 'Vocabulary Distribution',
+      'stats.noData': 'No data yet',
+      'stats.legendMastered': 'Mastered',
+      'stats.legendLearning': 'In progress',
+      'stats.legendNew': 'New',
+      'stats.catProgress': 'Progress by Category',
+
+      // Quiz Setup
+      'quiz.title': 'Quiz & Challenges',
+      'quiz.categories': '1. CATEGORIES (MULTI-SELECT)',
+      'quiz.selectAll': 'All',
+      'quiz.deselect': 'Deselect',
+      'quiz.typeHeader': '2. CHALLENGE TYPE',
+      'quiz.sizeHeader': '3. QUESTION COUNT',
+      'quiz.questionsUnit': 'questions',
+      'quiz.start': 'Start Quiz',
+      'quiz.type.mixed': 'Mixed Challenge',
+      'quiz.type.mixedDesc': 'Combines all 5 formats dynamically (Recommended)',
+      'quiz.type.multipleChoice': 'Multiple Choice',
+      'quiz.type.multipleChoiceDesc': 'Translation and fill-in-the-blank with 4 options',
+      'quiz.type.buildSentence': 'Build Sentence',
+      'quiz.type.buildSentenceDesc': 'Order scrambled words and fragments',
+      'quiz.type.speedQuiz': 'Speed Quiz',
+      'quiz.type.speedQuizDesc': 'Fast-paced countdown (7 seconds per question)',
+      'quiz.type.situation': 'Situational',
+      'quiz.type.situationDesc': 'Pick the right phrase or tense based on context',
+      'quiz.type.findError': 'Find Error',
+      'quiz.type.findErrorDesc': 'Identify and correct the grammatical mistake',
+      'quiz.infoNote': 'Questions you miss will be saved in your ',
+
+      // Quiz Play & Feedback
+      'quiz.questionCounter': 'Question',
+      'quiz.checkSentence': 'Check Sentence',
+      'quiz.availableWords': 'AVAILABLE WORDS',
+      'quiz.tapToOrder': 'Tap words below to arrange them here',
+      'quiz.correct': 'Great! Correct Answer',
+      'quiz.incorrect': 'Incorrect Answer',
+      'quiz.savedToSuggestions': 'Saved to Suggestions for review.',
+      'quiz.nextQuestion': 'Next Question',
+      'quiz.viewResults': 'View Results',
+      'quiz.exitDialog.title': 'Exit Quiz?',
+      'quiz.exitDialog.body': 'If you exit now, progress in this session will be lost.',
+      'quiz.exitDialog.cancel': 'Continue',
+      'quiz.exitDialog.confirm': 'Exit',
+
+      // Quiz Summary
+      'quiz.results.great': 'Great Mastery!',
+      'quiz.results.good': 'Good Job!',
+      'quiz.results.practice': 'Keep Practicing!',
+      'quiz.results.subtitle': 'You completed the quiz of',
+      'quiz.results.score': 'SCORE',
+      'quiz.results.accuracy': 'ACCURACY',
+      'quiz.results.bestStreak': 'BEST STREAK',
+      'quiz.results.correctCount': 'correct',
+      'quiz.results.incorrectCount': 'missed',
+      'quiz.results.itemsSaved': 'items saved in your Suggestions for review.',
+      'quiz.results.retry': 'Retry Quiz',
+      'quiz.results.viewSuggestions': 'View Suggestions',
+      'quiz.results.backHome': 'Back to Home',
+
+      // Suggestions
+      'suggestions.title': 'Review Suggestions',
+      'suggestions.filter.pending': 'Pending',
+      'suggestions.filter.all': 'All',
+      'suggestions.filter.resolved': 'Mastered',
+      'suggestions.failedTimes': 'Missed',
+      'suggestions.formula': 'Formula',
+      'suggestions.reviewCard': 'Review Card',
+      'suggestions.markResolved': 'Mark as mastered',
+      'suggestions.markPending': 'Mark as pending',
+      'suggestions.delete': 'Delete suggestion',
+      'suggestions.empty.title': 'No pending suggestions!',
+      'suggestions.empty.body': 'Questions you miss during quizzes will appear here so you can review and master them.',
+      'suggestions.clearAll.title': 'Clear all suggestions?',
+      'suggestions.clearAll.body': 'The list of recommended review items will be cleared.',
+      'suggestions.clearAll.cancel': 'Cancel',
+      'suggestions.clearAll.confirm': 'Clear',
+
       // Settings
       'settings.title': 'Settings',
+      'settings.themeGroup': 'APPEARANCE & THEME',
+      'settings.theme.title': 'Visual theme',
+      'settings.theme.light': 'Light',
+      'settings.theme.dark': 'Dark',
+      'settings.theme.system': 'System',
+      'settings.theme.systemDesc': 'Automatically matches device system theme',
       'settings.studyGroup': 'STUDY PREFERENCES',
       'settings.dailyGoal': 'Daily goal',
       'settings.dailyGoal.subtitle': 'words per day',
@@ -291,12 +436,12 @@ class SettingsProvider extends ChangeNotifier {
       'settings.notif.time': 'Reminder time',
       'settings.notif.testInstant': 'Instant notification (Test)',
       'settings.notif.testScheduled': 'Scheduled notification in 3s (Test)',
-      'settings.notif.instantTitle': 'Time to practice English! 🚀',
-      'settings.notif.instantBody': 'Your daily goal is waiting. Let\'s learn some words!',
-      'settings.notif.scheduledTitle': 'Reminder in 3 seconds ⏰',
-      'settings.notif.scheduledBody': 'Great! Scheduled notifications are working perfectly.',
-      'settings.notif.dailyTitle': 'Time for your EasyEnglish session 📚',
-      'settings.notif.dailyBody': 'Spend 5 minutes today to keep your learning streak going.',
+      'settings.notif.instantTitle': 'Time to practice English',
+      'settings.notif.instantBody': 'Your daily goal is waiting. Let\'s learn some words.',
+      'settings.notif.scheduledTitle': 'Scheduled reminder',
+      'settings.notif.scheduledBody': 'Scheduled notifications are working properly.',
+      'settings.notif.dailyTitle': 'Time for your EasyEnglish session',
+      'settings.notif.dailyBody': 'Spend a few minutes today to keep your learning streak going.',
       'settings.notif.openSettings': 'Manage notification permissions',
       'settings.notif.sentInstant': 'Notification sent!',
       'settings.notif.scheduledSent': 'Notification scheduled in 3 seconds!',
@@ -324,8 +469,8 @@ class SettingsProvider extends ChangeNotifier {
       'settings.itemNotif.slotsSummary': 'scheduled notifications',
 
       'settings.dataGroup': 'DATA & STORAGE',
-      'settings.language.title': 'App language',
-      'settings.language.subtitle': 'Choose the interface language',
+      'settings.language.title': 'Interface language',
+      'settings.language.subtitle': 'Choose menu and button language',
       'settings.reset.title': 'Reset progress',
       'settings.reset.subtitle': 'Clear history and learned cards',
       'settings.reset.dialog.title': 'Reset all progress?',
@@ -343,7 +488,7 @@ class SettingsProvider extends ChangeNotifier {
       'onb.page1.title': 'Learn English effortlessly',
       'onb.page1.sub': 'Vocabulary, useful phrases and irregular verbs with interactive cards and pronunciation audio.',
       'onb.page2.title': 'Smart spaced repetition',
-      'onb.page2.sub': '3-button system (Hard / Good / Easy) that schedules each card at the perfect time so you never forget.',
+      'onb.page2.sub': '3-option system (Hard / Good / Easy) that schedules each card at the ideal time.',
       'onb.page3.title': 'Your Daily Goal',
       'onb.page3.sub': 'Choose how many new words you want to master every day.',
 
@@ -360,10 +505,21 @@ class SettingsProvider extends ChangeNotifier {
   Future<void> init() async {
     try {
       await _storage.init();
-      _isDarkMode = _storage.getBool(
-        AppConstants.keyDarkMode,
-        defaultValue: true,
-      );
+      
+      // Load theme mode preference ('light', 'dark', 'system')
+      final String storedTheme = _storage.getString(AppConstants.keyThemeMode, defaultValue: '');
+      if (storedTheme == 'light') {
+        _themeMode = ThemeMode.light;
+      } else if (storedTheme == 'system') {
+        _themeMode = ThemeMode.system;
+      } else if (storedTheme == 'dark') {
+        _themeMode = ThemeMode.dark;
+      } else {
+        // Fallback to legacy bool
+        final bool legacyDark = _storage.getBool(AppConstants.keyDarkMode, defaultValue: true);
+        _themeMode = legacyDark ? ThemeMode.dark : ThemeMode.light;
+      }
+
       _soundEnabled = _storage.getBool(
         AppConstants.keySoundEnabled,
         defaultValue: true,
@@ -458,32 +614,34 @@ class SettingsProvider extends ChangeNotifier {
     // Ensure there are at least 3 distinct examples for rotation
     if (allExamples.length < 3) {
       if (card.isVerbWithForms) {
-        allExamples.add('Present: ${card.present} | Past: ${card.past} | Participle: ${card.participle}');
+        if (card.past != null && card.past!.isNotEmpty) {
+          allExamples.add('I ${card.past} yesterday.');
+        }
+        if (card.participle != null && card.participle!.isNotEmpty) {
+          allExamples.add('I have ${card.participle} many times.');
+        }
       }
-      if (card.hasStructure) {
-        allExamples.add('Estructura: ${card.structure}');
-      }
-      if (card.exampleEs.isNotEmpty && !allExamples.contains(card.exampleEs)) {
-        allExamples.add('Traducción: "${card.exampleEs}"');
+      if (allExamples.length < 3) {
+        allExamples.add('Always practice ${card.wordEn} in your daily routine.');
       }
     }
 
-    final selectedInterval = intervalMinutes ??
+    final int interval = intervalMinutes ??
         _itemNotificationConfig?.intervalMinutes ??
         AppConstants.defaultNotificationInterval;
 
-    final selectedStart = startTime ??
-        (_itemNotificationConfig?.times.isNotEmpty == true
+    final TimeOfDay start = startTime ??
+        (_itemNotificationConfig != null && _itemNotificationConfig!.times.isNotEmpty
             ? _itemNotificationConfig!.times.first
             : const TimeOfDay(
                 hour: AppConstants.notificationDefaultStartHour,
                 minute: AppConstants.notificationDefaultStartMinute,
               ));
 
-    // Automatically generate scheduled times from selected start time to end of day
-    final autoTimes = NotificationService.generateTimeSlots(
-      startTime: selectedStart,
-      intervalMinutes: selectedInterval,
+    final generatedTimes = generateDailyTimes(
+      startHour: start.hour,
+      startMinute: start.minute,
+      intervalMinutes: interval,
     );
 
     _itemNotificationConfig = ItemNotificationConfig(
@@ -493,10 +651,10 @@ class SettingsProvider extends ChangeNotifier {
       wordEs: card.wordEs,
       grammarFormula: card.hasStructure ? card.structure : null,
       examples: allExamples,
-      times: autoTimes,
-      intervalMinutes: selectedInterval,
+      times: generatedTimes,
       currentExampleIndex: 0,
       isEnabled: true,
+      intervalMinutes: interval,
     );
 
     await _storage.setMap(
@@ -504,34 +662,50 @@ class SettingsProvider extends ChangeNotifier {
       _itemNotificationConfig!.toMap(),
     );
 
-    await _notificationService.requestPermissions();
     await _syncItemNotifications();
     notifyListeners();
   }
 
-  /// Regenerates the daily time slots using the given [startTime] and [intervalMinutes]
-  Future<void> generateAutoTimes({
-    TimeOfDay? startTime,
-    int? intervalMinutes,
-  }) async {
-    if (_itemNotificationConfig == null) return;
-    final selectedInterval = intervalMinutes ?? _itemNotificationConfig!.intervalMinutes;
-    final selectedStart = startTime ??
-        (_itemNotificationConfig!.times.isNotEmpty
-            ? _itemNotificationConfig!.times.first
-            : const TimeOfDay(
-                hour: AppConstants.notificationDefaultStartHour,
-                minute: AppConstants.notificationDefaultStartMinute,
-              ));
+  /// Generates chronological list of TimeOfDay from start time to 23:30 based on intervalMinutes
+  List<TimeOfDay> generateDailyTimes({
+    required int startHour,
+    required int startMinute,
+    required int intervalMinutes,
+  }) {
+    final List<TimeOfDay> slots = [];
+    int currentMinutes = startHour * 60 + startMinute;
+    final int endMinutes = AppConstants.notificationDayEndHour * 60 + AppConstants.notificationDayEndMinute;
 
-    final generatedTimes = NotificationService.generateTimeSlots(
-      startTime: selectedStart,
-      intervalMinutes: selectedInterval,
+    while (currentMinutes <= endMinutes) {
+      final int h = currentMinutes ~/ 60;
+      final int m = currentMinutes % 60;
+      slots.add(TimeOfDay(hour: h, minute: m));
+      currentMinutes += intervalMinutes;
+    }
+
+    if (slots.isEmpty) {
+      slots.add(TimeOfDay(hour: startHour, minute: startMinute));
+    }
+
+    return slots;
+  }
+
+  /// Updates notification interval and regenerates schedule using current first slot
+  Future<void> updateItemNotificationInterval(int intervalMinutes) async {
+    if (_itemNotificationConfig == null) return;
+    final TimeOfDay startTime = _itemNotificationConfig!.times.isNotEmpty
+        ? _itemNotificationConfig!.times.first
+        : const TimeOfDay(hour: 8, minute: 0);
+
+    final generatedTimes = generateDailyTimes(
+      startHour: startTime.hour,
+      startMinute: startTime.minute,
+      intervalMinutes: intervalMinutes,
     );
 
     _itemNotificationConfig = _itemNotificationConfig!.copyWith(
       times: generatedTimes,
-      intervalMinutes: selectedInterval,
+      intervalMinutes: intervalMinutes,
     );
 
     await _storage.setMap(
@@ -545,31 +719,34 @@ class SettingsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Updates the interval and regenerates schedule
-  Future<void> updateItemNotificationInterval(int newIntervalMinutes) async {
-    await generateAutoTimes(intervalMinutes: newIntervalMinutes);
-  }
-
-  /// Toggles whether notifications for the pinned item are active
-  Future<void> toggleItemNotifications(bool value) async {
+  /// Updates start time and regenerates schedule using current interval
+  Future<void> updateItemNotificationStartTime(TimeOfDay newStartTime) async {
     if (_itemNotificationConfig == null) return;
-    _itemNotificationConfig = _itemNotificationConfig!.copyWith(isEnabled: value);
+    final int interval = _itemNotificationConfig!.intervalMinutes;
+
+    final generatedTimes = generateDailyTimes(
+      startHour: newStartTime.hour,
+      startMinute: newStartTime.minute,
+      intervalMinutes: interval,
+    );
+
+    _itemNotificationConfig = _itemNotificationConfig!.copyWith(
+      times: generatedTimes,
+    );
+
     await _storage.setMap(
       AppConstants.keyItemNotificationConfig,
       _itemNotificationConfig!.toMap(),
     );
 
-    if (value) {
-      await _notificationService.requestPermissions();
+    if (_itemNotificationConfig!.isEnabled) {
       await _syncItemNotifications();
-    } else {
-      await _notificationService.cancelNotificationRange(2000, 64);
     }
     notifyListeners();
   }
 
   /// Updates a specific time slot without resetting the rotation index
-  Future<void> updateItemNotificationTime(int index, TimeOfDay newTime) async {
+  Future<void> updateItemNotificationTimeSlot(int index, TimeOfDay newTime) async {
     if (_itemNotificationConfig == null) return;
     final currentTimes = List<TimeOfDay>.from(_itemNotificationConfig!.times);
     if (index >= 0 && index < currentTimes.length) {
@@ -587,12 +764,12 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  /// Adds a new daily time slot for the pinned item
+  /// Adds a custom daily time slot for the pinned item
   Future<void> addItemNotificationTime(TimeOfDay time) async {
     if (_itemNotificationConfig == null) return;
     final currentTimes = List<TimeOfDay>.from(_itemNotificationConfig!.times);
-    // Avoid exact duplicate time
-    if (!currentTimes.any((t) => t.hour == time.hour && t.minute == time.minute)) {
+    final exists = currentTimes.any((t) => t.hour == time.hour && t.minute == time.minute);
+    if (!exists) {
       currentTimes.add(time);
       currentTimes.sort((a, b) => (a.hour * 60 + a.minute).compareTo(b.hour * 60 + b.minute));
       _itemNotificationConfig = _itemNotificationConfig!.copyWith(times: currentTimes);
@@ -625,6 +802,23 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
+  /// Toggles enabled state for pinned item notifications
+  Future<void> toggleItemNotificationEnabled(bool value) async {
+    if (_itemNotificationConfig == null) return;
+    _itemNotificationConfig = _itemNotificationConfig!.copyWith(isEnabled: value);
+    await _storage.setMap(
+      AppConstants.keyItemNotificationConfig,
+      _itemNotificationConfig!.toMap(),
+    );
+    if (value) {
+      await _notificationService.requestPermissions();
+      await _syncItemNotifications();
+    } else {
+      await _notificationService.cancelNotificationRange(2000, 64);
+    }
+    notifyListeners();
+  }
+
   /// Advances rotation pointer (round-robin)
   Future<void> advanceItemExampleRotation() async {
     if (_itemNotificationConfig == null || _itemNotificationConfig!.examples.isEmpty) return;
@@ -651,9 +845,9 @@ class SettingsProvider extends ChangeNotifier {
             _itemNotificationConfig!.examples.length];
     final StringBuffer bodyBuffer = StringBuffer();
     if (_itemNotificationConfig!.hasGrammarFormula) {
-      bodyBuffer.writeln('📐 Fórmula: ${_itemNotificationConfig!.grammarFormula}');
+      bodyBuffer.writeln('Fórmula: ${_itemNotificationConfig!.grammarFormula}');
     }
-    bodyBuffer.write('💡 Ejemplo: "$example"');
+    bodyBuffer.write('Ejemplo: "$example"');
 
     final String jsonPayload = jsonEncode({
       'wordEn': _itemNotificationConfig!.wordEn,
@@ -715,10 +909,21 @@ class SettingsProvider extends ChangeNotifier {
     await _notificationService.openNotificationSettings();
   }
 
-  Future<void> toggleDarkMode(bool value) async {
-    _isDarkMode = value;
-    await _storage.setBool(AppConstants.keyDarkMode, value);
+  /// Sets ThemeMode (Light, Dark, System)
+  Future<void> setThemeMode(ThemeMode mode) async {
+    _themeMode = mode;
+    String modeString = 'system';
+    if (mode == ThemeMode.light) modeString = 'light';
+    if (mode == ThemeMode.dark) modeString = 'dark';
+
+    await _storage.setString(AppConstants.keyThemeMode, modeString);
+    await _storage.setBool(AppConstants.keyDarkMode, mode != ThemeMode.light);
     notifyListeners();
+  }
+
+  /// Legacy toggle for Dark/Light
+  Future<void> toggleDarkMode(bool value) async {
+    await setThemeMode(value ? ThemeMode.dark : ThemeMode.light);
   }
 
   Future<void> toggleSound(bool value) async {
@@ -752,5 +957,13 @@ class SettingsProvider extends ChangeNotifier {
     await _storage.setBool(AppConstants.keyOnboardingComplete, true);
     notifyListeners();
   }
-}
 
+  Future<void> resetAllData() async {
+    await _storage.clearAllProgress();
+    _itemNotificationConfig = null;
+    await _storage.setMap(AppConstants.keyItemNotificationConfig, {});
+    await _notificationService.cancelNotification(1001);
+    await _notificationService.cancelNotificationRange(2000, 64);
+    notifyListeners();
+  }
+}

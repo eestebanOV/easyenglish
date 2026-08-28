@@ -53,7 +53,7 @@ class QuizGenerator {
     return questions;
   }
 
-  // 1. 🎯 MULTIPLE CHOICE
+  // 1. MULTIPLE CHOICE
   QuizQuestion _generateMultipleChoice(Flashcard card, List<Flashcard> pool, int index) {
     final bool isFillInTheBlank = card.example.isNotEmpty && _random.nextBool();
 
@@ -110,7 +110,7 @@ class QuizGenerator {
     }
   }
 
-  // 2. 🧩 BUILD SENTENCE
+  // 2. BUILD SENTENCE
   QuizQuestion _generateBuildSentence(Flashcard card, List<Flashcard> pool, int index) {
     String sentence = card.example.isNotEmpty ? card.example.trim() : 'I learn ${card.wordEn} every day.';
     // Tokenize sentence into words
@@ -134,7 +134,7 @@ class QuizGenerator {
     );
   }
 
-  // 3. ⚡ SPEED QUIZ
+  // 3. SPEED QUIZ
   QuizQuestion _generateSpeedQuiz(Flashcard card, List<Flashcard> pool, int index) {
     final isEnToEs = _random.nextBool();
     final distractors = _getDistractorWords(card, pool, 3, isEnglish: !isEnToEs);
@@ -145,7 +145,7 @@ class QuizGenerator {
       id: 'sq_${card.id}_$index',
       card: card,
       type: QuizQuestionType.speedQuiz,
-      prompt: isEnToEs ? '⚡ ¡Rápido! ¿Qué significa "${card.wordEn}"?' : '⚡ ¡Rápido! ¿Cómo se dice "${card.wordEs}"?',
+      prompt: isEnToEs ? '¡Rápido! ¿Qué significa "${card.wordEn}"?' : '¡Rápido! ¿Cómo se dice "${card.wordEs}"?',
       subtitle: card.example.isNotEmpty ? '"${card.example}"' : null,
       correctAnswer: correct,
       options: options,
@@ -154,7 +154,7 @@ class QuizGenerator {
     );
   }
 
-  // 4. 🎭 SITUATION
+  // 4. SITUATION
   QuizQuestion _generateSituation(Flashcard card, List<Flashcard> pool, int index) {
     String promptScenario;
     if (card.categoryId == 'phrasal_verbs') {
@@ -188,14 +188,14 @@ class QuizGenerator {
       card: card,
       type: QuizQuestionType.situation,
       prompt: promptScenario,
-      subtitle: card.hasStructure ? '📐 Estructura: ${card.structure}' : null,
+      subtitle: card.hasStructure ? 'Estructura: ${card.structure}' : null,
       correctAnswer: correct,
       options: options,
       explanation: 'Para esta situación, la respuesta ideal es "$correct" (${card.wordEs}).',
     );
   }
 
-  // 5. 🔎 FIND ERROR
+  // 5. FIND ERROR
   QuizQuestion _generateFindError(Flashcard card, List<Flashcard> pool, int index) {
     String originalSentence = card.example.isNotEmpty ? card.example : 'She ${card.wordEn} every morning.';
     String erroneousSentence = _createIntentionalError(originalSentence, card);

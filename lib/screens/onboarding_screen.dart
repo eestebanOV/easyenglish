@@ -17,21 +17,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   int _currentPage = 0;
   int _selectedDailyGoal = AppConstants.defaultDailyGoal;
 
-  final List<Map<String, String>> _pages = [
+  final List<Map<String, dynamic>> _pages = [
     {
-      'emoji': '🧠',
-      'title': 'Aprende con Ciencia',
-      'subtitle': 'Usamos repetición espaciada (SRS) para que recuerdes el vocabulario a largo plazo sin esfuerzo.',
+      'icon': Icons.psychology_rounded,
+      'titleKey': 'onb.page1.title',
+      'subKey': 'onb.page1.sub',
     },
     {
-      'emoji': '⚡',
-      'title': 'Tarjetas Interactivas',
-      'subtitle': 'Voltea las flashcards para ver significados, ejemplos prácticos y escucha la pronunciación nativa.',
+      'icon': Icons.style_rounded,
+      'titleKey': 'onb.page2.title',
+      'subKey': 'onb.page2.sub',
     },
     {
-      'emoji': '🎯',
-      'title': 'Tu Meta Diaria',
-      'subtitle': 'Elige cuántas palabras nuevas deseas dominar cada día.',
+      'icon': Icons.track_changes_rounded,
+      'titleKey': 'onb.page3.title',
+      'subKey': 'onb.page3.sub',
     },
   ];
 
@@ -59,8 +59,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<SettingsProvider>();
+    final t = settings.translate;
+
     return Scaffold(
-      backgroundColor: AppTheme.darkBg,
+      backgroundColor: context.bg,
       body: SafeArea(
         child: Column(
           children: [
@@ -68,9 +71,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               alignment: Alignment.topRight,
               child: TextButton(
                 onPressed: _finishOnboarding,
-                child: const Text(
-                  'Omitir',
-                  style: TextStyle(color: Colors.white54, fontSize: 14),
+                child: Text(
+                  t('onb.skip'),
+                  style: TextStyle(color: context.textSecondary, fontSize: 14),
                 ),
               ),
             ),
@@ -85,66 +88,72 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 itemCount: _pages.length,
                 itemBuilder: (context, index) {
                   final page = _pages[index];
+                  final IconData icon = page['icon'] as IconData;
+                  final String title = t(page['titleKey'] as String);
+                  final String sub = t(page['subKey'] as String);
+
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 32.0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          width: 120,
-                          height: 120,
+                          width: 100,
+                          height: 100,
                           decoration: BoxDecoration(
-                            color: AppTheme.primaryLight.withValues(alpha: 0.15),
+                            color: AppTheme.primary.withValues(alpha: context.isDark ? 0.15 : 0.1),
                             shape: BoxShape.circle,
+                            border: Border.all(color: AppTheme.primary.withValues(alpha: 0.3), width: 1.5),
                           ),
                           child: Center(
-                            child: Text(
-                              page['emoji']!,
-                              style: const TextStyle(fontSize: 54),
+                            child: Icon(
+                              icon,
+                              size: 48,
+                              color: AppTheme.primary,
                             ),
                           ),
                         ),
-                        const SizedBox(height: 36),
+                        const SizedBox(height: 32),
                         Text(
-                          page['title']!,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 26,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          page['subtitle']!,
+                          title,
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 15,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: context.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                        Text(
+                          sub,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 14,
                             height: 1.5,
-                            color: Colors.white.withValues(alpha: 0.7),
+                            color: context.textSecondary,
                           ),
                         ),
                         if (index == 2) ...[
-                          const SizedBox(height: 32),
+                          const SizedBox(height: 28),
                           Wrap(
-                            spacing: 12,
-                            runSpacing: 12,
+                            spacing: 10,
+                            runSpacing: 10,
                             alignment: WrapAlignment.center,
                             children: AppConstants.dailyGoalOptions.map((goal) {
                               final isSelected = goal == _selectedDailyGoal;
                               return ChoiceChip(
                                 label: Text(
-                                  '$goal palabras/día',
+                                  '$goal ${t('settings.dailyGoal.subtitle')}',
                                   style: TextStyle(
                                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                    color: isSelected ? Colors.white : Colors.white70,
+                                    color: isSelected ? Colors.white : context.textSecondary,
                                   ),
                                 ),
                                 selected: isSelected,
-                                selectedColor: AppTheme.accent,
-                                backgroundColor: AppTheme.darkCard,
+                                selectedColor: AppTheme.primary,
+                                backgroundColor: context.cardBg,
                                 side: BorderSide(
-                                  color: isSelected ? AppTheme.accent : AppTheme.darkBorder,
+                                  color: isSelected ? AppTheme.primary : context.border,
                                 ),
                                 onSelected: (selected) {
                                   if (selected) {
@@ -178,8 +187,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         height: 8,
                         decoration: BoxDecoration(
                           color: _currentPage == index
-                              ? AppTheme.accent
-                              : Colors.white24,
+                              ? AppTheme.primary
+                              : context.border,
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
@@ -188,8 +197,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ElevatedButton(
                     onPressed: _nextPage,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.accent,
-                      foregroundColor: AppTheme.darkBg,
+                      backgroundColor: AppTheme.primary,
+                      foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 28,
                         vertical: 14,
@@ -199,7 +208,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                     ),
                     child: Text(
-                      _currentPage == _pages.length - 1 ? '¡Comenzar!' : 'Siguiente',
+                      _currentPage == _pages.length - 1 ? t('onb.finish') : t('onb.next'),
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),

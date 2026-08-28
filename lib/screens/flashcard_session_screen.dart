@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/flashcard.dart';
 import '../providers/flashcard_provider.dart';
+import '../providers/settings_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/confidence_buttons.dart';
 import '../widgets/flashcard_widget.dart';
@@ -64,10 +65,13 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.watch<SettingsProvider>().translate;
+
     if (_sessionCards.isEmpty) {
       return Scaffold(
+        backgroundColor: context.bg,
         appBar: AppBar(
-          title: Text(widget.title ?? 'Sesión de Estudio'),
+          title: Text(widget.title ?? t('srs.title')),
         ),
         body: Center(
           child: Padding(
@@ -75,22 +79,25 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('🎉', style: TextStyle(fontSize: 64)),
-                const SizedBox(height: 16),
-                const Text(
-                  '¡Todo al día!',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: AppTheme.success.withValues(alpha: context.isDark ? 0.15 : 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.check_circle_outline_rounded, size: 44, color: AppTheme.success),
                 ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Has completado todas las tarjetas pendientes por ahora. ¡Vuelve más tarde para tu próxima sesión!',
+                const SizedBox(height: 18),
+                Text(
+                  t('home.reviews.empty'),
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white70),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: context.textPrimary),
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Volver al Inicio'),
+                  child: Text(t('srs.finished.back')),
                 ),
               ],
             ),
@@ -101,7 +108,7 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
 
     if (_isFinished) {
       return Scaffold(
-        backgroundColor: AppTheme.darkBg,
+        backgroundColor: context.bg,
         body: SafeArea(
           child: Center(
             child: Padding(
@@ -110,45 +117,47 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    width: 100,
-                    height: 100,
+                    width: 90,
+                    height: 90,
                     decoration: BoxDecoration(
-                      color: AppTheme.accent.withValues(alpha: 0.15),
+                      color: AppTheme.accent.withValues(alpha: context.isDark ? 0.15 : 0.1),
                       shape: BoxShape.circle,
+                      border: Border.all(color: AppTheme.accent.withValues(alpha: 0.35), width: 2),
                     ),
                     child: const Center(
-                      child: Text('🏆', style: TextStyle(fontSize: 48)),
+                      child: Icon(Icons.emoji_events_rounded, size: 44, color: AppTheme.accent),
                     ),
                   ),
                   const SizedBox(height: 24),
-                  const Text(
-                    '¡Sesión Completada!',
+                  Text(
+                    t('srs.finished.title'),
                     style: TextStyle(
-                      fontSize: 26,
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: context.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
                   Text(
-                    'Repasaste $_cardsReviewedInSession tarjetas con éxito.',
+                    '${t('srs.finished.subtitle')} ($_cardsReviewedInSession)',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 16, color: Colors.white70),
+                    style: TextStyle(fontSize: 14, color: context.textSecondary),
                   ),
                   const SizedBox(height: 32),
                   ElevatedButton(
                     onPressed: () => Navigator.of(context).pop(),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.accent,
-                      foregroundColor: AppTheme.darkBg,
+                      backgroundColor: AppTheme.primary,
+                      foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 36,
                         vertical: 16,
                       ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusMd)),
                     ),
-                    child: const Text(
-                      'Continuar',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    child: Text(
+                      t('srs.finished.back'),
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                     ),
                   ),
                 ],
@@ -163,19 +172,19 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
     final progressRatio = (_currentIndex + 1) / _sessionCards.length;
 
     return Scaffold(
-      backgroundColor: AppTheme.darkBg,
+      backgroundColor: context.bg,
       appBar: AppBar(
-        title: Text(widget.title ?? 'Sesión de Estudio'),
+        title: Text(widget.title ?? t('srs.title')),
         leading: IconButton(
-          icon: const Icon(Icons.close_rounded),
+          icon: Icon(Icons.close_rounded, color: context.textSecondary),
           onPressed: () => Navigator.of(context).pop(),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(4),
           child: LinearProgressIndicator(
             value: progressRatio,
-            backgroundColor: AppTheme.darkBorder,
-            valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.accent),
+            backgroundColor: context.border,
+            valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primary),
             minHeight: 4,
           ),
         ),
@@ -189,24 +198,24 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Tarjeta ${_currentIndex + 1} de ${_sessionCards.length}',
-                    style: const TextStyle(
+                    '${t('srs.steps')} ${_currentIndex + 1} / ${_sessionCards.length}',
+                    style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white60,
+                      color: context.textSecondary,
                     ),
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryLight.withValues(alpha: 0.15),
+                      color: AppTheme.primary.withValues(alpha: context.isDark ? 0.15 : 0.1),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
                       widget.title ?? 'General',
                       style: const TextStyle(
                         fontSize: 11,
-                        color: AppTheme.primaryLight,
+                        color: AppTheme.primary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

@@ -24,7 +24,7 @@ class StatsScreen extends StatelessWidget {
     final newCards = totalCards - learnedCards;
 
     return Scaffold(
-      backgroundColor: AppTheme.darkBg,
+      backgroundColor: context.bg,
       appBar: AppBar(
         title: Text(t('stats.title')),
         automaticallyImplyLeading: false,
@@ -37,49 +37,52 @@ class StatsScreen extends StatelessWidget {
             children: [
               // Streak Hero Card
               StreakBadge(streakDays: stats.streakDays),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
               // Overview Numbers
               Row(
                 children: [
                   Expanded(
                     child: _buildMetricCard(
+                      context: context,
                       title: t('stats.totalReviews'),
                       value: '${stats.totalReviews}',
                       icon: Icons.repeat_rounded,
-                      color: AppTheme.primaryLight,
+                      color: AppTheme.primary,
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: _buildMetricCard(
+                      context: context,
                       title: t('stats.bestStreak'),
                       value: '${stats.bestStreak} ${t('stats.days')}',
                       icon: Icons.emoji_events_rounded,
-                      color: AppTheme.warning,
+                      color: AppTheme.accentAmber,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
               // Pie Chart: Learning Status Distribution
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: AppTheme.darkCard,
+                  color: context.cardBg,
                   borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                  border: Border.all(color: AppTheme.darkBorder),
+                  border: Border.all(color: context.border),
+                  boxShadow: context.cardShadow,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       t('stats.distribution'),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: context.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -94,11 +97,11 @@ class StatsScreen extends StatelessWidget {
                                   PieChartSectionData(
                                     value: masteredCards.toDouble(),
                                     title: '$masteredCards',
-                                    color: AppTheme.warning,
+                                    color: AppTheme.accentAmber,
                                     radius: 35,
                                     titleStyle: const TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: AppTheme.darkBg,
+                                      color: Colors.white,
                                       fontSize: 12,
                                     ),
                                   ),
@@ -109,57 +112,58 @@ class StatsScreen extends StatelessWidget {
                                     radius: 35,
                                     titleStyle: const TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: AppTheme.darkBg,
+                                      color: Colors.white,
                                       fontSize: 12,
                                     ),
                                   ),
                                   PieChartSectionData(
                                     value: newCards.toDouble(),
                                     title: '$newCards',
-                                    color: AppTheme.darkBorder,
+                                    color: context.isDark ? AppTheme.darkBorder : const Color(0xFFCBD5E1),
                                     radius: 35,
-                                    titleStyle: const TextStyle(
+                                    titleStyle: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.white70,
+                                      color: context.textPrimary,
                                       fontSize: 12,
                                     ),
                                   ),
                                 ],
                               ),
                             )
-                          : Center(child: Text(t('stats.noData'))),
+                          : Center(child: Text(t('stats.noData'), style: TextStyle(color: context.textSecondary))),
                     ),
                     const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        _buildLegendItem(t('stats.legendMastered'), AppTheme.warning),
-                        _buildLegendItem(t('stats.legendLearning'), AppTheme.accent),
-                        _buildLegendItem(t('stats.legendNew'), AppTheme.darkBorder),
+                        _buildLegendItem(context, t('stats.legendMastered'), AppTheme.accentAmber),
+                        _buildLegendItem(context, t('stats.legendLearning'), AppTheme.accent),
+                        _buildLegendItem(context, t('stats.legendNew'), context.isDark ? AppTheme.darkBorder : const Color(0xFFCBD5E1)),
                       ],
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
               // Category Mastery Breakdown
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: AppTheme.darkCard,
+                  color: context.cardBg,
                   borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                  border: Border.all(color: AppTheme.darkBorder),
+                  border: Border.all(color: context.border),
+                  boxShadow: context.cardShadow,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       t('stats.catProgress'),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: context.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -183,10 +187,10 @@ class StatsScreen extends StatelessWidget {
                                     const SizedBox(width: 8),
                                     Text(
                                       isEs ? cat.nameEs : cat.name,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w600,
-                                        color: Colors.white,
+                                        color: context.textPrimary,
                                       ),
                                     ),
                                   ],
@@ -206,7 +210,7 @@ class StatsScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(4),
                               child: LinearProgressIndicator(
                                 value: mastery / 100,
-                                backgroundColor: AppTheme.darkBorder,
+                                backgroundColor: context.cardSecondary,
                                 valueColor: AlwaysStoppedAnimation<Color>(cat.color),
                                 minHeight: 6,
                               ),
@@ -227,6 +231,7 @@ class StatsScreen extends StatelessWidget {
   }
 
   Widget _buildMetricCard({
+    required BuildContext context,
     required String title,
     required String value,
     required IconData icon,
@@ -235,21 +240,22 @@ class StatsScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.darkCard,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        border: Border.all(color: AppTheme.darkBorder),
+        color: context.cardBg,
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        border: Border.all(color: context.border),
+        boxShadow: context.cardShadow,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: color, size: 24),
-          const SizedBox(height: 12),
+          Icon(icon, color: color, size: 22),
+          const SizedBox(height: 10),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 22,
+            style: TextStyle(
+              fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: context.textPrimary,
             ),
           ),
           const SizedBox(height: 2),
@@ -257,7 +263,7 @@ class StatsScreen extends StatelessWidget {
             title,
             style: TextStyle(
               fontSize: 12,
-              color: Colors.white.withValues(alpha: 0.6),
+              color: context.textSecondary,
             ),
           ),
         ],
@@ -265,7 +271,7 @@ class StatsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLegendItem(String label, Color color) {
+  Widget _buildLegendItem(BuildContext context, String label, Color color) {
     return Row(
       children: [
         Container(
@@ -279,7 +285,7 @@ class StatsScreen extends StatelessWidget {
         const SizedBox(width: 6),
         Text(
           label,
-          style: const TextStyle(fontSize: 11, color: Colors.white70),
+          style: TextStyle(fontSize: 11, color: context.textSecondary),
         ),
       ],
     );

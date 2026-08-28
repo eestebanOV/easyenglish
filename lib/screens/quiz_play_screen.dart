@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/quiz_question.dart';
 import '../providers/quiz_provider.dart';
+import '../providers/settings_provider.dart';
 import '../theme/app_theme.dart';
 import 'quiz_summary_screen.dart';
 
@@ -11,6 +12,8 @@ class QuizPlayScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final quiz = context.watch<QuizProvider>();
+    final settings = context.watch<SettingsProvider>();
+    final t = settings.translate;
     final q = quiz.currentQuestion;
 
     if (quiz.isSessionFinished || q == null) {
@@ -19,9 +22,9 @@ class QuizPlayScreen extends StatelessWidget {
           MaterialPageRoute(builder: (_) => const QuizSummaryScreen()),
         );
       });
-      return const Scaffold(
-        backgroundColor: AppTheme.darkBg,
-        body: Center(child: CircularProgressIndicator(color: AppTheme.primaryLight)),
+      return Scaffold(
+        backgroundColor: context.bg,
+        body: const Center(child: CircularProgressIndicator(color: AppTheme.primary)),
       );
     }
 
@@ -31,21 +34,21 @@ class QuizPlayScreen extends StatelessWidget {
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
-        final shouldPop = await _showExitConfirmation(context, quiz);
+        final shouldPop = await _showExitConfirmation(context, quiz, t);
         if (shouldPop && context.mounted) {
           quiz.exitQuiz();
           Navigator.of(context).pop();
         }
       },
       child: Scaffold(
-        backgroundColor: AppTheme.darkBg,
+        backgroundColor: context.bg,
         appBar: AppBar(
-          backgroundColor: AppTheme.darkSurface,
+          backgroundColor: context.surface,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.close_rounded, color: Colors.white70),
+            icon: Icon(Icons.close_rounded, color: context.textSecondary),
             onPressed: () async {
-              if (await _showExitConfirmation(context, quiz)) {
+              if (await _showExitConfirmation(context, quiz, t)) {
                 if (context.mounted) {
                   quiz.exitQuiz();
                   Navigator.of(context).pop();
@@ -57,25 +60,29 @@ class QuizPlayScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Pregunta ${quiz.currentIndex + 1}/${quiz.totalQuestions}',
-                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                '${t('quiz.questionCounter')} ${quiz.currentIndex + 1}/${quiz.totalQuestions}',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: context.textPrimary),
               ),
               if (quiz.streak > 1) ...[
                 const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
-                    color: Colors.orange.withValues(alpha: 0.2),
+                    color: AppTheme.accentAmber.withValues(alpha: context.isDark ? 0.2 : 0.12),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.orangeAccent.withValues(alpha: 0.5)),
+                    border: Border.all(color: AppTheme.accentAmber.withValues(alpha: 0.4)),
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.local_fire_department_rounded, size: 14, color: Colors.orangeAccent),
+                      const Icon(Icons.local_fire_department_rounded, size: 14, color: AppTheme.accentAmber),
                       const SizedBox(width: 2),
                       Text(
                         '${quiz.streak}',
-                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.orangeAccent),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.accentAmber,
+                        ),
                       ),
                     ],
                   ),
@@ -88,17 +95,21 @@ class QuizPlayScreen extends StatelessWidget {
               margin: const EdgeInsets.only(right: 16),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: AppTheme.primaryLight.withValues(alpha: 0.15),
+                color: AppTheme.primary.withValues(alpha: context.isDark ? 0.15 : 0.1),
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: AppTheme.primaryLight.withValues(alpha: 0.4)),
+                border: Border.all(color: AppTheme.primary.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.stars_rounded, size: 16, color: Colors.amber),
+                  const Icon(Icons.stars_rounded, size: 16, color: AppTheme.accentAmber),
                   const SizedBox(width: 4),
                   Text(
                     '${quiz.score}',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                      color: context.textPrimary,
+                    ),
                   ),
                 ],
               ),
@@ -110,8 +121,8 @@ class QuizPlayScreen extends StatelessWidget {
               children: [
                 LinearProgressIndicator(
                   value: progress,
-                  backgroundColor: Colors.white12,
-                  valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primaryLight),
+                  backgroundColor: context.border,
+                  valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primary),
                   minHeight: 4,
                 ),
                 if (q.type == QuizQuestionType.speedQuiz)
@@ -119,7 +130,7 @@ class QuizPlayScreen extends StatelessWidget {
                     value: quiz.timeRemaining / q.timeLimitSeconds,
                     backgroundColor: Colors.transparent,
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      quiz.timeRemaining <= 2 ? Colors.redAccent : Colors.orangeAccent,
+                      quiz.timeRemaining <= 2 ? AppTheme.error : AppTheme.accentAmber,
                     ),
                     minHeight: 3,
                   ),
@@ -141,15 +152,21 @@ class QuizPlayScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                             decoration: BoxDecoration(
-                              color: _getBadgeColor(q.type).withValues(alpha: 0.15),
+                              color: _getBadgeColor(q.type).withValues(alpha: context.isDark ? 0.15 : 0.1),
                               borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: _getBadgeColor(q.type).withValues(alpha: 0.4)),
+                              border: Border.all(color: _getBadgeColor(q.type).withValues(alpha: 0.35)),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
+                                Icon(
+                                  q.type.icon,
+                                  size: 13,
+                                  color: _getBadgeColor(q.type),
+                                ),
+                                const SizedBox(width: 5),
                                 Text(
                                   q.type.badgeLabel,
                                   style: TextStyle(
@@ -164,18 +181,18 @@ class QuizPlayScreen extends StatelessWidget {
                           ),
                           if (q.type == QuizQuestionType.speedQuiz)
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                               decoration: BoxDecoration(
-                                color: Colors.red.withValues(alpha: 0.2),
+                                color: AppTheme.error.withValues(alpha: context.isDark ? 0.2 : 0.12),
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Row(
                                 children: [
-                                  const Icon(Icons.timer_rounded, size: 14, color: Colors.redAccent),
+                                  const Icon(Icons.timer_rounded, size: 14, color: AppTheme.error),
                                   const SizedBox(width: 4),
                                   Text(
                                     '${quiz.timeRemaining}s',
-                                    style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent, fontSize: 12),
+                                    style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.error, fontSize: 12),
                                   ),
                                 ],
                               ),
@@ -187,10 +204,10 @@ class QuizPlayScreen extends StatelessWidget {
                       // Prompt text
                       Text(
                         q.prompt,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: context.textPrimary,
                           height: 1.35,
                         ),
                       ),
@@ -200,16 +217,16 @@ class QuizPlayScreen extends StatelessWidget {
                           width: double.infinity,
                           padding: const EdgeInsets.all(14),
                           decoration: BoxDecoration(
-                            color: AppTheme.darkCard,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: AppTheme.darkBorder),
+                            color: context.cardSecondary,
+                            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                            border: Border.all(color: context.border),
                           ),
                           child: Text(
                             q.subtitle!,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 15,
                               fontStyle: FontStyle.italic,
-                              color: Colors.white,
+                              color: context.textPrimary,
                               height: 1.4,
                             ),
                           ),
@@ -220,7 +237,7 @@ class QuizPlayScreen extends StatelessWidget {
 
                       // Question Interactive Body
                       if (q.type == QuizQuestionType.buildSentence)
-                        _buildSentenceWidget(context, quiz, q)
+                        _buildSentenceWidget(context, quiz, q, t)
                       else
                         _buildOptionsList(context, quiz, q),
                     ],
@@ -228,8 +245,8 @@ class QuizPlayScreen extends StatelessWidget {
                 ),
               ),
 
-              // Immediate Feedback Bottom Sheet / Container
-              if (quiz.isAnswered) _buildFeedbackContainer(context, quiz, q),
+              // Immediate Feedback Bottom Container
+              if (quiz.isAnswered) _buildFeedbackContainer(context, quiz, q, t),
             ],
           ),
         ),
@@ -240,53 +257,57 @@ class QuizPlayScreen extends StatelessWidget {
   Color _getBadgeColor(QuizQuestionType type) {
     switch (type) {
       case QuizQuestionType.multipleChoice:
-        return AppTheme.primaryLight;
+        return AppTheme.primary;
       case QuizQuestionType.buildSentence:
         return AppTheme.accent;
       case QuizQuestionType.speedQuiz:
-        return Colors.orangeAccent;
+        return AppTheme.accentAmber;
       case QuizQuestionType.situation:
-        return Colors.purpleAccent;
+        return AppTheme.accentPurple;
       case QuizQuestionType.findError:
-        return Colors.tealAccent;
+        return AppTheme.accentPink;
     }
   }
 
-  // --- Options List (Multiple Choice, Speed, Situation, Find Error) ---
+  // --- Options List ---
   Widget _buildOptionsList(BuildContext context, QuizProvider quiz, QuizQuestion q) {
     return Column(
       children: q.options.map((option) {
         final bool isSelected = quiz.selectedAnswer == option;
         final bool isCorrect = option.trim().toLowerCase() == q.correctAnswer.trim().toLowerCase();
 
-        Color bgColor = AppTheme.darkCard;
-        Color borderColor = AppTheme.darkBorder;
+        Color bgColor = context.cardBg;
+        Color borderColor = context.border;
         Widget? trailingIcon;
 
         if (quiz.isAnswered) {
           if (isCorrect) {
-            bgColor = Colors.green.withValues(alpha: 0.2);
-            borderColor = Colors.greenAccent;
-            trailingIcon = const Icon(Icons.check_circle_rounded, color: Colors.greenAccent, size: 22);
+            bgColor = AppTheme.success.withValues(alpha: context.isDark ? 0.2 : 0.12);
+            borderColor = AppTheme.success;
+            trailingIcon = const Icon(Icons.check_circle_rounded, color: AppTheme.success, size: 22);
           } else if (isSelected) {
-            bgColor = Colors.red.withValues(alpha: 0.2);
-            borderColor = Colors.redAccent;
-            trailingIcon = const Icon(Icons.cancel_rounded, color: Colors.redAccent, size: 22);
+            bgColor = AppTheme.error.withValues(alpha: context.isDark ? 0.2 : 0.12);
+            borderColor = AppTheme.error;
+            trailingIcon = const Icon(Icons.cancel_rounded, color: AppTheme.error, size: 22);
           }
         }
 
         return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.only(bottom: 10),
           child: InkWell(
             onTap: quiz.isAnswered ? null : () => quiz.submitAnswer(option),
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
                 color: bgColor,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: borderColor, width: isSelected || (quiz.isAnswered && isCorrect) ? 1.8 : 1.0),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                border: Border.all(
+                  color: borderColor,
+                  width: isSelected || (quiz.isAnswered && isCorrect) ? 1.8 : 1.0,
+                ),
+                boxShadow: isSelected ? null : context.cardShadow,
               ),
               child: Row(
                 children: [
@@ -296,7 +317,7 @@ class QuizPlayScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: isSelected || (quiz.isAnswered && isCorrect) ? FontWeight.bold : FontWeight.w500,
-                        color: Colors.white,
+                        color: context.textPrimary,
                         height: 1.3,
                       ),
                     ),
@@ -312,32 +333,38 @@ class QuizPlayScreen extends StatelessWidget {
   }
 
   // --- Build Sentence Widget ---
-  Widget _buildSentenceWidget(BuildContext context, QuizProvider quiz, QuizQuestion q) {
+  Widget _buildSentenceWidget(
+    BuildContext context,
+    QuizProvider quiz,
+    QuizQuestion q,
+    String Function(String) t,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Target Area (words placed so far)
         Container(
           width: double.infinity,
           constraints: const BoxConstraints(minHeight: 70),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: quiz.isAnswered
-                ? (quiz.isCorrect ? Colors.green.withValues(alpha: 0.15) : Colors.red.withValues(alpha: 0.15))
-                : Colors.white.withValues(alpha: 0.04),
-            borderRadius: BorderRadius.circular(14),
+                ? (quiz.isCorrect
+                    ? AppTheme.success.withValues(alpha: context.isDark ? 0.15 : 0.1)
+                    : AppTheme.error.withValues(alpha: context.isDark ? 0.15 : 0.1))
+                : context.cardSecondary,
+            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
             border: Border.all(
               color: quiz.isAnswered
-                  ? (quiz.isCorrect ? Colors.greenAccent : Colors.redAccent)
-                  : AppTheme.primaryLight.withValues(alpha: 0.4),
+                  ? (quiz.isCorrect ? AppTheme.success : AppTheme.error)
+                  : AppTheme.primary.withValues(alpha: 0.4),
               width: 1.5,
             ),
           ),
           child: quiz.builtSentence.isEmpty
-              ? const Center(
+              ? Center(
                   child: Text(
-                    'Toca las palabras abajo para ordenarlas aquí',
-                    style: TextStyle(color: Colors.white38, fontSize: 13, fontStyle: FontStyle.italic),
+                    t('quiz.tapToOrder'),
+                    style: TextStyle(color: context.textSecondary, fontSize: 13, fontStyle: FontStyle.italic),
                   ),
                 )
               : Wrap(
@@ -347,7 +374,7 @@ class QuizPlayScreen extends StatelessWidget {
                     final word = quiz.builtSentence[i];
                     return ActionChip(
                       label: Text(word, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-                      backgroundColor: AppTheme.primaryLight,
+                      backgroundColor: AppTheme.primary,
                       side: BorderSide.none,
                       onPressed: quiz.isAnswered ? null : () => quiz.removeWordFromBuiltSentence(i),
                     );
@@ -356,10 +383,14 @@ class QuizPlayScreen extends StatelessWidget {
         ),
         const SizedBox(height: 20),
 
-        // Word Bank
-        const Text(
-          'PALABRAS DISPONIBLES:',
-          style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.1, color: Colors.white38),
+        Text(
+          t('quiz.availableWords'),
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.1,
+            color: context.textSecondary,
+          ),
         ),
         const SizedBox(height: 10),
         Wrap(
@@ -368,9 +399,12 @@ class QuizPlayScreen extends StatelessWidget {
           children: List.generate(quiz.remainingScrambledWords.length, (i) {
             final word = quiz.remainingScrambledWords[i];
             return ActionChip(
-              label: Text(word, style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.white)),
-              backgroundColor: AppTheme.darkCard,
-              side: const BorderSide(color: AppTheme.darkBorder),
+              label: Text(
+                word,
+                style: TextStyle(fontWeight: FontWeight.w600, color: context.textPrimary),
+              ),
+              backgroundColor: context.cardBg,
+              side: BorderSide(color: context.border),
               onPressed: quiz.isAnswered ? null : () => quiz.addWordToBuiltSentence(i),
             );
           }),
@@ -378,19 +412,18 @@ class QuizPlayScreen extends StatelessWidget {
 
         const SizedBox(height: 24),
 
-        // Submit Button (only when sentence has words and not yet answered)
         if (!quiz.isAnswered)
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               onPressed: quiz.builtSentence.isNotEmpty ? () => quiz.submitBuiltSentence() : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.accent,
+                backgroundColor: AppTheme.primary,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text('Comprobar Oración', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+              child: Text(t('quiz.checkSentence'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
             ),
           ),
       ],
@@ -398,16 +431,22 @@ class QuizPlayScreen extends StatelessWidget {
   }
 
   // --- Feedback Bottom Container ---
-  Widget _buildFeedbackContainer(BuildContext context, QuizProvider quiz, QuizQuestion q) {
+  Widget _buildFeedbackContainer(
+    BuildContext context,
+    QuizProvider quiz,
+    QuizQuestion q,
+    String Function(String) t,
+  ) {
     final isCorrect = quiz.isCorrect;
-    final color = isCorrect ? Colors.greenAccent : Colors.redAccent;
+    final color = isCorrect ? AppTheme.success : AppTheme.error;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       decoration: BoxDecoration(
-        color: AppTheme.darkSurface,
+        color: context.surface,
         border: Border(top: BorderSide(color: color.withValues(alpha: 0.5), width: 2)),
+        boxShadow: context.cardShadow,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -418,7 +457,7 @@ class QuizPlayScreen extends StatelessWidget {
               Icon(isCorrect ? Icons.check_circle_rounded : Icons.cancel_rounded, color: color, size: 24),
               const SizedBox(width: 10),
               Text(
-                isCorrect ? '¡Excelente! Respuesta Correcta' : 'Respuesta Incorrecta',
+                isCorrect ? t('quiz.correct') : t('quiz.incorrect'),
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: color),
               ),
             ],
@@ -426,13 +465,23 @@ class QuizPlayScreen extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             q.explanation,
-            style: const TextStyle(fontSize: 13, color: Colors.white70, height: 1.35),
+            style: TextStyle(fontSize: 13, color: context.textSecondary, height: 1.35),
           ),
           if (!isCorrect) ...[
             const SizedBox(height: 6),
-            Text(
-              '💡 Guardado en "Sugerencias" para que puedas repasarlo.',
-              style: TextStyle(fontSize: 12, color: Colors.amberAccent.withValues(alpha: 0.8), fontStyle: FontStyle.italic),
+            Row(
+              children: [
+                const Icon(Icons.lightbulb_outline_rounded, size: 14, color: AppTheme.accentAmber),
+                const SizedBox(width: 6),
+                Text(
+                  t('quiz.savedToSuggestions'),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppTheme.accentAmber,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
           ],
           const SizedBox(height: 14),
@@ -442,12 +491,14 @@ class QuizPlayScreen extends StatelessWidget {
               onPressed: () => quiz.nextQuestion(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: color,
-                foregroundColor: Colors.black87,
+                foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 13),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
               child: Text(
-                quiz.currentIndex + 1 < quiz.totalQuestions ? 'Siguiente Pregunta ➔' : 'Ver Resultados 🏁',
+                quiz.currentIndex + 1 < quiz.totalQuestions
+                    ? '${t('quiz.nextQuestion')} ➔'
+                    : t('quiz.viewResults'),
                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
               ),
             ),
@@ -457,18 +508,25 @@ class QuizPlayScreen extends StatelessWidget {
     );
   }
 
-  Future<bool> _showExitConfirmation(BuildContext context, QuizProvider quiz) async {
+  Future<bool> _showExitConfirmation(
+    BuildContext context,
+    QuizProvider quiz,
+    String Function(String) t,
+  ) async {
     final result = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppTheme.darkCard,
-        title: const Text('¿Salir del Quiz?'),
-        content: const Text('Si sales ahora, se perderá el progreso de esta sesión.'),
+        backgroundColor: context.cardBg,
+        title: Text(t('quiz.exitDialog.title'), style: TextStyle(color: context.textPrimary)),
+        content: Text(t('quiz.exitDialog.body'), style: TextStyle(color: context.textSecondary)),
         actions: [
-          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Continuar Quiz')),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(t('quiz.exitDialog.cancel')),
+          ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Salir', style: TextStyle(color: AppTheme.error)),
+            child: Text(t('quiz.exitDialog.confirm'), style: const TextStyle(color: AppTheme.error)),
           ),
         ],
       ),

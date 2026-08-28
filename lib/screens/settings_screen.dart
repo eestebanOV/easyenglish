@@ -16,7 +16,7 @@ class SettingsScreen extends StatelessWidget {
     final t = settings.translate;
 
     return Scaffold(
-      backgroundColor: AppTheme.darkBg,
+      backgroundColor: context.bg,
       appBar: AppBar(
         title: Text(t('settings.title')),
         automaticallyImplyLeading: false,
@@ -25,43 +25,130 @@ class SettingsScreen extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.all(20.0),
           children: [
+            // --- APPEARANCE & THEME GROUP ---
             Text(
-              t('settings.studyGroup'),
-              style: const TextStyle(
-                fontSize: 12,
+              t('settings.themeGroup'),
+              style: TextStyle(
+                fontSize: 11,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.2,
-                color: Colors.white54,
+                color: context.textSecondary,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
+
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: context.cardBg,
+                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                border: Border.all(color: context.border),
+                boxShadow: context.cardShadow,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.palette_outlined, color: AppTheme.primary, size: 20),
+                      const SizedBox(width: 10),
+                      Text(
+                        t('settings.theme.title'),
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: context.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+
+                  // 3-way Theme Mode Segmented Selector
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildThemeModeOption(
+                          context: context,
+                          label: t('settings.theme.light'),
+                          icon: Icons.light_mode_rounded,
+                          isSelected: settings.themeMode == ThemeMode.light,
+                          onTap: () => settings.setThemeMode(ThemeMode.light),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: _buildThemeModeOption(
+                          context: context,
+                          label: t('settings.theme.dark'),
+                          icon: Icons.dark_mode_rounded,
+                          isSelected: settings.themeMode == ThemeMode.dark,
+                          onTap: () => settings.setThemeMode(ThemeMode.dark),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: _buildThemeModeOption(
+                          context: context,
+                          label: t('settings.theme.system'),
+                          icon: Icons.brightness_auto_rounded,
+                          isSelected: settings.themeMode == ThemeMode.system,
+                          onTap: () => settings.setThemeMode(ThemeMode.system),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // --- STUDY PREFERENCES GROUP ---
+            Text(
+              t('settings.studyGroup'),
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.2,
+                color: context.textSecondary,
+              ),
+            ),
+            const SizedBox(height: 10),
 
             // Language Selector
             Container(
               decoration: BoxDecoration(
-                color: AppTheme.darkCard,
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                border: Border.all(color: AppTheme.darkBorder),
+                color: context.cardBg,
+                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                border: Border.all(color: context.border),
+                boxShadow: context.cardShadow,
               ),
               child: ListTile(
                 leading: const Icon(
                   Icons.translate_rounded,
-                  color: AppTheme.primaryLight,
+                  color: AppTheme.primary,
                 ),
-                title: Text(t('settings.language.title')),
-                subtitle: Text(t('settings.language.subtitle')),
+                title: Text(
+                  t('settings.language.title'),
+                  style: TextStyle(color: context.textPrimary, fontWeight: FontWeight.w600, fontSize: 14),
+                ),
+                subtitle: Text(
+                  t('settings.language.subtitle'),
+                  style: TextStyle(color: context.textSecondary, fontSize: 12),
+                ),
                 trailing: DropdownButton<String>(
                   value: settings.languageCode,
                   underline: const SizedBox(),
-                  dropdownColor: AppTheme.darkCard,
+                  dropdownColor: context.cardBg,
+                  style: TextStyle(color: context.textPrimary, fontSize: 13, fontWeight: FontWeight.bold),
                   items: const [
                     DropdownMenuItem<String>(
                       value: 'es',
-                      child: Text('🇪🇸  Español'),
+                      child: Text('Español'),
                     ),
                     DropdownMenuItem<String>(
                       value: 'en',
-                      child: Text('🇺🇸  English'),
+                      child: Text('English'),
                     ),
                   ],
                   onChanged: (val) {
@@ -72,28 +159,34 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
 
             // Daily Goal Selector
             Container(
               decoration: BoxDecoration(
-                color: AppTheme.darkCard,
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                border: Border.all(color: AppTheme.darkBorder),
+                color: context.cardBg,
+                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                border: Border.all(color: context.border),
+                boxShadow: context.cardShadow,
               ),
               child: ListTile(
                 leading: const Icon(
                   Icons.track_changes_rounded,
-                  color: AppTheme.primaryLight,
+                  color: AppTheme.primary,
                 ),
-                title: Text(t('settings.dailyGoal')),
+                title: Text(
+                  t('settings.dailyGoal'),
+                  style: TextStyle(color: context.textPrimary, fontWeight: FontWeight.w600, fontSize: 14),
+                ),
                 subtitle: Text(
                   '${settings.dailyGoal} ${t('settings.dailyGoal.subtitle')}',
+                  style: TextStyle(color: context.textSecondary, fontSize: 12),
                 ),
                 trailing: DropdownButton<int>(
                   value: settings.dailyGoal,
                   underline: const SizedBox(),
-                  dropdownColor: AppTheme.darkCard,
+                  dropdownColor: context.cardBg,
+                  style: TextStyle(color: context.textPrimary, fontSize: 14, fontWeight: FontWeight.bold),
                   items: AppConstants.dailyGoalOptions.map((goal) {
                     return DropdownMenuItem<int>(
                       value: goal,
@@ -108,69 +201,86 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
 
             // Audio Pronunciation Toggle
             Container(
               decoration: BoxDecoration(
-                color: AppTheme.darkCard,
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                border: Border.all(color: AppTheme.darkBorder),
+                color: context.cardBg,
+                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                border: Border.all(color: context.border),
+                boxShadow: context.cardShadow,
               ),
               child: SwitchListTile(
                 secondary: const Icon(
                   Icons.volume_up_rounded,
                   color: AppTheme.accent,
                 ),
-                title: Text(t('settings.sound.title')),
-                subtitle: Text(t('settings.sound.subtitle')),
+                title: Text(
+                  t('settings.sound.title'),
+                  style: TextStyle(color: context.textPrimary, fontWeight: FontWeight.w600, fontSize: 14),
+                ),
+                subtitle: Text(
+                  t('settings.sound.subtitle'),
+                  style: TextStyle(color: context.textSecondary, fontSize: 12),
+                ),
                 value: settings.soundEnabled,
                 activeTrackColor: AppTheme.accent,
                 onChanged: (val) => settings.toggleSound(val),
               ),
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: 24),
 
-            // Notifications Group
+            // --- NOTIFICATIONS GROUP ---
             Text(
               t('settings.notifGroup'),
-              style: const TextStyle(
-                fontSize: 12,
+              style: TextStyle(
+                fontSize: 11,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.2,
-                color: Colors.white54,
+                color: context.textSecondary,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
 
-            // Notification Daily Reminder Switch
+            // Daily Reminder Switch
             Container(
               decoration: BoxDecoration(
-                color: AppTheme.darkCard,
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                border: Border.all(color: AppTheme.darkBorder),
+                color: context.cardBg,
+                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                border: Border.all(color: context.border),
+                boxShadow: context.cardShadow,
               ),
               child: Column(
                 children: [
                   SwitchListTile(
                     secondary: const Icon(
                       Icons.notifications_active_rounded,
-                      color: AppTheme.primaryLight,
+                      color: AppTheme.primary,
                     ),
-                    title: Text(t('settings.notif.title')),
-                    subtitle: Text(t('settings.notif.subtitle')),
+                    title: Text(
+                      t('settings.notif.title'),
+                      style: TextStyle(color: context.textPrimary, fontWeight: FontWeight.w600, fontSize: 14),
+                    ),
+                    subtitle: Text(
+                      t('settings.notif.subtitle'),
+                      style: TextStyle(color: context.textSecondary, fontSize: 12),
+                    ),
                     value: settings.notificationsEnabled,
-                    activeTrackColor: AppTheme.primaryLight,
+                    activeTrackColor: AppTheme.primary,
                     onChanged: (val) => settings.toggleNotifications(val),
                   ),
                   if (settings.notificationsEnabled) ...[
-                    const Divider(color: AppTheme.darkBorder, height: 1),
+                    Divider(color: context.border, height: 1),
                     ListTile(
                       leading: const Icon(
                         Icons.access_time_rounded,
                         color: AppTheme.accent,
                       ),
-                      title: Text(t('settings.notif.time')),
+                      title: Text(
+                        t('settings.notif.time'),
+                        style: TextStyle(color: context.textPrimary, fontWeight: FontWeight.w600, fontSize: 14),
+                      ),
                       subtitle: Text(
                         settings.reminderTime.format(context),
                         style: const TextStyle(
@@ -178,27 +288,14 @@ class SettingsScreen extends StatelessWidget {
                           color: AppTheme.accent,
                         ),
                       ),
-                      trailing: const Icon(
+                      trailing: Icon(
                         Icons.chevron_right_rounded,
-                        color: Colors.white38,
+                        color: context.textSecondary,
                       ),
                       onTap: () async {
                         final picked = await showTimePicker(
                           context: context,
                           initialTime: settings.reminderTime,
-                          builder: (context, child) {
-                            return Theme(
-                              data: Theme.of(context).copyWith(
-                                colorScheme: const ColorScheme.dark(
-                                  primary: AppTheme.primaryLight,
-                                  onPrimary: Colors.white,
-                                  surface: AppTheme.darkCard,
-                                  onSurface: Colors.white,
-                                ),
-                              ),
-                              child: child!,
-                            );
-                          },
                         );
                         if (picked != null) {
                           await settings.setReminderTime(picked);
@@ -209,27 +306,31 @@ class SettingsScreen extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
 
             // Notification Testing Cards
             Container(
               decoration: BoxDecoration(
-                color: AppTheme.darkCard,
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                border: Border.all(color: AppTheme.darkBorder),
+                color: context.cardBg,
+                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                border: Border.all(color: context.border),
+                boxShadow: context.cardShadow,
               ),
               child: Column(
                 children: [
                   ListTile(
                     leading: const Icon(
                       Icons.bolt_rounded,
-                      color: Colors.amber,
+                      color: AppTheme.accentAmber,
                     ),
-                    title: Text(t('settings.notif.testInstant')),
-                    subtitle: const Text('Dispara una notificación ahora mismo'),
+                    title: Text(
+                      t('settings.notif.testInstant'),
+                      style: TextStyle(color: context.textPrimary, fontWeight: FontWeight.w600, fontSize: 14),
+                    ),
+                    subtitle: Text('Dispara una notificación ahora mismo', style: TextStyle(color: context.textSecondary, fontSize: 12)),
                     trailing: const Icon(
                       Icons.play_arrow_rounded,
-                      color: Colors.amber,
+                      color: AppTheme.accentAmber,
                     ),
                     onTap: () async {
                       await settings.sendTestInstantNotification();
@@ -243,17 +344,20 @@ class SettingsScreen extends StatelessWidget {
                       }
                     },
                   ),
-                  const Divider(color: AppTheme.darkBorder, height: 1),
+                  Divider(color: context.border, height: 1),
                   ListTile(
                     leading: const Icon(
                       Icons.timer_outlined,
-                      color: Colors.cyanAccent,
+                      color: AppTheme.accent,
                     ),
-                    title: Text(t('settings.notif.testScheduled')),
-                    subtitle: const Text('Lanza notificación en 3, 2, 1...'),
+                    title: Text(
+                      t('settings.notif.testScheduled'),
+                      style: TextStyle(color: context.textPrimary, fontWeight: FontWeight.w600, fontSize: 14),
+                    ),
+                    subtitle: Text('Espera 3 segundos con la app abierta o cerrada', style: TextStyle(color: context.textSecondary, fontSize: 12)),
                     trailing: const Icon(
-                      Icons.schedule_rounded,
-                      color: Colors.cyanAccent,
+                      Icons.play_arrow_rounded,
+                      color: AppTheme.accent,
                     ),
                     onTap: () async {
                       await settings.sendTestScheduledNotification();
@@ -267,67 +371,53 @@ class SettingsScreen extends StatelessWidget {
                       }
                     },
                   ),
-                  const Divider(color: AppTheme.darkBorder, height: 1),
-                  ListTile(
-                    leading: const Icon(
-                      Icons.settings_suggest_rounded,
-                      color: Colors.white70,
-                    ),
-                    title: Text(t('settings.notif.openSettings')),
-                    subtitle: const Text('Abrir ajustes del sistema si fue rechazada'),
-                    trailing: const Icon(
-                      Icons.open_in_new_rounded,
-                      color: Colors.white38,
-                    ),
-                    onTap: () async {
-                      await settings.openNotificationSettings();
-                    },
-                  ),
                 ],
               ),
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: 24),
 
-            // Item-Specific Notifications Section
+            // --- PINNED ITEM NOTIFICATIONS GROUP ---
             Text(
               t('settings.itemNotif.group'),
-              style: const TextStyle(
-                fontSize: 12,
+              style: TextStyle(
+                fontSize: 11,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.2,
-                color: Colors.white54,
+                color: context.textSecondary,
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 4),
             Text(
               t('settings.itemNotif.desc'),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
-                color: Colors.white60,
+                color: context.textSecondary,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
 
             _buildItemNotificationCard(context, settings, flashcardProvider),
-            const SizedBox(height: 28),
+            const SizedBox(height: 24),
 
+            // --- DATA GROUP ---
             Text(
               t('settings.dataGroup'),
-              style: const TextStyle(
-                fontSize: 12,
+              style: TextStyle(
+                fontSize: 11,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.2,
-                color: Colors.white54,
+                color: context.textSecondary,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
 
             // Reset Data
             Container(
               decoration: BoxDecoration(
-                color: AppTheme.darkCard,
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                border: Border.all(color: AppTheme.darkBorder),
+                color: context.cardBg,
+                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                border: Border.all(color: context.border),
+                boxShadow: context.cardShadow,
               ),
               child: ListTile(
                 leading: const Icon(
@@ -336,16 +426,16 @@ class SettingsScreen extends StatelessWidget {
                 ),
                 title: Text(
                   t('settings.reset.title'),
-                  style: const TextStyle(color: AppTheme.error),
+                  style: const TextStyle(color: AppTheme.error, fontWeight: FontWeight.w600, fontSize: 14),
                 ),
-                subtitle: Text(t('settings.reset.subtitle')),
+                subtitle: Text(t('settings.reset.subtitle'), style: TextStyle(color: context.textSecondary, fontSize: 12)),
                 onTap: () {
                   showDialog(
                     context: context,
                     builder: (ctx) => AlertDialog(
-                      backgroundColor: AppTheme.darkCard,
-                      title: Text(t('settings.reset.dialog.title')),
-                      content: Text(t('settings.reset.dialog.body')),
+                      backgroundColor: context.cardBg,
+                      title: Text(t('settings.reset.dialog.title'), style: TextStyle(color: context.textPrimary)),
+                      content: Text(t('settings.reset.dialog.body'), style: TextStyle(color: context.textSecondary)),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(ctx).pop(),
@@ -374,50 +464,95 @@ class SettingsScreen extends StatelessWidget {
                 },
               ),
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: 24),
 
+            // --- ABOUT GROUP ---
             Text(
               t('settings.aboutGroup'),
-              style: const TextStyle(
-                fontSize: 12,
+              style: TextStyle(
+                fontSize: 11,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.2,
-                color: Colors.white54,
+                color: context.textSecondary,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
 
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppTheme.darkCard,
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                border: Border.all(color: AppTheme.darkBorder),
+                color: context.cardBg,
+                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                border: Border.all(color: context.border),
+                boxShadow: context.cardShadow,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Row(
-                    children: [
-                      Text(
-                        'EasyEnglish v1.0.0',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    'EasyEnglish v1.0.0',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: context.textPrimary,
+                    ),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 4),
                   Text(
                     'Aprende inglés con repetición espaciada inteligente y pronunciación nativa.',
                     style: TextStyle(
                       fontSize: 12,
-                      color: Colors.white.withValues(alpha: 0.6),
+                      color: context.textSecondary,
                     ),
                   ),
                 ],
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildThemeModeOption({
+    required BuildContext context,
+    required String label,
+    required IconData icon,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppTheme.primary
+              : context.cardSecondary,
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          border: Border.all(
+            color: isSelected ? AppTheme.primary : context.border,
+          ),
+        ),
+        child: Column(
+          children: [
+            Icon(
+              icon,
+              size: 20,
+              color: isSelected ? Colors.white : context.textSecondary,
+            ),
+            const SizedBox(height: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                color: isSelected ? Colors.white : context.textPrimary,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
@@ -462,9 +597,10 @@ class _ItemNotificationAccordionState extends State<_ItemNotificationAccordion> 
     if (config == null) {
       return Container(
         decoration: BoxDecoration(
-          color: AppTheme.darkCard,
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          border: Border.all(color: AppTheme.darkBorder),
+          color: context.cardBg,
+          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+          border: Border.all(color: context.border),
+          boxShadow: context.cardShadow,
         ),
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -472,32 +608,23 @@ class _ItemNotificationAccordionState extends State<_ItemNotificationAccordion> 
           children: [
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.push_pin_outlined,
-                  color: Colors.white38,
+                  color: context.textSecondary,
                   size: 22,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     t('settings.itemNotif.noCard'),
-                    style: const TextStyle(
-                      color: Colors.white54,
+                    style: TextStyle(
+                      color: context.textSecondary,
                       fontSize: 13,
-                      height: 1.5,
+                      height: 1.4,
                     ),
                   ),
                 ),
               ],
-            ),
-            const SizedBox(height: 10),
-            Text(
-              '→ Abre cualquier tarjeta de cualquier categoría y usa el botón 📌',
-              style: TextStyle(
-                fontSize: 12,
-                color: AppTheme.primaryLight.withValues(alpha: 0.7),
-                fontStyle: FontStyle.italic,
-              ),
             ),
           ],
         ),
@@ -506,105 +633,75 @@ class _ItemNotificationAccordionState extends State<_ItemNotificationAccordion> 
 
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.darkCard,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        color: context.cardBg,
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         border: Border.all(
-          color: config.isEnabled ? AppTheme.primaryLight.withValues(alpha: 0.5) : AppTheme.darkBorder,
+          color: config.isEnabled
+              ? AppTheme.primary.withValues(alpha: 0.35)
+              : context.border,
         ),
+        boxShadow: context.cardShadow,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Collapsible Header (Accordion)
+          // Header / Summary Row
           InkWell(
-            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-            onTap: () {
-              setState(() {
-                _isExpanded = !_isExpanded;
-              });
-            },
+            onTap: () => setState(() => _isExpanded = !_isExpanded),
+            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: [
                   Container(
-                    width: 42,
-                    height: 42,
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [AppTheme.primaryLight, AppTheme.accent],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
+                      color: config.isEnabled
+                          ? AppTheme.primary.withValues(alpha: context.isDark ? 0.2 : 0.1)
+                          : context.cardSecondary,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(Icons.push_pin_rounded, color: Colors.white, size: 20),
+                    child: Icon(
+                      Icons.push_pin_rounded,
+                      color: config.isEnabled ? AppTheme.primary : context.textSecondary,
+                      size: 20,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Flexible(
-                              child: Text(
-                                config.wordEn,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            if (config.hasGrammarFormula) ...[
-                              const SizedBox(width: 8),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: Colors.purple.withValues(alpha: 0.25),
-                                  borderRadius: BorderRadius.circular(6),
-                                  border: Border.all(color: Colors.purpleAccent.withValues(alpha: 0.5)),
-                                ),
-                                child: const Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(Icons.architecture_rounded, size: 11, color: Colors.purpleAccent),
-                                    SizedBox(width: 4),
-                                    Text(
-                                      'Fórmula',
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.purpleAccent,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                        const SizedBox(height: 3),
                         Text(
-                          '${config.wordEs}  •  ${config.times.length} ${t('settings.itemNotif.slotsSummary')}',
-                          style: const TextStyle(fontSize: 12, color: Colors.white60),
+                          config.wordEn,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: context.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '${config.wordEs} • ${config.times.length} ${t('settings.itemNotif.slotsSummary')}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: context.textSecondary,
+                          ),
                         ),
                       ],
                     ),
                   ),
                   Switch(
                     value: config.isEnabled,
-                    activeThumbColor: AppTheme.primaryLight,
-                    onChanged: (val) => settings.toggleItemNotifications(val),
+                    activeTrackColor: AppTheme.primary,
+                    onChanged: (val) => settings.toggleItemNotificationEnabled(val),
                   ),
                   AnimatedRotation(
                     turns: _isExpanded ? 0.5 : 0.0,
                     duration: const Duration(milliseconds: 200),
-                    child: const Icon(
+                    child: Icon(
                       Icons.keyboard_arrow_down_rounded,
-                      color: Colors.white54,
+                      color: context.textSecondary,
                     ),
                   ),
                 ],
@@ -614,9 +711,9 @@ class _ItemNotificationAccordionState extends State<_ItemNotificationAccordion> 
 
           // Expanded Content
           if (_isExpanded && config.isEnabled) ...[
-            const Divider(color: AppTheme.darkBorder, height: 1),
+            Divider(color: context.border, height: 1),
 
-            // Grammar Formula Section (Conditional for Tiempos Verbales)
+            // Grammar Formula Section
             if (config.hasGrammarFormula) ...[
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
@@ -624,16 +721,16 @@ class _ItemNotificationAccordionState extends State<_ItemNotificationAccordion> 
                   width: double.infinity,
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.purple.withValues(alpha: 0.12),
+                    color: AppTheme.accentPurple.withValues(alpha: context.isDark ? 0.15 : 0.08),
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.purpleAccent.withValues(alpha: 0.35)),
+                    border: Border.all(color: AppTheme.accentPurple.withValues(alpha: 0.3)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Row(
                         children: [
-                          Icon(Icons.architecture_rounded, size: 15, color: Colors.purpleAccent),
+                          Icon(Icons.architecture_rounded, size: 15, color: AppTheme.accentPurple),
                           SizedBox(width: 6),
                           Text(
                             'ESTRUCTURA / GRAMMAR FORMULA',
@@ -641,7 +738,7 @@ class _ItemNotificationAccordionState extends State<_ItemNotificationAccordion> 
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 1.1,
-                              color: Colors.purpleAccent,
+                              color: AppTheme.accentPurple,
                             ),
                           ),
                         ],
@@ -649,27 +746,18 @@ class _ItemNotificationAccordionState extends State<_ItemNotificationAccordion> 
                       const SizedBox(height: 6),
                       Text(
                         config.grammarFormula!,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                          color: context.textPrimary,
                           height: 1.4,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        '✓ Se incluirá automáticamente en todas las notificaciones de este ítem.',
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: Colors.white54,
-                          fontStyle: FontStyle.italic,
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-              const Divider(color: AppTheme.darkBorder, height: 1),
+              Divider(color: context.border, height: 1),
             ],
 
             // Auto-Generation & Interval Selector Section
@@ -683,15 +771,15 @@ class _ItemNotificationAccordionState extends State<_ItemNotificationAccordion> 
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.auto_mode_rounded, size: 14, color: Colors.white38),
+                          Icon(Icons.auto_mode_rounded, size: 14, color: context.textSecondary),
                           const SizedBox(width: 6),
                           Text(
                             t('settings.itemNotif.autoGenerate').toUpperCase(),
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 1.2,
-                              color: Colors.white38,
+                              color: context.textSecondary,
                             ),
                           ),
                         ],
@@ -708,28 +796,14 @@ class _ItemNotificationAccordionState extends State<_ItemNotificationAccordion> 
                             context: context,
                             initialTime: initialTime,
                             helpText: 'HORA DE INICIO DEL DÍA',
-                            builder: (context, child) => Theme(
-                              data: Theme.of(context).copyWith(
-                                colorScheme: const ColorScheme.dark(
-                                  primary: AppTheme.primaryLight,
-                                  onPrimary: Colors.white,
-                                  surface: AppTheme.darkCard,
-                                  onSurface: Colors.white,
-                                ),
-                              ),
-                              child: child!,
-                            ),
                           );
                           if (picked != null) {
-                            await settings.generateAutoTimes(
-                              startTime: picked,
-                              intervalMinutes: config.intervalMinutes,
-                            );
+                            await settings.updateItemNotificationStartTime(picked);
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
-                                    '⏰ Horarios generados cada ${config.intervalMinutes} min desde ${picked.format(context)}',
+                                    'Horarios generados cada ${config.intervalMinutes} min desde ${picked.format(context)}',
                                   ),
                                   duration: const Duration(seconds: 2),
                                 ),
@@ -743,7 +817,7 @@ class _ItemNotificationAccordionState extends State<_ItemNotificationAccordion> 
                           style: const TextStyle(fontSize: 11),
                         ),
                         style: TextButton.styleFrom(
-                          foregroundColor: AppTheme.primaryLight,
+                          foregroundColor: AppTheme.primary,
                           padding: EdgeInsets.zero,
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
@@ -765,14 +839,14 @@ class _ItemNotificationAccordionState extends State<_ItemNotificationAccordion> 
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                            color: isSelected ? Colors.white : Colors.white70,
+                            color: isSelected ? Colors.white : context.textSecondary,
                           ),
                         ),
                         selected: isSelected,
-                        selectedColor: AppTheme.primaryLight,
-                        backgroundColor: Colors.white.withValues(alpha: 0.05),
+                        selectedColor: AppTheme.primary,
+                        backgroundColor: context.cardSecondary,
                         side: BorderSide(
-                          color: isSelected ? AppTheme.primaryLight : Colors.white12,
+                          color: isSelected ? AppTheme.primary : context.border,
                         ),
                         onSelected: (selected) {
                           if (selected) {
@@ -787,119 +861,28 @@ class _ItemNotificationAccordionState extends State<_ItemNotificationAccordion> 
             ),
             const SizedBox(height: 8),
 
-            const Divider(color: AppTheme.darkBorder, height: 1),
+            Divider(color: context.border, height: 1),
 
-            // Examples preview
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-              child: Row(
-                children: [
-                  const Icon(Icons.rotate_right_rounded, size: 14, color: Colors.white38),
-                  const SizedBox(width: 6),
-                  const Text(
-                    'ROTACIÓN DE EJEMPLOS',
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
-                      color: Colors.white38,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: config.examples.length,
-              itemBuilder: (ctx, i) {
-                final isCurrent = i == config.currentExampleIndex % config.examples.length;
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: isCurrent
-                          ? AppTheme.primaryLight.withValues(alpha: 0.15)
-                          : Colors.white.withValues(alpha: 0.04),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: isCurrent
-                            ? AppTheme.primaryLight.withValues(alpha: 0.4)
-                            : Colors.white12,
-                      ),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${i + 1}.',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            color: isCurrent ? AppTheme.primaryLight : Colors.white38,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            config.examples[i],
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: isCurrent ? Colors.white : Colors.white70,
-                              fontWeight: isCurrent ? FontWeight.w500 : FontWeight.normal,
-                            ),
-                          ),
-                        ),
-                        if (isCurrent)
-                          const Icon(Icons.notifications_active, size: 14, color: AppTheme.primaryLight),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 10),
-
-            const Divider(color: AppTheme.darkBorder, height: 1),
-
-            // Times section
+            // Time slots header
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.access_time_rounded, size: 14, color: Colors.white38),
-                      const SizedBox(width: 6),
-                      Text(
-                        'HORARIOS DEL DÍA (${config.times.length})',
-                        style: const TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.2,
-                          color: Colors.white38,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    'HORARIOS ACTIVOS (${config.times.length})',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                      color: context.textSecondary,
+                    ),
                   ),
                   TextButton.icon(
                     onPressed: () async {
                       final picked = await showTimePicker(
                         context: context,
-                        initialTime: const TimeOfDay(hour: 9, minute: 0),
-                        builder: (context, child) => Theme(
-                          data: Theme.of(context).copyWith(
-                            colorScheme: const ColorScheme.dark(
-                              primary: AppTheme.primaryLight,
-                              onPrimary: Colors.white,
-                              surface: AppTheme.darkCard,
-                              onSurface: Colors.white,
-                            ),
-                          ),
-                          child: child!,
-                        ),
+                        initialTime: const TimeOfDay(hour: 12, minute: 0),
                       );
                       if (picked != null) {
                         await settings.addItemNotificationTime(picked);
@@ -908,7 +891,7 @@ class _ItemNotificationAccordionState extends State<_ItemNotificationAccordion> 
                     icon: const Icon(Icons.add_rounded, size: 16),
                     label: Text(t('settings.itemNotif.addTime')),
                     style: TextButton.styleFrom(
-                      foregroundColor: AppTheme.primaryLight,
+                      foregroundColor: AppTheme.primary,
                       padding: EdgeInsets.zero,
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
@@ -918,11 +901,11 @@ class _ItemNotificationAccordionState extends State<_ItemNotificationAccordion> 
             ),
 
             config.times.isEmpty
-                ? const Padding(
-                    padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
+                ? Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
                     child: Text(
                       'Sin horarios. Agrega al menos uno o regenera automáticamente.',
-                      style: TextStyle(fontSize: 12, color: Colors.orange),
+                      style: TextStyle(fontSize: 12, color: AppTheme.accentAmber),
                     ),
                   )
                 : ListView.builder(
@@ -935,10 +918,10 @@ class _ItemNotificationAccordionState extends State<_ItemNotificationAccordion> 
                       return ListTile(
                         dense: true,
                         leading: Container(
-                          width: 36,
-                          height: 36,
+                          width: 34,
+                          height: 34,
                           decoration: BoxDecoration(
-                            color: AppTheme.accent.withValues(alpha: 0.15),
+                            color: AppTheme.accent.withValues(alpha: context.isDark ? 0.15 : 0.1),
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(color: AppTheme.accent.withValues(alpha: 0.3)),
                           ),
@@ -946,41 +929,28 @@ class _ItemNotificationAccordionState extends State<_ItemNotificationAccordion> 
                         ),
                         title: Text(
                           slotTime.format(context),
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: context.textPrimary),
                         ),
                         subtitle: Text(
-                          'Ejemplo ${exampleIndex + 1}/${config.examples.length}: "${config.examples[exampleIndex].length > 45 ? '${config.examples[exampleIndex].substring(0, 45)}…' : config.examples[exampleIndex]}"',
-                          style: const TextStyle(fontSize: 11, color: Colors.white54),
+                          'Ejemplo ${exampleIndex + 1}/${config.examples.length}: "${config.examples[exampleIndex].length > 40 ? '${config.examples[exampleIndex].substring(0, 40)}…' : config.examples[exampleIndex]}"',
+                          style: TextStyle(fontSize: 11, color: context.textSecondary),
                         ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            // Edit time slot button
                             IconButton(
                               tooltip: t('settings.itemNotif.editTime'),
-                              icon: const Icon(Icons.edit_rounded, color: AppTheme.primaryLight, size: 18),
+                              icon: const Icon(Icons.edit_rounded, color: AppTheme.primary, size: 18),
                               onPressed: () async {
                                 final picked = await showTimePicker(
                                   context: context,
                                   initialTime: slotTime,
-                                  builder: (context, child) => Theme(
-                                    data: Theme.of(context).copyWith(
-                                      colorScheme: const ColorScheme.dark(
-                                        primary: AppTheme.primaryLight,
-                                        onPrimary: Colors.white,
-                                        surface: AppTheme.darkCard,
-                                        onSurface: Colors.white,
-                                      ),
-                                    ),
-                                    child: child!,
-                                  ),
                                 );
                                 if (picked != null) {
-                                  await settings.updateItemNotificationTime(i, picked);
+                                  await settings.updateItemNotificationTimeSlot(i, picked);
                                 }
                               },
                             ),
-                            // Delete time slot button
                             IconButton(
                               tooltip: 'Eliminar',
                               icon: const Icon(Icons.close_rounded, color: AppTheme.error, size: 18),
@@ -993,24 +963,26 @@ class _ItemNotificationAccordionState extends State<_ItemNotificationAccordion> 
                   ),
             const SizedBox(height: 8),
 
-            const Divider(color: AppTheme.darkBorder, height: 1),
+            Divider(color: context.border, height: 1),
 
             // Test button
             ListTile(
-              leading: const Icon(Icons.science_rounded, color: Colors.purpleAccent),
-              title: Text(t('settings.itemNotif.testNow')),
-              subtitle: Text(
-                config.hasGrammarFormula
-                    ? 'Prueba la fórmula + ejemplo #${(config.currentExampleIndex % config.examples.length) + 1}'
-                    : 'Prueba el ejemplo #${(config.currentExampleIndex % config.examples.length) + 1}',
+              leading: const Icon(Icons.science_rounded, color: AppTheme.accentPurple),
+              title: Text(
+                t('settings.itemNotif.testNow'),
+                style: TextStyle(color: context.textPrimary, fontWeight: FontWeight.w600, fontSize: 14),
               ),
-              trailing: const Icon(Icons.play_arrow_rounded, color: Colors.purpleAccent),
+              subtitle: Text(
+                'Prueba el ejemplo #${(config.currentExampleIndex % config.examples.length) + 1}',
+                style: TextStyle(color: context.textSecondary, fontSize: 12),
+              ),
+              trailing: const Icon(Icons.play_arrow_rounded, color: AppTheme.accentPurple),
               onTap: () async {
                 await settings.sendTestItemNotification();
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('📬 ${t('settings.notif.sentInstant')}'),
+                      content: Text(t('settings.notif.sentInstant')),
                       duration: const Duration(seconds: 2),
                     ),
                   );

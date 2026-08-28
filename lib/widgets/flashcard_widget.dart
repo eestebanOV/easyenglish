@@ -1,8 +1,9 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../models/flashcard.dart';
+import '../providers/settings_provider.dart';
 import '../services/tts_service.dart';
 import '../theme/app_theme.dart';
 
@@ -109,15 +110,15 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
       child: AnimatedBuilder(
         animation: _animation,
         builder: (context, child) {
+          final isFront = _animation.value < 0.5;
           final angle = _animation.value * pi;
-          final isFront = angle < pi / 2;
 
           return Transform(
             alignment: Alignment.center,
             transform: Matrix4.identity()
-              ..setEntry(3, 2, 0.001) // Perspective
+              ..setEntry(3, 2, 0.001)
               ..rotateY(angle),
-            child: isFront ? _buildFront() : _buildBack(),
+            child: isFront ? _buildFront(context) : _buildBack(context),
           );
         },
       ),
@@ -125,76 +126,62 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
   }
 
   /// LADO 1: INGLÉS + TRADUCCIÓN AL ESPAÑOL + PRONUNCIACIÓN + BOCINA
-  Widget _buildFront() {
+  Widget _buildFront(BuildContext context) {
+    final t = context.read<SettingsProvider>().translate;
+
     return Container(
       width: double.infinity,
       constraints: const BoxConstraints(minHeight: 380),
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 26.0),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF1E2640), Color(0xFF131826)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: context.cardBg,
         borderRadius: BorderRadius.circular(AppTheme.radiusXl),
         border: Border.all(
-          color: AppTheme.primaryLight.withValues(alpha: 0.35),
+          color: AppTheme.primary.withValues(alpha: context.isDark ? 0.35 : 0.25),
           width: 1.5,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.primaryDark.withValues(alpha: 0.35),
-            blurRadius: 24,
-            offset: const Offset(0, 10),
-          ),
-          BoxShadow(
-            color: AppTheme.shadowSoft,
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow: context.cardShadow,
       ),
       child: SingleChildScrollView(
         physics: const NeverScrollableScrollPhysics(),
         child: widget.card.categoryId == "verb_tenses"
-            ? _buildVerbTenseFront()
-            : _buildStandardFront(),
+            ? _buildVerbTenseFront(context, t)
+            : _buildStandardFront(context, t),
       ),
     );
   }
 
-  Widget _buildVerbTenseFront() {
+  Widget _buildVerbTenseFront(BuildContext context, String Function(String) t) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Tag Superior: STRUCTURE
         Center(
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
             decoration: BoxDecoration(
-              color: AppTheme.accentOrange.withValues(alpha: 0.15),
+              color: AppTheme.accentPurple.withValues(alpha: context.isDark ? 0.15 : 0.1),
               borderRadius: BorderRadius.circular(AppTheme.radiusRound),
               border: Border.all(
-                color: AppTheme.accentOrange.withValues(alpha: 0.3),
+                color: AppTheme.accentPurple.withValues(alpha: 0.3),
               ),
             ),
-            child: const Row(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.rule_rounded,
+                const Icon(
+                  Icons.functions_rounded,
                   size: 14,
-                  color: AppTheme.accentOrange,
+                  color: AppTheme.accentPurple,
                 ),
-                SizedBox(width: 6),
+                const SizedBox(width: 6),
                 Text(
-                  'STRUCTURE',
-                  style: TextStyle(
+                  t('card.structureLabel'),
+                  style: const TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.2,
-                    color: AppTheme.accentOrange,
+                    color: AppTheme.accentPurple,
                   ),
                 ),
               ],
@@ -203,50 +190,48 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
         ),
         const SizedBox(height: 22),
 
-        // Nombre del tiempo verbal
         Text(
           widget.card.wordEn,
           textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 28,
+          style: TextStyle(
+            fontSize: 26,
             fontWeight: FontWeight.w800,
-            color: Colors.white,
+            color: context.textPrimary,
             letterSpacing: -0.5,
           ),
         ),
         const SizedBox(height: 24),
 
-        // Estructura gramatical
         Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           decoration: BoxDecoration(
-            color: AppTheme.accentOrange.withValues(alpha: 0.14),
+            color: AppTheme.accentPurple.withValues(alpha: context.isDark ? 0.14 : 0.08),
             borderRadius: BorderRadius.circular(AppTheme.radiusLg),
             border: Border.all(
-              color: AppTheme.accentOrange.withValues(alpha: 0.4),
+              color: AppTheme.accentPurple.withValues(alpha: 0.35),
             ),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'GRAMMAR FORMULA',
-                style: TextStyle(
+              Text(
+                t('card.grammarFormula'),
+                style: const TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.3,
-                  color: AppTheme.accentOrange,
+                  color: AppTheme.accentPurple,
                 ),
               ),
               const SizedBox(height: 10),
               Text(
                 widget.card.structure ?? '',
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
-                  color: AppTheme.accentOrange.withValues(alpha: 0.95),
+                  color: AppTheme.accentPurple,
                   fontFamily: 'monospace',
                 ),
               ),
@@ -255,21 +240,20 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
         ),
         const SizedBox(height: 24),
 
-        // Indicador para voltear
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.touch_app_rounded,
               size: 15,
-              color: Colors.white.withValues(alpha: 0.45),
+              color: context.textSecondary.withValues(alpha: 0.6),
             ),
             const SizedBox(width: 6),
             Text(
-              'Toca para ver ejemplos de uso',
+              t('card.tapToFlip'),
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.white.withValues(alpha: 0.45),
+                color: context.textSecondary.withValues(alpha: 0.6),
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -279,38 +263,37 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
     );
   }
 
-  Widget _buildStandardFront() {
+  Widget _buildStandardFront(BuildContext context, String Function(String) t) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Tag Superior
         Center(
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
             decoration: BoxDecoration(
-              color: AppTheme.primaryLight.withValues(alpha: 0.15),
+              color: AppTheme.primary.withValues(alpha: context.isDark ? 0.15 : 0.1),
               borderRadius: BorderRadius.circular(AppTheme.radiusRound),
               border: Border.all(
-                color: AppTheme.primaryLight.withValues(alpha: 0.3),
+                color: AppTheme.primary.withValues(alpha: 0.3),
               ),
             ),
-            child: const Row(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
+                const Icon(
                   Icons.translate_rounded,
                   size: 14,
-                  color: AppTheme.primaryLight,
+                  color: AppTheme.primary,
                 ),
-                SizedBox(width: 6),
+                const SizedBox(width: 6),
                 Text(
-                  'PALABRA & TRADUCCIÓN',
-                  style: TextStyle(
+                  t('card.frontTag'),
+                  style: const TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.2,
-                    color: AppTheme.primaryLight,
+                    color: AppTheme.primary,
                   ),
                 ),
               ],
@@ -319,38 +302,40 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
         ),
         const SizedBox(height: 20),
 
-        // Término en Inglés o 3 formas verbales
         if (widget.card.isVerbWithForms) ...[
           Container(
             padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.05),
+              color: context.cardSecondary,
               borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+              border: Border.all(color: context.border),
             ),
             child: Row(
               children: [
                 Expanded(
                   child: _buildTenseBox(
-                    tense: 'PRESENT',
+                    context: context,
+                    tense: t('card.tense.present'),
                     word: widget.card.present!,
                     color: AppTheme.accent,
                   ),
                 ),
-                Container(width: 1, height: 44, color: Colors.white12),
+                Container(width: 1, height: 40, color: context.border),
                 Expanded(
                   child: _buildTenseBox(
-                    tense: 'PAST',
+                    context: context,
+                    tense: t('card.tense.past'),
                     word: widget.card.past!,
-                    color: AppTheme.primaryLight,
+                    color: AppTheme.primary,
                   ),
                 ),
-                Container(width: 1, height: 44, color: Colors.white12),
+                Container(width: 1, height: 40, color: context.border),
                 Expanded(
                   child: _buildTenseBox(
-                    tense: 'PARTICIPLE',
+                    context: context,
+                    tense: t('card.tense.participle'),
                     word: widget.card.participle!,
-                    color: AppTheme.accentOrange,
+                    color: AppTheme.accentAmber,
                   ),
                 ),
               ],
@@ -360,10 +345,10 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
           Text(
             widget.card.wordEn,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 30,
+            style: TextStyle(
+              fontSize: 28,
               fontWeight: FontWeight.w800,
-              color: Colors.white,
+              color: context.textPrimary,
               letterSpacing: -0.5,
             ),
           ),
@@ -371,25 +356,23 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
 
         const SizedBox(height: 10),
 
-        // Pronunciación Fonética
         if (widget.card.pronunciation.isNotEmpty)
           Text(
             widget.card.pronunciation,
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 13,
               fontStyle: FontStyle.italic,
-              color: Colors.white.withValues(alpha: 0.6),
+              color: context.textSecondary,
             ),
           ),
 
         const SizedBox(height: 18),
 
-        // Traducción al Español Destacada en el Frente
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
           decoration: BoxDecoration(
-            color: AppTheme.accent.withValues(alpha: 0.12),
+            color: AppTheme.accent.withValues(alpha: context.isDark ? 0.12 : 0.08),
             borderRadius: BorderRadius.circular(AppTheme.radiusMd),
             border: Border.all(color: AppTheme.accent.withValues(alpha: 0.35)),
           ),
@@ -403,7 +386,7 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
                   widget.card.wordEs,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    fontSize: 18,
+                    fontSize: 17,
                     fontWeight: FontWeight.bold,
                     color: AppTheme.accent,
                   ),
@@ -415,34 +398,32 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
 
         const SizedBox(height: 18),
 
-        // Bocina para pronunciación
         IconButton.filledTonal(
           onPressed: _speak,
-          icon: const Icon(Icons.volume_up_rounded, size: 24),
+          icon: const Icon(Icons.volume_up_rounded, size: 22),
           style: IconButton.styleFrom(
-            backgroundColor: AppTheme.primaryLight.withValues(alpha: 0.2),
-            foregroundColor: AppTheme.primaryLight,
+            backgroundColor: AppTheme.primary.withValues(alpha: context.isDark ? 0.2 : 0.12),
+            foregroundColor: AppTheme.primary,
             padding: const EdgeInsets.all(12),
           ),
         ),
 
         const SizedBox(height: 16),
 
-        // Indicador para voltear
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.touch_app_rounded,
               size: 15,
-              color: Colors.white.withValues(alpha: 0.45),
+              color: context.textSecondary.withValues(alpha: 0.6),
             ),
             const SizedBox(width: 6),
             Text(
-              'Toca para ver ejemplos de uso',
+              t('card.tapToFlip'),
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.white.withValues(alpha: 0.45),
+                color: context.textSecondary.withValues(alpha: 0.6),
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -453,8 +434,9 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
   }
 
   /// LADO 2 (REVERSO): DEDICADO A EJEMPLOS + BOTÓN DADO + BOCINA
-  Widget _buildBack() {
+  Widget _buildBack(BuildContext context) {
     final currentExample = _examplesList[_exampleIndex % _examplesList.length];
+    final t = context.read<SettingsProvider>().translate;
 
     return Transform(
       alignment: Alignment.center,
@@ -464,28 +446,13 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
         constraints: const BoxConstraints(minHeight: 380),
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 26.0),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF162E3B), Color(0xFF0F1E29)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          color: context.cardBg,
           borderRadius: BorderRadius.circular(AppTheme.radiusXl),
           border: Border.all(
-            color: AppTheme.accent.withValues(alpha: 0.45),
+            color: AppTheme.accent.withValues(alpha: context.isDark ? 0.45 : 0.3),
             width: 1.5,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: AppTheme.accent.withValues(alpha: 0.25),
-              blurRadius: 24,
-              offset: const Offset(0, 10),
-            ),
-            BoxShadow(
-              color: AppTheme.shadowSoft,
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          boxShadow: context.cardShadow,
         ),
         child: SingleChildScrollView(
           physics: const NeverScrollableScrollPhysics(),
@@ -493,7 +460,6 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Header reverso con Tag - CENTRALIZADO
               Center(
                 child: Container(
                   padding: const EdgeInsets.symmetric(
@@ -501,7 +467,7 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
                     vertical: 5,
                   ),
                   decoration: BoxDecoration(
-                    color: AppTheme.accent.withValues(alpha: 0.15),
+                    color: AppTheme.accent.withValues(alpha: context.isDark ? 0.15 : 0.1),
                     borderRadius: BorderRadius.circular(AppTheme.radiusRound),
                     border: Border.all(
                       color: AppTheme.accent.withValues(alpha: 0.3),
@@ -532,15 +498,14 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
 
               const SizedBox(height: 24),
 
-              // Contenedor del Ejemplo Actual - contenido CENTRALIZADO
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(22),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.06),
+                  color: context.cardSecondary,
                   borderRadius: BorderRadius.circular(AppTheme.radiusLg),
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.12),
+                    color: context.border,
                   ),
                 ),
                 child: Column(
@@ -552,20 +517,20 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
                         '"$currentExample"',
                         key: ValueKey(currentExample),
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 18,
+                        style: TextStyle(
+                          fontSize: 17,
                           fontWeight: FontWeight.w600,
                           fontStyle: FontStyle.italic,
-                          color: Colors.white,
-                          height: 1.5,
+                          color: context.textPrimary,
+                          height: 1.45,
                         ),
                       ),
                     ),
                     if (_exampleIndex == 0 &&
                         widget.card.exampleEs.isNotEmpty) ...[
                       const SizedBox(height: 14),
-                      const Divider(
-                        color: Colors.white12,
+                      Divider(
+                        color: context.border,
                         height: 1,
                         indent: 30,
                         endIndent: 30,
@@ -575,8 +540,8 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
                         widget.card.exampleEs,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white.withValues(alpha: 0.7),
+                          fontSize: 13,
+                          color: context.textSecondary,
                           fontWeight: FontWeight.w500,
                           height: 1.4,
                         ),
@@ -588,32 +553,26 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
 
               const SizedBox(height: 22),
 
-              // Barra inferior con Bocina y Dado juntos
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Bocina para escuchar el ejemplo
                   IconButton.filledTonal(
                     onPressed: _speakCurrentExample,
-                    icon: const Icon(Icons.volume_up_rounded, size: 24),
+                    icon: const Icon(Icons.volume_up_rounded, size: 22),
                     style: IconButton.styleFrom(
-                      backgroundColor: AppTheme.accent.withValues(alpha: 0.2),
+                      backgroundColor: AppTheme.accent.withValues(alpha: context.isDark ? 0.2 : 0.12),
                       foregroundColor: AppTheme.accent,
                       padding: const EdgeInsets.all(12),
                     ),
                     tooltip: 'Escuchar ejemplo',
                   ),
                   const SizedBox(width: 14),
-
-                  // Botón Dado (solo icono, sin texto)
                   IconButton.filledTonal(
                     onPressed: _rollNextExample,
-                    icon: const Icon(Icons.casino_rounded, size: 24),
+                    icon: const Icon(Icons.shuffle_rounded, size: 22),
                     style: IconButton.styleFrom(
-                      backgroundColor: AppTheme.accentOrange.withValues(
-                        alpha: 0.2,
-                      ),
-                      foregroundColor: AppTheme.accentOrange,
+                      backgroundColor: AppTheme.accentAmber.withValues(alpha: context.isDark ? 0.2 : 0.12),
+                      foregroundColor: AppTheme.accentAmber,
                       padding: const EdgeInsets.all(12),
                     ),
                     tooltip: 'Cambiar ejemplo',
@@ -623,21 +582,20 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
 
               const SizedBox(height: 16),
 
-              // Indicador para volver al frente
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
                     Icons.flip_to_front_rounded,
                     size: 15,
-                    color: Colors.white.withValues(alpha: 0.4),
+                    color: context.textSecondary.withValues(alpha: 0.6),
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    'Toca la tarjeta para volver',
+                    t('card.backHint'),
                     style: TextStyle(
                       fontSize: 12,
-                      color: Colors.white.withValues(alpha: 0.4),
+                      color: context.textSecondary.withValues(alpha: 0.6),
                     ),
                   ),
                 ],
@@ -650,6 +608,7 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
   }
 
   Widget _buildTenseBox({
+    required BuildContext context,
     required String tense,
     required String word,
     required Color color,
@@ -670,10 +629,10 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
         Text(
           word,
           textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 16,
+          style: TextStyle(
+            fontSize: 15,
             fontWeight: FontWeight.w800,
-            color: Colors.white,
+            color: context.textPrimary,
           ),
         ),
       ],

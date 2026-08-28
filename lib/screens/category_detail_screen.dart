@@ -56,9 +56,10 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
             return Padding(
               padding: EdgeInsets.only(bottom: MediaQuery.of(dialogContext).viewInsets.bottom),
               child: Container(
-                decoration: const BoxDecoration(
-                  color: AppTheme.darkCard,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                decoration: BoxDecoration(
+                  color: context.cardBg,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                  border: Border.all(color: context.border),
                 ),
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
                 child: Column(
@@ -70,7 +71,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                         width: 40,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: Colors.white24,
+                          color: context.textSecondary.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -81,9 +82,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [AppTheme.primaryLight, AppTheme.accent],
-                            ),
+                            gradient: AppTheme.primaryGradient,
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: const Icon(Icons.push_pin_rounded, color: Colors.white, size: 20),
@@ -95,15 +94,15 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                             children: [
                               Text(
                                 card.wordEn,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,
-                                  color: Colors.white,
+                                  color: context.textPrimary,
                                 ),
                               ),
                               Text(
                                 card.wordEs,
-                                style: const TextStyle(fontSize: 13, color: Colors.white60),
+                                style: TextStyle(fontSize: 13, color: context.textSecondary),
                               ),
                             ],
                           ),
@@ -115,18 +114,18 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: Colors.purple.withValues(alpha: 0.15),
+                          color: AppTheme.accentPurple.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.purpleAccent.withValues(alpha: 0.3)),
+                          border: Border.all(color: AppTheme.accentPurple.withValues(alpha: 0.3)),
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.architecture_rounded, size: 16, color: Colors.purpleAccent),
+                            const Icon(Icons.architecture_rounded, size: 16, color: AppTheme.accentPurple),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                '📐 Fórmula: ${card.structure}',
-                                style: const TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w500),
+                                'Fórmula: ${card.structure}',
+                                style: TextStyle(fontSize: 12, color: context.textPrimary, fontWeight: FontWeight.w500),
                               ),
                             ),
                           ],
@@ -134,13 +133,13 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                       ),
                     ],
                     const SizedBox(height: 18),
-                    const Text(
+                    Text(
                       'HORA DE INICIO DEL DÍA',
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.1,
-                        color: Colors.white54,
+                        color: context.textSecondary,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -150,17 +149,6 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                         final picked = await showTimePicker(
                           context: dialogContext,
                           initialTime: selectedStart,
-                          builder: (context, child) => Theme(
-                            data: Theme.of(context).copyWith(
-                              colorScheme: const ColorScheme.dark(
-                                primary: AppTheme.primaryLight,
-                                onPrimary: Colors.white,
-                                surface: AppTheme.darkCard,
-                                onSurface: Colors.white,
-                              ),
-                            ),
-                            child: child!,
-                          ),
                         );
                         if (picked != null) {
                           setDialogState(() {
@@ -171,34 +159,34 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.05),
+                          color: context.cardSecondary,
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.white12),
+                          border: Border.all(color: context.border),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               selectedStart.format(context),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: context.textPrimary,
                               ),
                             ),
-                            const Icon(Icons.access_time_rounded, color: AppTheme.primaryLight, size: 18),
+                            const Icon(Icons.access_time_rounded, color: AppTheme.primary, size: 18),
                           ],
                         ),
                       ),
                     ),
                     const SizedBox(height: 18),
-                    const Text(
+                    Text(
                       'INTERVALO DE REPETICIÓN',
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.1,
-                        color: Colors.white54,
+                        color: context.textSecondary,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -210,8 +198,13 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                         return ChoiceChip(
                           label: Text(label),
                           selected: isSel,
-                          selectedColor: AppTheme.primaryLight,
-                          backgroundColor: Colors.white.withValues(alpha: 0.05),
+                          selectedColor: AppTheme.primary,
+                          labelStyle: TextStyle(
+                            color: isSel ? Colors.white : context.textSecondary,
+                            fontWeight: isSel ? FontWeight.bold : FontWeight.normal,
+                          ),
+                          backgroundColor: context.cardSecondary,
+                          side: BorderSide(color: isSel ? AppTheme.primary : context.border),
                           onSelected: (sel) {
                             if (sel) {
                               setDialogState(() {
@@ -223,9 +216,15 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                       }).toList(),
                     ),
                     const SizedBox(height: 12),
-                    Text(
-                      '⚡ Se programarán $count notificaciones rotativas a lo largo del día.',
-                      style: const TextStyle(fontSize: 12, color: Colors.white54),
+                    Row(
+                      children: [
+                        const Icon(Icons.bolt_rounded, size: 16, color: AppTheme.accentAmber),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Se programarán $count notificaciones rotativas al día.',
+                          style: TextStyle(fontSize: 12, color: context.textSecondary),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 20),
                     SizedBox(
@@ -245,24 +244,21 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
-                                  '📌 "${card.wordEn}" programada: $count avisos cada $selectedInterval min',
+                                  '"${card.wordEn}" programada: $count avisos cada $selectedInterval min',
                                 ),
-                                backgroundColor: AppTheme.primaryLight,
-                                duration: const Duration(seconds: 3),
+                                backgroundColor: AppTheme.primary,
                               ),
                             );
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primaryLight,
+                          backgroundColor: AppTheme.primary,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
                         child: const Text(
-                          'Programar Notificaciones',
+                          'Guardar y Activar Horarios',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -279,6 +275,10 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
 
   void _openCardModal(Flashcard card) {
     bool isFlipped = false;
+    final settings = context.read<SettingsProvider>();
+    final isPinned = settings.itemNotificationConfig?.cardId == card.id &&
+        (settings.itemNotificationConfig?.isEnabled ?? false);
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -286,17 +286,13 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
       builder: (ctx) {
         return StatefulBuilder(
           builder: (context, setModalState) {
-            final settings = context.read<SettingsProvider>();
-            final isPinned = settings.itemNotificationConfig?.cardId == card.id &&
-                settings.itemNotificationConfig?.isEnabled == true;
             return Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-              ),
+              padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
               child: Container(
-                decoration: const BoxDecoration(
-                  color: AppTheme.darkBg,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                decoration: BoxDecoration(
+                  color: context.bg,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                  border: Border.all(color: context.border),
                 ),
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
                 child: SingleChildScrollView(
@@ -308,7 +304,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                         width: 40,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: Colors.white24,
+                          color: context.textSecondary.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -344,36 +340,33 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                       // Pin for Notifications button
                       SizedBox(
                         width: double.infinity,
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          child: ElevatedButton.icon(
-                            onPressed: () {
-                              _showPinNotificationDialog(context, card, settings);
-                            },
-                            icon: Icon(
-                              isPinned ? Icons.push_pin_rounded : Icons.push_pin_outlined,
-                              size: 20,
-                            ),
-                            label: Text(
-                              isPinned
-                                  ? '📌 Configurar Notificaciones (Fijada)'
-                                  : '📌 Fijar para Notificaciones',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: isPinned
-                                  ? AppTheme.primaryLight.withValues(alpha: 0.25)
-                                  : AppTheme.primaryLight,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
-                                side: BorderSide(
-                                  color: AppTheme.primaryLight.withValues(alpha: 0.6),
-                                ),
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            _showPinNotificationDialog(context, card, settings);
+                          },
+                          icon: Icon(
+                            isPinned ? Icons.push_pin_rounded : Icons.push_pin_outlined,
+                            size: 18,
+                          ),
+                          label: Text(
+                            isPinned
+                                ? 'Configurar Notificaciones (Fijada)'
+                                : 'Fijar para Notificaciones',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: isPinned
+                                ? AppTheme.primary.withValues(alpha: 0.15)
+                                : AppTheme.primary,
+                            foregroundColor: isPinned ? AppTheme.primary : Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              side: BorderSide(
+                                color: AppTheme.primary.withValues(alpha: isPinned ? 0.4 : 1.0),
                               ),
-                              elevation: isPinned ? 0 : 3,
                             ),
+                            elevation: isPinned ? 0 : 2,
                           ),
                         ),
                       ),
@@ -387,7 +380,6 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
       },
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -428,7 +420,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
     final isIrregularVerbs = widget.category.id == 'irregular_verbs';
 
     return Scaffold(
-      backgroundColor: AppTheme.darkBg,
+      backgroundColor: context.bg,
       appBar: AppBar(
         title: Text(isEs ? widget.category.nameEs : widget.category.name),
         actions: [
@@ -454,81 +446,70 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  widget.category.color.withValues(alpha: 0.12),
-                  AppTheme.darkCard,
-                ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
+              color: context.cardBg,
               border: Border(
                 bottom: BorderSide(
-                  color: widget.category.color.withValues(alpha: 0.2),
+                  color: context.border,
                 ),
               ),
             ),
-            child: Column(
+            child: Row(
               children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: widget.category.color.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                        border: Border.all(
-                          color: widget.category.color.withValues(alpha: 0.4),
-                        ),
-                      ),
-                      child: Icon(
-                        widget.category.vectorIcon,
-                        size: 28,
-                        color: widget.category.color,
-                      ),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: widget.category.color.withValues(alpha: context.isDark ? 0.2 : 0.12),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                    border: Border.all(
+                      color: widget.category.color.withValues(alpha: 0.3),
                     ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                  ),
+                  child: Icon(
+                    widget.category.vectorIcon,
+                    size: 26,
+                    color: widget.category.color,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '${allCategoryCards.length} elementos en total',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w700,
-                                  color: widget.category.color,
-                                ),
-                              ),
-                              Text(
-                                '${mastery.toInt()}% Dominio',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white70,
-                                ),
-                              ),
-                            ],
+                          Text(
+                            '${allCategoryCards.length} ${widget.category.id == 'daily_phrases' ? t('catcount.phrases') : t('catcount.words')}',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: widget.category.color,
+                            ),
                           ),
-                          const SizedBox(height: 8),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(6),
-                            child: LinearProgressIndicator(
-                              value: mastery / 100,
-                              backgroundColor: Colors.white12,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                widget.category.color,
-                              ),
-                              minHeight: 6,
+                          Text(
+                            '${mastery.toInt()}% ${t('home.dominio')}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: context.textSecondary,
                             ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 8),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: LinearProgressIndicator(
+                          value: mastery / 100,
+                          backgroundColor: context.isDark ? Colors.white12 : Colors.black12,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            widget.category.color,
+                          ),
+                          minHeight: 6,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -542,18 +523,16 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                 TextField(
                   controller: _searchController,
                   onChanged: (val) => setState(() => _searchQuery = val),
-                  style: const TextStyle(color: Colors.white, fontSize: 14),
+                  style: TextStyle(color: context.textPrimary, fontSize: 14),
                   decoration: InputDecoration(
-                    hintText: isIrregularVerbs
-                        ? 'Buscar por infinitivo, pasado o español...'
-                        : 'Buscar palabra o traducción...',
-                    hintStyle: const TextStyle(
-                      color: Colors.white38,
+                    hintText: t('cat.search'),
+                    hintStyle: TextStyle(
+                      color: context.textSecondary.withValues(alpha: 0.6),
                       fontSize: 13,
                     ),
-                    prefixIcon: const Icon(
+                    prefixIcon: Icon(
                       Icons.search_rounded,
-                      color: Colors.white38,
+                      color: context.textSecondary,
                       size: 20,
                     ),
                     suffixIcon: _searchQuery.isNotEmpty
@@ -566,22 +545,22 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                           )
                         : null,
                     filled: true,
-                    fillColor: AppTheme.darkCard,
+                    fillColor: context.cardBg,
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 12,
                     ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                      borderSide: const BorderSide(color: AppTheme.darkBorder),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                      borderSide: BorderSide(color: context.border),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                      borderSide: const BorderSide(color: AppTheme.darkBorder),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                      borderSide: BorderSide(color: context.border),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                      borderSide: BorderSide(color: widget.category.color),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                      borderSide: BorderSide(color: AppTheme.primary),
                     ),
                   ),
                 ),
@@ -593,9 +572,9 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                       'all',
                     ),
                     const SizedBox(width: 8),
-                    _buildFilterChip('Aprendidas', 'learned'),
+                    _buildFilterChip(t('home.learned'), 'learned'),
                     const SizedBox(width: 8),
-                    _buildFilterChip('Nuevas', 'new'),
+                    _buildFilterChip(t('stats.legendNew'), 'new'),
                   ],
                 ),
               ],
@@ -605,10 +584,10 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
           // Word List View
           Expanded(
             child: filteredCards.isEmpty
-                ? const Center(
+                ? Center(
                     child: Text(
                       'No se encontraron resultados',
-                      style: TextStyle(color: Colors.white54),
+                      style: TextStyle(color: context.textSecondary),
                     ),
                   )
                 : ListView.separated(
@@ -618,7 +597,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                     ),
                     itemCount: filteredCards.length,
                     separatorBuilder: (context, index) =>
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 10),
                     itemBuilder: (context, index) {
                       final card = filteredCards[index];
                       final progress = flashcardProvider.getProgressForCard(
@@ -643,7 +622,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
     );
   }
 
-  /// TARJETA GRANDE Y DESTACADA PARA VERBOS IRREGULARES
+  /// TARJETA PARA VERBOS IRREGULARES
   Widget _buildLargeIrregularVerbCard(
     Flashcard card,
     int index,
@@ -657,30 +636,19 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [const Color(0xFF1E283A), AppTheme.darkCard],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            color: context.cardBg,
             borderRadius: BorderRadius.circular(AppTheme.radiusLg),
             border: Border.all(
               color: isLearned
                   ? AppTheme.accent.withValues(alpha: 0.4)
-                  : Colors.white.withValues(alpha: 0.12),
-              width: 1.5,
+                  : context.border,
+              width: 1.2,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: AppTheme.shadowSoft,
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            boxShadow: context.cardShadow,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Fila superior con Número, Significado en español y Acciones
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -688,10 +656,10 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                      color: AppTheme.accentOrange.withValues(alpha: 0.15),
+                      color: AppTheme.accentAmber.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: AppTheme.accentOrange.withValues(alpha: 0.3),
+                        color: AppTheme.accentAmber.withValues(alpha: 0.3),
                       ),
                     ),
                     child: Center(
@@ -700,7 +668,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                         style: const TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
-                          color: AppTheme.accentOrange,
+                          color: AppTheme.accentAmber,
                         ),
                       ),
                     ),
@@ -709,32 +677,31 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                   Expanded(
                     child: Text(
                       card.wordEs,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: context.textPrimary,
                       ),
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.volume_up_rounded, size: 22),
-                    color: AppTheme.primaryLight,
+                    icon: const Icon(Icons.volume_up_rounded, size: 20),
+                    color: AppTheme.primary,
                     onPressed: () => _ttsService.speak(card.wordEn),
                   ),
                 ],
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 12),
 
-              // Bloque GRANDE de 3 tiempos verbales (Present, Past, Participle)
               Container(
                 padding: const EdgeInsets.symmetric(
-                  vertical: 12,
+                  vertical: 10,
                   horizontal: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.04),
+                  color: context.cardSecondary,
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  border: Border.all(color: Colors.white10),
+                  border: Border.all(color: context.border),
                 ),
                 child: Row(
                   children: [
@@ -745,43 +712,42 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                         color: AppTheme.accent,
                       ),
                     ),
-                    Container(width: 1, height: 38, color: Colors.white12),
+                    Container(width: 1, height: 32, color: context.border),
                     Expanded(
                       child: _buildLargeTenseColumn(
                         label: 'PASADO',
                         verb: card.past!,
-                        color: AppTheme.primaryLight,
+                        color: AppTheme.primary,
                       ),
                     ),
-                    Container(width: 1, height: 38, color: Colors.white12),
+                    Container(width: 1, height: 32, color: context.border),
                     Expanded(
                       child: _buildLargeTenseColumn(
                         label: 'PARTICIPIO',
                         verb: card.participle!,
-                        color: AppTheme.accentOrange,
+                        color: AppTheme.accentAmber,
                       ),
                     ),
                   ],
                 ),
               ),
 
-              const SizedBox(height: 10),
-              // Pronunciación fonética
+              const SizedBox(height: 8),
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.record_voice_over_rounded,
-                    size: 14,
-                    color: Colors.white38,
+                    size: 13,
+                    color: context.textSecondary,
                   ),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
                       card.pronunciation,
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 11,
                         fontStyle: FontStyle.italic,
-                        color: Colors.white.withValues(alpha: 0.55),
+                        color: context.textSecondary,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -809,17 +775,17 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
             fontSize: 9,
             fontWeight: FontWeight.w800,
             letterSpacing: 0.8,
-            color: color.withValues(alpha: 0.8),
+            color: color,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 3),
         Text(
           verb,
           textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 16,
+          style: TextStyle(
+            fontSize: 15,
             fontWeight: FontWeight.w800,
-            color: Colors.white,
+            color: context.textPrimary,
             letterSpacing: -0.2,
           ),
         ),
@@ -834,34 +800,36 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
       color: Colors.transparent,
       child: InkWell(
         onTap: () => _openCardModal(card),
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         child: Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: AppTheme.darkCard,
-            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            color: context.cardBg,
+            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
             border: Border.all(
               color: isLearned
-                  ? AppTheme.accent.withValues(alpha: 0.3)
-                  : AppTheme.darkBorder,
+                  ? AppTheme.accent.withValues(alpha: 0.35)
+                  : context.border,
             ),
+            boxShadow: context.cardShadow,
           ),
           child: Row(
             children: [
               Container(
-                width: 32,
-                height: 32,
+                width: 30,
+                height: 30,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.05),
+                  color: context.cardSecondary,
                   shape: BoxShape.circle,
+                  border: Border.all(color: context.border),
                 ),
                 child: Center(
                   child: Text(
                     '${index + 1}',
-                    style: const TextStyle(
-                      fontSize: 12,
+                    style: TextStyle(
+                      fontSize: 11,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white54,
+                      color: context.textSecondary,
                     ),
                   ),
                 ),
@@ -873,19 +841,19 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                   children: [
                     Text(
                       card.wordEn,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: context.textPrimary,
                       ),
                     ),
                     if (!isVerbTenses) ...[
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 3),
                       Text(
                         card.wordEs,
                         style: TextStyle(
                           fontSize: 13,
-                          color: Colors.white.withValues(alpha: 0.7),
+                          color: context.textSecondary,
                         ),
                       ),
                     ],
@@ -894,8 +862,8 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
               ),
               if (!isVerbTenses)
                 IconButton(
-                  icon: const Icon(Icons.volume_up_rounded, size: 22),
-                  color: AppTheme.primaryLight,
+                  icon: const Icon(Icons.volume_up_rounded, size: 20),
+                  color: AppTheme.primary,
                   onPressed: () {
                     _ttsService.speak(card.wordEn);
                   },
@@ -914,15 +882,15 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
         label,
         style: TextStyle(
           fontSize: 12,
-          color: isSelected ? AppTheme.darkBg : Colors.white70,
+          color: isSelected ? Colors.white : context.textSecondary,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
       ),
       selected: isSelected,
-      selectedColor: AppTheme.accent,
-      backgroundColor: AppTheme.darkCard,
+      selectedColor: AppTheme.primary,
+      backgroundColor: context.cardBg,
       side: BorderSide(
-        color: isSelected ? AppTheme.accent : AppTheme.darkBorder,
+        color: isSelected ? AppTheme.primary : context.border,
       ),
       onSelected: (selected) {
         if (selected) {
