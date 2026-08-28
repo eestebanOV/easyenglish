@@ -306,74 +306,6 @@ class SettingsScreen extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 10),
-
-            // Notification Testing Cards
-            Container(
-              decoration: BoxDecoration(
-                color: context.cardBg,
-                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                border: Border.all(color: context.border),
-                boxShadow: context.cardShadow,
-              ),
-              child: Column(
-                children: [
-                  ListTile(
-                    leading: const Icon(
-                      Icons.bolt_rounded,
-                      color: AppTheme.accentAmber,
-                    ),
-                    title: Text(
-                      t('settings.notif.testInstant'),
-                      style: TextStyle(color: context.textPrimary, fontWeight: FontWeight.w600, fontSize: 14),
-                    ),
-                    subtitle: Text('Dispara una notificación ahora mismo', style: TextStyle(color: context.textSecondary, fontSize: 12)),
-                    trailing: const Icon(
-                      Icons.play_arrow_rounded,
-                      color: AppTheme.accentAmber,
-                    ),
-                    onTap: () async {
-                      await settings.sendTestInstantNotification();
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(t('settings.notif.sentInstant')),
-                            duration: const Duration(seconds: 2),
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                  Divider(color: context.border, height: 1),
-                  ListTile(
-                    leading: const Icon(
-                      Icons.timer_outlined,
-                      color: AppTheme.accent,
-                    ),
-                    title: Text(
-                      t('settings.notif.testScheduled'),
-                      style: TextStyle(color: context.textPrimary, fontWeight: FontWeight.w600, fontSize: 14),
-                    ),
-                    subtitle: Text('Espera 3 segundos con la app abierta o cerrada', style: TextStyle(color: context.textSecondary, fontSize: 12)),
-                    trailing: const Icon(
-                      Icons.play_arrow_rounded,
-                      color: AppTheme.accent,
-                    ),
-                    onTap: () async {
-                      await settings.sendTestScheduledNotification();
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(t('settings.notif.scheduledSent')),
-                            duration: const Duration(seconds: 2),
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ],
-              ),
-            ),
             const SizedBox(height: 24),
 
             // --- PINNED ITEM NOTIFICATIONS GROUP ---
@@ -631,14 +563,17 @@ class _ItemNotificationAccordionState extends State<_ItemNotificationAccordion> 
       );
     }
 
+    final catColor = widget.flashcardProvider.getCategoryColor(config.categoryId);
+
     return Container(
       decoration: BoxDecoration(
-        color: context.cardBg,
+        color: catColor.withValues(alpha: context.isDark ? 0.16 : 0.08),
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         border: Border.all(
           color: config.isEnabled
-              ? AppTheme.primary.withValues(alpha: 0.35)
+              ? catColor.withValues(alpha: context.isDark ? 0.40 : 0.25)
               : context.border,
+          width: 1.2,
         ),
         boxShadow: context.cardShadow,
       ),

@@ -446,10 +446,10 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             decoration: BoxDecoration(
-              color: context.cardBg,
+              color: widget.category.color.withValues(alpha: context.isDark ? 0.16 : 0.08),
               border: Border(
                 bottom: BorderSide(
-                  color: context.border,
+                  color: widget.category.color.withValues(alpha: context.isDark ? 0.3 : 0.18),
                 ),
               ),
             ),
@@ -636,12 +636,12 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: context.cardBg,
+            color: widget.category.color.withValues(alpha: context.isDark ? 0.16 : 0.08),
             borderRadius: BorderRadius.circular(AppTheme.radiusLg),
             border: Border.all(
               color: isLearned
-                  ? AppTheme.accent.withValues(alpha: 0.4)
-                  : context.border,
+                  ? AppTheme.accent.withValues(alpha: 0.5)
+                  : widget.category.color.withValues(alpha: context.isDark ? 0.35 : 0.2),
               width: 1.2,
             ),
             boxShadow: context.cardShadow,
@@ -804,12 +804,13 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
         child: Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: context.cardBg,
+            color: widget.category.color.withValues(alpha: context.isDark ? 0.16 : 0.08),
             borderRadius: BorderRadius.circular(AppTheme.radiusLg),
             border: Border.all(
               color: isLearned
-                  ? AppTheme.accent.withValues(alpha: 0.35)
-                  : context.border,
+                  ? AppTheme.accent.withValues(alpha: 0.5)
+                  : widget.category.color.withValues(alpha: context.isDark ? 0.35 : 0.2),
+              width: 1.2,
             ),
             boxShadow: context.cardShadow,
           ),

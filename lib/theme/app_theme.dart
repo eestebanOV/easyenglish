@@ -21,8 +21,8 @@ class AppTheme {
   static const Color warning = Color(0xFFF59E0B);
   static const Color warningLight = Color(0xFFFBBF24);
 
-  // Light Mode Surfaces (Clean Cloud & Slate)
-  static const Color lightBg = Color(0xFFF8FAFC); // Slate 50
+  // Light Mode Surfaces (Pure White)
+  static const Color lightBg = Color(0xFFFFFFFF); // Pure White
   static const Color lightSurface = Color(0xFFFFFFFF);
   static const Color lightCard = Color(0xFFFFFFFF);
   static const Color lightCardSecondary = Color(0xFFF1F5F9); // Slate 100
@@ -30,10 +30,10 @@ class AppTheme {
   static const Color lightText = Color(0xFF0F172A); // Slate 900
   static const Color lightTextSecondary = Color(0xFF64748B); // Slate 500
 
-  // Dark Mode Surfaces (Midnight Navy & Slate)
-  static const Color darkBg = Color(0xFF0B0F19); // Midnight Deep Slate
-  static const Color darkSurface = Color(0xFF151D2E);
-  static const Color darkCard = Color(0xFF151D2E);
+  // Dark Mode Surfaces (Pure Black)
+  static const Color darkBg = Color(0xFF000000); // Pure Black
+  static const Color darkSurface = Color(0xFF111827);
+  static const Color darkCard = Color(0xFF1A1A2E);
   static const Color darkCardSecondary = Color(0xFF1E293B); // Slate 800
   static const Color darkBorder = Color(0xFF2A374D);
   static const Color darkText = Color(0xFFF8FAFC); // Slate 50

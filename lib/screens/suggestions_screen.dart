@@ -146,12 +146,13 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: context.cardBg,
+        color: category.color.withValues(alpha: context.isDark ? 0.16 : 0.08),
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         border: Border.all(
           color: item.isResolved
-              ? AppTheme.success.withValues(alpha: 0.4)
-              : context.border,
+              ? AppTheme.success.withValues(alpha: 0.5)
+              : category.color.withValues(alpha: context.isDark ? 0.35 : 0.2),
+          width: 1.2,
         ),
         boxShadow: context.cardShadow,
       ),

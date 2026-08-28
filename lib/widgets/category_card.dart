@@ -30,10 +30,10 @@ class CategoryCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: context.cardBg,
+            color: category.color.withValues(alpha: context.isDark ? 0.16 : 0.08),
             borderRadius: BorderRadius.circular(AppTheme.radiusLg),
             border: Border.all(
-              color: category.color.withValues(alpha: context.isDark ? 0.35 : 0.25),
+              color: category.color.withValues(alpha: context.isDark ? 0.38 : 0.22),
               width: 1.2,
             ),
             boxShadow: context.cardShadow,

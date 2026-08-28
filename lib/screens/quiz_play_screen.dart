@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/quiz_question.dart';
+import '../providers/flashcard_provider.dart';
 import '../providers/quiz_provider.dart';
 import '../providers/settings_provider.dart';
 import '../theme/app_theme.dart';
@@ -12,6 +13,7 @@ class QuizPlayScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final quiz = context.watch<QuizProvider>();
+    final flashcards = context.watch<FlashcardProvider>();
     final settings = context.watch<SettingsProvider>();
     final t = settings.translate;
     final q = quiz.currentQuestion;
@@ -28,6 +30,7 @@ class QuizPlayScreen extends StatelessWidget {
       );
     }
 
+    final catColor = flashcards.getCategoryColor(q.card.categoryId);
     final double progress = (quiz.currentIndex + 1) / quiz.totalQuestions;
 
     return PopScope(
@@ -90,50 +93,16 @@ class QuizPlayScreen extends StatelessWidget {
               ],
             ],
           ),
-          actions: [
-            Container(
-              margin: const EdgeInsets.only(right: 16),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: AppTheme.primary.withValues(alpha: context.isDark ? 0.15 : 0.1),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: AppTheme.primary.withValues(alpha: 0.3)),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.stars_rounded, size: 16, color: AppTheme.accentAmber),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${quiz.score}',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13,
-                      color: context.textPrimary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
           bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(6),
+            preferredSize: const Size.fromHeight(3),
             child: Column(
               children: [
                 LinearProgressIndicator(
                   value: progress,
-                  backgroundColor: context.border,
-                  valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primary),
-                  minHeight: 4,
+                  backgroundColor: context.isDark ? Colors.white12 : Colors.black12,
+                  valueColor: AlwaysStoppedAnimation<Color>(catColor),
+                  minHeight: 3,
                 ),
-                if (q.type == QuizQuestionType.speedQuiz)
-                  LinearProgressIndicator(
-                    value: quiz.timeRemaining / q.timeLimitSeconds,
-                    backgroundColor: Colors.transparent,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      quiz.timeRemaining <= 2 ? AppTheme.error : AppTheme.accentAmber,
-                    ),
-                    minHeight: 3,
-                  ),
               ],
             ),
           ),
@@ -143,103 +112,121 @@ class QuizPlayScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Badge
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                            decoration: BoxDecoration(
-                              color: _getBadgeColor(q.type).withValues(alpha: context.isDark ? 0.15 : 0.1),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: _getBadgeColor(q.type).withValues(alpha: 0.35)),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
+                      // Main Question Pastel Card
+                      Container(
+                        padding: const EdgeInsets.all(18),
+                        decoration: BoxDecoration(
+                          color: catColor.withValues(alpha: context.isDark ? 0.16 : 0.08),
+                          borderRadius: BorderRadius.circular(AppTheme.radiusXl),
+                          border: Border.all(
+                            color: catColor.withValues(alpha: context.isDark ? 0.38 : 0.22),
+                            width: 1.2,
+                          ),
+                          boxShadow: context.cardShadow,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Badge & Speed Quiz Timer
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Icon(
-                                  q.type.icon,
-                                  size: 13,
-                                  color: _getBadgeColor(q.type),
-                                ),
-                                const SizedBox(width: 5),
-                                Text(
-                                  q.type.badgeLabel,
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1.1,
-                                    color: _getBadgeColor(q.type),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: _getBadgeColor(q.type).withValues(alpha: context.isDark ? 0.18 : 0.12),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: _getBadgeColor(q.type).withValues(alpha: 0.35)),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        q.type.icon,
+                                        size: 13,
+                                        color: _getBadgeColor(q.type),
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        q.type.badgeLabel,
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 1.1,
+                                          color: _getBadgeColor(q.type),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
+                                if (q.type == QuizQuestionType.speedQuiz)
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                    decoration: BoxDecoration(
+                                      color: AppTheme.error.withValues(alpha: context.isDark ? 0.2 : 0.12),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        const Icon(Icons.timer_rounded, size: 14, color: AppTheme.error),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          '${quiz.timeRemaining}s',
+                                          style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.error, fontSize: 12),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                               ],
                             ),
-                          ),
-                          if (q.type == QuizQuestionType.speedQuiz)
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                              decoration: BoxDecoration(
-                                color: AppTheme.error.withValues(alpha: context.isDark ? 0.2 : 0.12),
-                                borderRadius: BorderRadius.circular(6),
+                            const SizedBox(height: 14),
+
+                            // Prompt text
+                            Text(
+                              q.prompt,
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                                color: context.textPrimary,
+                                height: 1.35,
                               ),
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.timer_rounded, size: 14, color: AppTheme.error),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    '${quiz.timeRemaining}s',
-                                    style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.error, fontSize: 12),
+                            ),
+                            if (q.subtitle != null) ...[
+                              const SizedBox(height: 10),
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(14),
+                                decoration: BoxDecoration(
+                                  color: context.cardSecondary,
+                                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                  border: Border.all(color: context.border),
+                                ),
+                                child: Text(
+                                  q.subtitle!,
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontStyle: FontStyle.italic,
+                                    color: context.textPrimary,
+                                    height: 1.4,
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
-                        ],
-                      ),
-                      const SizedBox(height: 14),
+                            ],
 
-                      // Prompt text
-                      Text(
-                        q.prompt,
-                        style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                          color: context.textPrimary,
-                          height: 1.35,
+                            const SizedBox(height: 18),
+
+                            // Question Interactive Body
+                            if (q.type == QuizQuestionType.buildSentence)
+                              _buildSentenceWidget(context, quiz, q, t)
+                            else
+                              _buildOptionsList(context, quiz, q),
+                          ],
                         ),
                       ),
-                      if (q.subtitle != null) ...[
-                        const SizedBox(height: 10),
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                            color: context.cardSecondary,
-                            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                            border: Border.all(color: context.border),
-                          ),
-                          child: Text(
-                            q.subtitle!,
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontStyle: FontStyle.italic,
-                              color: context.textPrimary,
-                              height: 1.4,
-                            ),
-                          ),
-                        ),
-                      ],
-
-                      const SizedBox(height: 20),
-
-                      // Question Interactive Body
-                      if (q.type == QuizQuestionType.buildSentence)
-                        _buildSentenceWidget(context, quiz, q, t)
-                      else
-                        _buildOptionsList(context, quiz, q),
                     ],
                   ),
                 ),

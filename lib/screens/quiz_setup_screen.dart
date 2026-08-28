@@ -87,10 +87,11 @@ class QuizSetupScreen extends StatelessWidget {
                 children: allCategories.map((cat) {
                   final bool isSelected = quiz.selectedCategoryIds.contains(cat.id);
                   final cardCount = flashcards.allCards.where((c) => c.categoryId == cat.id).length;
+                  final isEs = settings.languageCode == 'es';
 
                   return FilterChip(
                     label: Text(
-                      '${cat.nameEs} ($cardCount)',
+                      '${isEs ? cat.nameEs : cat.name} ($cardCount)',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
@@ -98,10 +99,10 @@ class QuizSetupScreen extends StatelessWidget {
                       ),
                     ),
                     selected: isSelected,
-                    selectedColor: AppTheme.primary,
+                    selectedColor: cat.color,
                     backgroundColor: context.cardBg,
                     side: BorderSide(
-                      color: isSelected ? AppTheme.primary : context.border,
+                      color: isSelected ? cat.color : context.border,
                       width: isSelected ? 1.5 : 1.0,
                     ),
                     avatar: isSelected ? const Icon(Icons.check, size: 14, color: Colors.white) : null,

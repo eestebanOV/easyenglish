@@ -76,6 +76,9 @@ class SettingsProvider extends ChangeNotifier {
       'home.quizChallenge.desc': 'Pon a prueba tu vocabulario con 5 tipos de preguntas dinámicas.',
       'home.welcome.title': 'Bienvenido a EasyEnglish',
       'home.welcome.subtitle': 'Aprende vocabulario y verbos en inglés con repetición espaciada.',
+      'home.dominio': 'Dominio',
+      'home.studyNow': 'Estudiar ahora',
+      'home.reviews.empty': '¡Todo al día!',
 
       // Categories
       'cats.title': 'Categorías de Vocabulario',
@@ -300,6 +303,9 @@ class SettingsProvider extends ChangeNotifier {
       'home.quizChallenge.desc': 'Test your vocabulary with 5 dynamic question formats.',
       'home.welcome.title': 'Welcome to EasyEnglish',
       'home.welcome.subtitle': 'Learn English vocabulary and verbs with spaced repetition.',
+      'home.dominio': 'Mastery',
+      'home.studyNow': 'Study now',
+      'home.reviews.empty': 'All caught up!',
 
       // Categories
       'cats.title': 'Vocabulary Categories',

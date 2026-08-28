@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart' hide Category;
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/srs_engine.dart';
 import '../models/flashcard.dart';
@@ -7,6 +7,7 @@ import '../models/card_progress.dart';
 import '../models/category.dart';
 import '../models/user_stats.dart';
 import '../services/storage_service.dart';
+import '../theme/app_theme.dart';
 
 class FlashcardProvider extends ChangeNotifier {
   final StorageService _storage = StorageService();
@@ -144,6 +145,19 @@ class FlashcardProvider extends ChangeNotifier {
       }
     }
     return (learned / catCards.length) * 100;
+  }
+
+  Category? getCategory(String categoryId) {
+    try {
+      return _categories.firstWhere((c) => c.id == categoryId);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Color getCategoryColor(String categoryId) {
+    final cat = getCategory(categoryId);
+    return cat?.color ?? AppTheme.primary;
   }
 
   Future<void> recordCardReview(String cardId, int quality) async {
