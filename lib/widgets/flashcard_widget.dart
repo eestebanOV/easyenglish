@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/flashcard.dart';
-import '../providers/flashcard_provider.dart';
 import '../providers/settings_provider.dart';
 import '../services/tts_service.dart';
 import '../theme/app_theme.dart';
@@ -129,18 +128,17 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
   /// LADO 1: INGLÉS + TRADUCCIÓN AL ESPAÑOL + PRONUNCIACIÓN + BOCINA
   Widget _buildFront(BuildContext context) {
     final t = context.read<SettingsProvider>().translate;
-    final catColor = context.read<FlashcardProvider>().getCategoryColor(widget.card.categoryId);
 
     return Container(
       width: double.infinity,
       constraints: const BoxConstraints(minHeight: 380),
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 26.0),
       decoration: BoxDecoration(
-        color: catColor.withValues(alpha: context.isDark ? 0.16 : 0.08),
+        color: context.cardBg,
         borderRadius: BorderRadius.circular(AppTheme.radiusXl),
         border: Border.all(
-          color: catColor.withValues(alpha: context.isDark ? 0.40 : 0.25),
-          width: 1.5,
+          color: context.border,
+          width: 1.2,
         ),
         boxShadow: context.cardShadow,
       ),
@@ -439,7 +437,6 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
   Widget _buildBack(BuildContext context) {
     final currentExample = _examplesList[_exampleIndex % _examplesList.length];
     final t = context.read<SettingsProvider>().translate;
-    final catColor = context.read<FlashcardProvider>().getCategoryColor(widget.card.categoryId);
 
     return Transform(
       alignment: Alignment.center,
@@ -449,11 +446,11 @@ class _FlashcardWidgetState extends State<FlashcardWidget>
         constraints: const BoxConstraints(minHeight: 380),
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 26.0),
         decoration: BoxDecoration(
-          color: catColor.withValues(alpha: context.isDark ? 0.16 : 0.08),
+          color: context.cardBg,
           borderRadius: BorderRadius.circular(AppTheme.radiusXl),
           border: Border.all(
-            color: catColor.withValues(alpha: context.isDark ? 0.40 : 0.25),
-            width: 1.5,
+            color: context.border,
+            width: 1.2,
           ),
           boxShadow: context.cardShadow,
         ),

@@ -972,4 +972,13 @@ class SettingsProvider extends ChangeNotifier {
     await _notificationService.cancelNotificationRange(2000, 64);
     notifyListeners();
   }
+
+  bool isCategoryFirstVisit(String categoryId) {
+    return !_storage.getBool('cat_visited_$categoryId', defaultValue: false);
+  }
+
+  Future<void> markCategoryVisited(String categoryId) async {
+    await _storage.setBool('cat_visited_$categoryId', true);
+    notifyListeners();
+  }
 }

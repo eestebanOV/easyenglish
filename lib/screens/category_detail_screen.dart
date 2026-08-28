@@ -26,6 +26,17 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
   final TtsService _ttsService = TtsService();
   String _searchQuery = '';
   String _filter = 'all'; // 'all', 'learned', 'new'
+  bool _showFirstVisitBanner = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final settings = context.read<SettingsProvider>();
+    _showFirstVisitBanner = settings.isCategoryFirstVisit(widget.category.id);
+    if (_showFirstVisitBanner) {
+      settings.markCategoryVisited(widget.category.id);
+    }
+  }
 
   @override
   void dispose() {
@@ -447,18 +458,19 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
       ),
       body: Column(
         children: [
-          // Header Hero Banner
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            decoration: BoxDecoration(
-              color: widget.category.color.withValues(alpha: context.isDark ? 0.24 : 0.16),
-              border: Border(
-                bottom: BorderSide(
-                  color: widget.category.color.withValues(alpha: context.isDark ? 0.35 : 0.22),
+          // Header Hero Banner (Only shown on first visit to this category)
+          if (_showFirstVisitBanner)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              decoration: BoxDecoration(
+                color: widget.category.color.withValues(alpha: context.isDark ? 0.24 : 0.16),
+                border: Border(
+                  bottom: BorderSide(
+                    color: widget.category.color.withValues(alpha: context.isDark ? 0.35 : 0.22),
+                  ),
                 ),
               ),
-            ),
-            child: Row(
+              child: Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(12),
@@ -641,12 +653,12 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: widget.category.color.withValues(alpha: context.isDark ? 0.24 : 0.16),
+            color: context.cardBg,
             borderRadius: BorderRadius.circular(AppTheme.radiusLg),
             border: Border.all(
               color: isLearned
                   ? AppTheme.accent.withValues(alpha: 0.5)
-                  : widget.category.color.withValues(alpha: context.isDark ? 0.45 : 0.28),
+                  : context.border,
               width: 1.2,
             ),
             boxShadow: context.cardShadow,
@@ -661,19 +673,19 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                      color: widget.category.color.withValues(alpha: context.isDark ? 0.30 : 0.20),
+                      color: AppTheme.accentAmber.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: widget.category.color.withValues(alpha: 0.4),
+                        color: AppTheme.accentAmber.withValues(alpha: 0.3),
                       ),
                     ),
                     child: Center(
                       child: Text(
                         '${index + 1}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
-                          color: context.isDark ? Colors.white : widget.category.color,
+                          color: AppTheme.accentAmber,
                         ),
                       ),
                     ),
@@ -704,9 +716,9 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                   horizontal: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: widget.category.color.withValues(alpha: context.isDark ? 0.18 : 0.10),
+                  color: context.cardSecondary,
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  border: Border.all(color: widget.category.color.withValues(alpha: 0.25)),
+                  border: Border.all(color: context.border),
                 ),
                 child: Row(
                   children: [
@@ -809,12 +821,12 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
         child: Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: widget.category.color.withValues(alpha: context.isDark ? 0.24 : 0.16),
+            color: context.cardBg,
             borderRadius: BorderRadius.circular(AppTheme.radiusLg),
             border: Border.all(
               color: isLearned
                   ? AppTheme.accent.withValues(alpha: 0.5)
-                  : widget.category.color.withValues(alpha: context.isDark ? 0.45 : 0.28),
+                  : context.border,
               width: 1.2,
             ),
             boxShadow: context.cardShadow,
@@ -825,9 +837,9 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                 width: 30,
                 height: 30,
                 decoration: BoxDecoration(
-                  color: widget.category.color.withValues(alpha: context.isDark ? 0.30 : 0.20),
+                  color: context.cardSecondary,
                   shape: BoxShape.circle,
-                  border: Border.all(color: widget.category.color.withValues(alpha: 0.35)),
+                  border: Border.all(color: context.border),
                 ),
                 child: Center(
                   child: Text(
@@ -835,7 +847,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
-                      color: context.isDark ? Colors.white : widget.category.color,
+                      color: context.textSecondary,
                     ),
                   ),
                 ),
