@@ -18,11 +18,13 @@ class QuizPlayScreen extends StatelessWidget {
     final t = settings.translate;
     final q = quiz.currentQuestion;
 
-    if (quiz.isSessionFinished || q == null) {
+    if (quiz.isSessionFinished) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const QuizSummaryScreen()),
-        );
+        if (context.mounted) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const QuizSummaryScreen()),
+          );
+        }
       });
       return Scaffold(
         backgroundColor: context.bg,
@@ -30,8 +32,16 @@ class QuizPlayScreen extends StatelessWidget {
       );
     }
 
+    if (q == null || !quiz.isSessionActive) {
+      return Scaffold(
+        backgroundColor: context.bg,
+        body: const SizedBox.shrink(),
+      );
+    }
+
+    final category = flashcards.getCategory(q.card.categoryId);
     final catColor = flashcards.getCategoryColor(q.card.categoryId);
-    final double progress = (quiz.currentIndex + 1) / quiz.totalQuestions;
+    final double progress = quiz.totalQuestions > 0 ? (quiz.currentIndex + 1) / quiz.totalQuestions : 0;
 
     return PopScope(
       canPop: false,
@@ -46,16 +56,17 @@ class QuizPlayScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: context.bg,
         appBar: AppBar(
-          backgroundColor: context.surface,
+          backgroundColor: context.bg,
           elevation: 0,
+          scrolledUnderElevation: 0,
+          surfaceTintColor: Colors.transparent,
           leading: IconButton(
-            icon: Icon(Icons.close_rounded, color: context.textSecondary),
+            icon: Icon(Icons.close_rounded, color: context.textPrimary),
             onPressed: () async {
-              if (await _showExitConfirmation(context, quiz, t)) {
-                if (context.mounted) {
-                  quiz.exitQuiz();
-                  Navigator.of(context).pop();
-                }
+              final shouldPop = await _showExitConfirmation(context, quiz, t);
+              if (shouldPop && context.mounted) {
+                quiz.exitQuiz();
+                Navigator.of(context).pop();
               }
             },
           ),
@@ -112,121 +123,140 @@ class QuizPlayScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Main Question Pastel Card
-                      Container(
-                        padding: const EdgeInsets.all(18),
-                        decoration: BoxDecoration(
-                          color: catColor.withValues(alpha: context.isDark ? 0.16 : 0.08),
-                          borderRadius: BorderRadius.circular(AppTheme.radiusXl),
-                          border: Border.all(
-                            color: catColor.withValues(alpha: context.isDark ? 0.38 : 0.22),
-                            width: 1.2,
-                          ),
-                          boxShadow: context.cardShadow,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Badge & Speed Quiz Timer
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      // Header Badges: Question Type & Category Name & Timer
+                      Row(
+                        children: [
+                          // 1. Question Type Badge
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: _getBadgeColor(q.type).withValues(alpha: context.isDark ? 0.20 : 0.12),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: _getBadgeColor(q.type).withValues(alpha: 0.35)),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                  decoration: BoxDecoration(
-                                    color: _getBadgeColor(q.type).withValues(alpha: context.isDark ? 0.18 : 0.12),
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(color: _getBadgeColor(q.type).withValues(alpha: 0.35)),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        q.type.icon,
-                                        size: 13,
-                                        color: _getBadgeColor(q.type),
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        q.type.badgeLabel,
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
-                                          letterSpacing: 1.1,
-                                          color: _getBadgeColor(q.type),
-                                        ),
-                                      ),
-                                    ],
+                                Icon(
+                                  q.type.icon,
+                                  size: 14,
+                                  color: _getBadgeColor(q.type),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  q.type.displayNameEn,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 0.2,
+                                    color: _getBadgeColor(q.type),
                                   ),
                                 ),
-                                if (q.type == QuizQuestionType.speedQuiz)
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                                    decoration: BoxDecoration(
-                                      color: AppTheme.error.withValues(alpha: context.isDark ? 0.2 : 0.12),
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        const Icon(Icons.timer_rounded, size: 14, color: AppTheme.error),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          '${quiz.timeRemaining}s',
-                                          style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.error, fontSize: 12),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
                               ],
                             ),
-                            const SizedBox(height: 14),
+                          ),
+                          const SizedBox(width: 8),
 
-                            // Prompt text
-                            Text(
-                              q.prompt,
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                                color: context.textPrimary,
-                                height: 1.35,
-                              ),
+                          // 2. Category Badge
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: catColor.withValues(alpha: context.isDark ? 0.20 : 0.12),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: catColor.withValues(alpha: 0.35)),
                             ),
-                            if (q.subtitle != null) ...[
-                              const SizedBox(height: 10),
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.all(14),
-                                decoration: BoxDecoration(
-                                  color: context.cardSecondary,
-                                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                  border: Border.all(color: context.border),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  category?.vectorIcon ?? Icons.folder_outlined,
+                                  size: 14,
+                                  color: catColor,
                                 ),
-                                child: Text(
-                                  q.subtitle!,
+                                const SizedBox(width: 6),
+                                Text(
+                                  category?.name ?? q.card.categoryId,
                                   style: TextStyle(
-                                    fontSize: 15,
-                                    fontStyle: FontStyle.italic,
-                                    color: context.textPrimary,
-                                    height: 1.4,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 0.2,
+                                    color: catColor,
                                   ),
                                 ),
+                              ],
+                            ),
+                          ),
+
+                          const Spacer(),
+
+                          // 3. Speed Timer (if applicable)
+                          if (q.type == QuizQuestionType.speedQuiz)
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                color: AppTheme.error.withValues(alpha: context.isDark ? 0.22 : 0.12),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: AppTheme.error.withValues(alpha: 0.4)),
                               ),
-                            ],
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.timer_rounded, size: 14, color: AppTheme.error),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '${quiz.timeRemaining}s',
+                                    style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.error, fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
 
-                            const SizedBox(height: 18),
-
-                            // Question Interactive Body
-                            if (q.type == QuizQuestionType.buildSentence)
-                              _buildSentenceWidget(context, quiz, q, t)
-                            else
-                              _buildOptionsList(context, quiz, q),
-                          ],
+                      // Prompt text directly on scaffold background (no wrapping card)
+                      Text(
+                        q.prompt,
+                        style: TextStyle(
+                          fontSize: 19,
+                          fontWeight: FontWeight.w800,
+                          color: context.textPrimary,
+                          letterSpacing: -0.3,
+                          height: 1.3,
                         ),
                       ),
+                      if (q.subtitle != null) ...[
+                        const SizedBox(height: 12),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: context.cardSecondary,
+                            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                            border: Border.all(color: context.border),
+                          ),
+                          child: Text(
+                            q.subtitle!,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontStyle: FontStyle.italic,
+                              color: context.textPrimary,
+                              height: 1.4,
+                            ),
+                          ),
+                        ),
+                      ],
+
+                      const SizedBox(height: 22),
+
+                      // Question Interactive Body
+                      if (q.type == QuizQuestionType.buildSentence)
+                        _buildSentenceWidget(context, quiz, q, t)
+                      else
+                        _buildOptionsList(context, quiz, q),
                     ],
                   ),
                 ),
@@ -452,25 +482,8 @@ class QuizPlayScreen extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             q.explanation,
-            style: TextStyle(fontSize: 13, color: context.textSecondary, height: 1.35),
+            style: TextStyle(fontSize: 13, color: context.textSecondary, height: 1.4),
           ),
-          if (!isCorrect) ...[
-            const SizedBox(height: 6),
-            Row(
-              children: [
-                const Icon(Icons.lightbulb_outline_rounded, size: 14, color: AppTheme.accentAmber),
-                const SizedBox(width: 6),
-                Text(
-                  t('quiz.savedToSuggestions'),
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: AppTheme.accentAmber,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ],
           const SizedBox(height: 14),
           SizedBox(
             width: double.infinity,
@@ -479,12 +492,12 @@ class QuizPlayScreen extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: color,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 13),
+                padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
               child: Text(
                 quiz.currentIndex + 1 < quiz.totalQuestions
-                    ? '${t('quiz.nextQuestion')} ➔'
+                    ? t('quiz.nextQuestion')
                     : t('quiz.viewResults'),
                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
               ),
@@ -504,16 +517,21 @@ class QuizPlayScreen extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: context.cardBg,
-        title: Text(t('quiz.exitDialog.title'), style: TextStyle(color: context.textPrimary)),
-        content: Text(t('quiz.exitDialog.body'), style: TextStyle(color: context.textSecondary)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(t('quiz.exitTitle'), style: TextStyle(color: ctx.textPrimary)),
+        content: Text(t('quiz.exitMessage'), style: TextStyle(color: ctx.textSecondary)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(t('quiz.exitDialog.cancel')),
+            child: Text(t('quiz.continue'), style: TextStyle(color: ctx.textSecondary)),
           ),
-          TextButton(
+          ElevatedButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(t('quiz.exitDialog.confirm'), style: const TextStyle(color: AppTheme.error)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.error,
+              foregroundColor: Colors.white,
+            ),
+            child: Text(t('quiz.exitButton')),
           ),
         ],
       ),

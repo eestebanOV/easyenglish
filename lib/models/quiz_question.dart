@@ -11,6 +11,21 @@ enum QuizQuestionType {
 }
 
 extension QuizQuestionTypeExtension on QuizQuestionType {
+  String get displayNameEn {
+    switch (this) {
+      case QuizQuestionType.multipleChoice:
+        return 'Multiple Choice';
+      case QuizQuestionType.buildSentence:
+        return 'Build Sentence';
+      case QuizQuestionType.speedQuiz:
+        return 'Speed Quiz';
+      case QuizQuestionType.situation:
+        return 'Situation';
+      case QuizQuestionType.findError:
+        return 'Find Error';
+    }
+  }
+
   String get displayNameEs {
     switch (this) {
       case QuizQuestionType.multipleChoice:
@@ -26,35 +41,9 @@ extension QuizQuestionTypeExtension on QuizQuestionType {
     }
   }
 
-  String get shortName {
-    switch (this) {
-      case QuizQuestionType.multipleChoice:
-        return 'Multiple Choice';
-      case QuizQuestionType.buildSentence:
-        return 'Build Sentence';
-      case QuizQuestionType.speedQuiz:
-        return 'Speed Quiz';
-      case QuizQuestionType.situation:
-        return 'Situation';
-      case QuizQuestionType.findError:
-        return 'Find Error';
-    }
-  }
+  String get shortName => displayNameEn;
 
-  String get badgeLabel {
-    switch (this) {
-      case QuizQuestionType.multipleChoice:
-        return 'OPCIÓN MÚLTIPLE';
-      case QuizQuestionType.buildSentence:
-        return 'ORDENAR PALABRAS';
-      case QuizQuestionType.speedQuiz:
-        return 'CONTRARRELOJ';
-      case QuizQuestionType.situation:
-        return 'SITUACIONAL';
-      case QuizQuestionType.findError:
-        return 'CORREGIR ERROR';
-    }
-  }
+  String get badgeLabel => displayNameEn.toUpperCase();
 
   IconData get icon {
     switch (this) {

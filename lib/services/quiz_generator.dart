@@ -53,71 +53,45 @@ class QuizGenerator {
     return questions;
   }
 
-  // 1. MULTIPLE CHOICE
+  // 1. MULTIPLE CHOICE (100% English & Same Category)
   QuizQuestion _generateMultipleChoice(Flashcard card, List<Flashcard> pool, int index) {
-    final bool isFillInTheBlank = card.example.isNotEmpty && _random.nextBool();
+    final distractors = _getDistractorWords(card, pool, 3);
+    final options = [card.wordEn, ...distractors]..shuffle(_random);
 
-    if (isFillInTheBlank && card.wordEn.length > 2 && card.example.toLowerCase().contains(card.wordEn.toLowerCase())) {
-      // Fill-in-the-blank
+    if (card.example.isNotEmpty && card.example.toLowerCase().contains(card.wordEn.toLowerCase())) {
       final regex = RegExp(RegExp.escape(card.wordEn), caseSensitive: false);
       final maskedExample = card.example.replaceAll(regex, '________');
-
-      final distractors = _getDistractorWords(card, pool, 3, isEnglish: true);
-      final options = [card.wordEn, ...distractors]..shuffle(_random);
 
       return QuizQuestion(
         id: 'mc_${card.id}_$index',
         card: card,
         type: QuizQuestionType.multipleChoice,
-        prompt: 'Completa el espacio en blanco con la palabra correcta:',
+        prompt: 'Complete the sentence with the correct option:',
         subtitle: '"$maskedExample"',
         correctAnswer: card.wordEn,
         options: options,
-        explanation: 'La respuesta correcta es "${card.wordEn}" (${card.wordEs}). Oración completa: "${card.example}"',
+        explanation: 'Correct answer: "${card.wordEn}". Full sentence: "${card.example}"',
       );
     } else {
-      // Translation / Meaning
-      final isEnToEs = _random.nextBool();
-      if (isEnToEs) {
-        final distractors = _getDistractorWords(card, pool, 3, isEnglish: false);
-        final options = [card.wordEs, ...distractors]..shuffle(_random);
-
-        return QuizQuestion(
-          id: 'mc_${card.id}_$index',
-          card: card,
-          type: QuizQuestionType.multipleChoice,
-          prompt: '¿Cuál es el significado correcto de "${card.wordEn}"?',
-          subtitle: card.example.isNotEmpty ? 'Ejemplo: "${card.example}"' : null,
-          correctAnswer: card.wordEs,
-          options: options,
-          explanation: '"${card.wordEn}" significa "${card.wordEs}".',
-        );
-      } else {
-        final distractors = _getDistractorWords(card, pool, 3, isEnglish: true);
-        final options = [card.wordEn, ...distractors]..shuffle(_random);
-
-        return QuizQuestion(
-          id: 'mc_${card.id}_$index',
-          card: card,
-          type: QuizQuestionType.multipleChoice,
-          prompt: '¿Cómo se dice "${card.wordEs}" en inglés?',
-          subtitle: card.exampleEs.isNotEmpty ? 'Contexto: "${card.exampleEs}"' : null,
-          correctAnswer: card.wordEn,
-          options: options,
-          explanation: 'La traducción en inglés de "${card.wordEs}" es "${card.wordEn}".',
-        );
-      }
+      return QuizQuestion(
+        id: 'mc_${card.id}_$index',
+        card: card,
+        type: QuizQuestionType.multipleChoice,
+        prompt: 'Which is the correct term to use in this context?',
+        subtitle: card.example.isNotEmpty ? 'Context: "${card.example}"' : (card.hasStructure ? 'Structure: ${card.structure}' : null),
+        correctAnswer: card.wordEn,
+        options: options,
+        explanation: 'The correct choice is "${card.wordEn}". ${card.example.isNotEmpty ? 'Example: "${card.example}"' : ''}',
+      );
     }
   }
 
-  // 2. BUILD SENTENCE
+  // 2. BUILD SENTENCE (100% English)
   QuizQuestion _generateBuildSentence(Flashcard card, List<Flashcard> pool, int index) {
-    String sentence = card.example.isNotEmpty ? card.example.trim() : 'I learn ${card.wordEn} every day.';
-    // Tokenize sentence into words
+    String sentence = card.example.isNotEmpty ? card.example.trim() : 'I practice ${card.wordEn} every single day.';
     final rawTokens = sentence.split(RegExp(r'\s+'));
     final scrambled = List<String>.from(rawTokens)..shuffle(_random);
 
-    // If accidentally same order and length > 2, shuffle again
     if (scrambled.join(' ') == sentence && rawTokens.length > 2) {
       scrambled.shuffle(_random);
     }
@@ -126,55 +100,59 @@ class QuizGenerator {
       id: 'bs_${card.id}_$index',
       card: card,
       type: QuizQuestionType.buildSentence,
-      prompt: 'Ordena las palabras para formar la oración correcta:',
-      subtitle: card.exampleEs.isNotEmpty ? 'Traducción: "${card.exampleEs}"' : 'Significado: "${card.wordEs}"',
+      prompt: 'Arrange the scrambled words to form the correct sentence:',
+      subtitle: card.hasStructure ? 'Grammar Structure: ${card.structure}' : null,
       correctAnswer: sentence,
       scrambledWords: scrambled,
-      explanation: 'Oración correcta: "$sentence"\n(${card.exampleEs.isNotEmpty ? card.exampleEs : card.wordEs})',
+      explanation: 'Correct sentence: "$sentence"',
     );
   }
 
-  // 3. SPEED QUIZ
+  // 3. SPEED QUIZ (100% English & Same Category)
   QuizQuestion _generateSpeedQuiz(Flashcard card, List<Flashcard> pool, int index) {
-    final isEnToEs = _random.nextBool();
-    final distractors = _getDistractorWords(card, pool, 3, isEnglish: !isEnToEs);
-    final correct = isEnToEs ? card.wordEs : card.wordEn;
-    final options = [correct, ...distractors]..shuffle(_random);
+    final distractors = _getDistractorWords(card, pool, 3);
+    final options = [card.wordEn, ...distractors]..shuffle(_random);
+
+    String? subtitle;
+    if (card.example.isNotEmpty && card.example.toLowerCase().contains(card.wordEn.toLowerCase())) {
+      final regex = RegExp(RegExp.escape(card.wordEn), caseSensitive: false);
+      subtitle = '"${card.example.replaceAll(regex, '________')}"';
+    } else if (card.example.isNotEmpty) {
+      subtitle = 'Context: "${card.example}"';
+    }
 
     return QuizQuestion(
       id: 'sq_${card.id}_$index',
       card: card,
       type: QuizQuestionType.speedQuiz,
-      prompt: isEnToEs ? '¡Rápido! ¿Qué significa "${card.wordEn}"?' : '¡Rápido! ¿Cómo se dice "${card.wordEs}"?',
-      subtitle: card.example.isNotEmpty ? '"${card.example}"' : null,
-      correctAnswer: correct,
+      prompt: 'Quick! Select the correct word or phrase:',
+      subtitle: subtitle,
+      correctAnswer: card.wordEn,
       options: options,
       timeLimitSeconds: 7,
-      explanation: '"${card.wordEn}" = "${card.wordEs}".',
+      explanation: 'Correct choice: "${card.wordEn}". ${card.example.isNotEmpty ? 'Sentence: "${card.example}"' : ''}',
     );
   }
 
-  // 4. SITUATION
+  // 4. SITUATION (100% English & Same Category)
   QuizQuestion _generateSituation(Flashcard card, List<Flashcard> pool, int index) {
     String promptScenario;
-    if (card.categoryId == 'phrasal_verbs') {
-      promptScenario = 'Estás en una conversación y quieres expresar la idea de "${card.wordEs}". ¿Qué phrasal verb es el más adecuado?';
-    } else if (card.categoryId == 'daily_phrases') {
-      promptScenario = card.exampleEs.isNotEmpty
-          ? 'En una situación cotidiana donde quieres decir "${card.exampleEs}", ¿cuál es la expresión correcta?'
-          : 'Quieres decir "${card.wordEs}" a un amigo en inglés. ¿Qué frase usas?';
-    } else if (card.categoryId == 'verb_tenses') {
-      promptScenario = card.exampleEs.isNotEmpty
-          ? 'Quieres describir la siguiente acción en inglés: "${card.exampleEs}". ¿Cuál es la oración gramaticalmente adecuada?'
-          : 'Para la estructura de ${card.wordEn} (${card.wordEs}), ¿cuál es la opción correcta?';
-    } else if (card.categoryId == 'irregular_verbs') {
-      promptScenario = card.exampleEs.isNotEmpty
-          ? 'Estás contando una historia en pasado y quieres decir: "${card.exampleEs}". ¿Cuál es la forma correcta?'
-          : 'Para expresar la acción "${card.wordEs}", ¿qué verbo o forma debes usar?';
-    } else {
-      promptScenario = card.exampleEs.isNotEmpty
-          ? 'En una situación donde necesitas expresar: "${card.exampleEs}", ¿cuál es la mejor opción en inglés?'
-          : '¿Cuál es la palabra o frase en inglés para expresar "${card.wordEs}"?';
+    switch (card.categoryId) {
+      case 'phrasal_verbs':
+        promptScenario = 'In an everyday conversation, which phrasal verb fits this context best?';
+        break;
+      case 'daily_phrases':
+        promptScenario = 'In a social interaction, which expression is the most natural to use?';
+        break;
+      case 'verb_tenses':
+        promptScenario = 'Which sentence uses the correct grammatical tense and structure?';
+        break;
+      case 'irregular_verbs':
+        promptScenario = 'Which verb form correctly completes the sentence?';
+        break;
+      default:
+        promptScenario = 'Which word or phrase fits best in this scenario?';
+        break;
     }
 
     final bool useFullSentence = card.example.isNotEmpty && (card.categoryId == 'daily_phrases' || card.categoryId == 'verb_tenses');
@@ -188,19 +166,18 @@ class QuizGenerator {
       card: card,
       type: QuizQuestionType.situation,
       prompt: promptScenario,
-      subtitle: card.hasStructure ? 'Estructura: ${card.structure}' : null,
+      subtitle: card.hasStructure ? 'Structure: ${card.structure}' : (card.example.isNotEmpty && !useFullSentence ? 'Context: "${card.example.replaceAll(card.wordEn, '______')}"' : null),
       correctAnswer: correct,
       options: options,
-      explanation: 'Para esta situación, la respuesta ideal es "$correct" (${card.wordEs}).',
+      explanation: 'The most natural option is "$correct".',
     );
   }
 
-  // 5. FIND ERROR
+  // 5. FIND ERROR (100% English & Same Category)
   QuizQuestion _generateFindError(Flashcard card, List<Flashcard> pool, int index) {
     String originalSentence = card.example.isNotEmpty ? card.example : 'She ${card.wordEn} every morning.';
     String erroneousSentence = _createIntentionalError(originalSentence, card);
 
-    // If couldn't make a distinct error, fallback to modifying words
     if (erroneousSentence == originalSentence) {
       erroneousSentence = originalSentence.replaceFirst(' ', ' is not ');
     }
@@ -212,12 +189,12 @@ class QuizGenerator {
       id: 'fe_${card.id}_$index',
       card: card,
       type: QuizQuestionType.findError,
-      prompt: 'Identifica la versión corregida de la siguiente oración con error:',
+      prompt: 'Identify the corrected version of the erroneous sentence:',
       erroneousSentence: erroneousSentence,
-      subtitle: 'Oración incorrecta: "$erroneousSentence"',
+      subtitle: 'Incorrect sentence: "$erroneousSentence"',
       correctAnswer: originalSentence,
       options: options,
-      explanation: 'La versión correcta es: "$originalSentence"\n(${card.exampleEs.isNotEmpty ? card.exampleEs : card.wordEs})',
+      explanation: 'The grammatically correct sentence is: "$originalSentence"',
     );
   }
 
@@ -256,7 +233,6 @@ class QuizGenerator {
 
     // 4. Default: 3rd person 's' error
     if (lower.contains('goes')) return sentence.replaceAll('goes', 'go');
-    if (lower.contains('goes')) return sentence.replaceAll('goes', 'go');
     if (lower.contains('studies')) return sentence.replaceAll('studies', 'study');
     if (lower.contains('plays')) return sentence.replaceAll('plays', 'play');
 
@@ -265,9 +241,8 @@ class QuizGenerator {
 
   List<String> _getFindErrorDistractors(String correctSentence, String erroneous, List<Flashcard> pool, int count) {
     final List<String> result = [];
-    result.add(erroneous); // One option is the actual error itself
+    result.add(erroneous);
 
-    // Add altered variants
     final words = correctSentence.split(' ');
     if (words.length > 3) {
       final v1 = List<String>.from(words)..removeAt(1);
@@ -284,34 +259,45 @@ class QuizGenerator {
       result.add('Does $correctSentence?');
     }
 
-    while (result.length < count) {
-      final randomCard = pool[_random.nextInt(pool.length)];
-      if (randomCard.example.isNotEmpty && randomCard.example != correctSentence) {
-        result.add(randomCard.example);
-      } else {
-        result.add('$correctSentence (incorrect)');
+    final sameCategoryPool = pool.where((c) => c.example.isNotEmpty && c.example != correctSentence).toList()..shuffle(_random);
+    for (var card in sameCategoryPool) {
+      if (result.length >= count) break;
+      if (!result.contains(card.example)) {
+        result.add(card.example);
       }
+    }
+
+    while (result.length < count) {
+      result.add('$correctSentence (incorrect)');
     }
 
     return result.take(count).toList();
   }
 
-  List<String> _getDistractorWords(Flashcard current, List<Flashcard> pool, int count, {required bool isEnglish}) {
+  List<String> _getDistractorWords(Flashcard current, List<Flashcard> pool, int count) {
     final List<String> distractors = [];
-    final candidates = List<Flashcard>.from(pool)..shuffle(_random);
+    // Strict filter: SAME category only
+    final sameCategoryPool = pool.where((c) => c.categoryId == current.categoryId && c.id != current.id).toList();
+    final candidates = List<Flashcard>.from(sameCategoryPool)..shuffle(_random);
 
     for (var card in candidates) {
-      if (card.id == current.id) continue;
-      final word = isEnglish ? card.wordEn : card.wordEs;
-      if (word.isNotEmpty && !distractors.contains(word) && word != (isEnglish ? current.wordEn : current.wordEs)) {
+      final word = card.wordEn.trim();
+      if (word.isNotEmpty && !distractors.contains(word) && word.toLowerCase() != current.wordEn.trim().toLowerCase()) {
         distractors.add(word);
         if (distractors.length == count) break;
       }
     }
 
-    // Fallbacks if pool is small
-    while (distractors.length < count) {
-      distractors.add(isEnglish ? 'Option ${distractors.length + 1}' : 'Opción ${distractors.length + 1}');
+    // Fallback if category has very few cards
+    if (distractors.length < count) {
+      final fallbackPool = pool.where((c) => c.id != current.id && !distractors.contains(c.wordEn.trim())).toList()..shuffle(_random);
+      for (var card in fallbackPool) {
+        final word = card.wordEn.trim();
+        if (word.isNotEmpty && !distractors.contains(word)) {
+          distractors.add(word);
+          if (distractors.length == count) break;
+        }
+      }
     }
 
     return distractors;
@@ -319,21 +305,30 @@ class QuizGenerator {
 
   List<String> _getDistractorsForSituation(Flashcard current, List<Flashcard> pool, int count, bool useFullSentence) {
     final List<String> distractors = [];
-    final candidates = List<Flashcard>.from(pool)..shuffle(_random);
+    final sameCategoryPool = pool.where((c) => c.categoryId == current.categoryId && c.id != current.id).toList();
+    final candidates = List<Flashcard>.from(sameCategoryPool)..shuffle(_random);
 
     for (var card in candidates) {
-      if (card.id == current.id) continue;
       final text = useFullSentence
-          ? (card.example.isNotEmpty ? card.example : card.wordEn)
-          : card.wordEn;
-      if (text.isNotEmpty && !distractors.contains(text)) {
+          ? (card.example.isNotEmpty ? card.example.trim() : card.wordEn.trim())
+          : card.wordEn.trim();
+      if (text.isNotEmpty && !distractors.contains(text) && text != (useFullSentence ? current.example.trim() : current.wordEn.trim())) {
         distractors.add(text);
         if (distractors.length == count) break;
       }
     }
 
-    while (distractors.length < count) {
-      distractors.add(useFullSentence ? 'I will call you later.' : 'Get along');
+    if (distractors.length < count) {
+      final fallbackPool = pool.where((c) => c.id != current.id).toList()..shuffle(_random);
+      for (var card in fallbackPool) {
+        final text = useFullSentence
+            ? (card.example.isNotEmpty ? card.example.trim() : card.wordEn.trim())
+            : card.wordEn.trim();
+        if (text.isNotEmpty && !distractors.contains(text)) {
+          distractors.add(text);
+          if (distractors.length == count) break;
+        }
+      }
     }
 
     return distractors;
