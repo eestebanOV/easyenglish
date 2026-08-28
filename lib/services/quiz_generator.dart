@@ -1,4 +1,5 @@
 import 'dart:math';
+import '../config/quiz_category_config.dart';
 import '../models/flashcard.dart';
 import '../models/quiz_question.dart';
 
@@ -10,7 +11,7 @@ class QuizGenerator {
     required List<Flashcard> availableCards,
     required List<Flashcard> allPoolCards,
     required int count,
-    QuizQuestionType? specificType, // null means mixed
+    QuizQuestionType? specificType, // null means auto-pick per category
   }) {
     if (availableCards.isEmpty) return [];
 
@@ -19,17 +20,22 @@ class QuizGenerator {
 
     final List<QuizQuestion> questions = [];
 
-    final List<QuizQuestionType> mixedTypes = [
-      QuizQuestionType.multipleChoice,
-      QuizQuestionType.buildSentence,
-      QuizQuestionType.speedQuiz,
-      QuizQuestionType.situation,
-      QuizQuestionType.findError,
-    ];
-
     for (int i = 0; i < selectedCards.length; i++) {
       final card = selectedCards[i];
-      final qType = specificType ?? mixedTypes[i % mixedTypes.length];
+      final categoryConfig = QuizCategoryConfigs.forCategory(card.categoryId);
+
+      // Determine question type:
+      // - If user specified a type AND the category supports it → use it
+      // - If user specified a type but it's NOT supported → silently use primary type
+      // - If no type specified (mixed/auto) → pick weighted type for this category
+      final QuizQuestionType qType;
+      if (specificType != null) {
+        qType = categoryConfig.supportsType(specificType)
+            ? specificType
+            : categoryConfig.primaryType;
+      } else {
+        qType = categoryConfig.pickWeightedType(_random);
+      }
 
       switch (qType) {
         case QuizQuestionType.multipleChoice:
