@@ -30,10 +30,10 @@ class CategoryCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: category.color.withValues(alpha: context.isDark ? 0.16 : 0.08),
+            color: category.color.withValues(alpha: context.isDark ? 0.24 : 0.16),
             borderRadius: BorderRadius.circular(AppTheme.radiusLg),
             border: Border.all(
-              color: category.color.withValues(alpha: context.isDark ? 0.38 : 0.22),
+              color: category.color.withValues(alpha: context.isDark ? 0.45 : 0.28),
               width: 1.2,
             ),
             boxShadow: context.cardShadow,
@@ -48,10 +48,10 @@ class CategoryCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: category.color.withValues(alpha: context.isDark ? 0.2 : 0.12),
+                      color: category.color.withValues(alpha: context.isDark ? 0.25 : 0.18),
                       borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                       border: Border.all(
-                        color: category.color.withValues(alpha: 0.3),
+                        color: category.color.withValues(alpha: 0.35),
                         width: 1,
                       ),
                     ),
@@ -65,10 +65,10 @@ class CategoryCard extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: context.isDark
-                          ? Colors.white.withValues(alpha: 0.06)
-                          : Colors.black.withValues(alpha: 0.04),
+                          ? Colors.white.withValues(alpha: 0.08)
+                          : Colors.black.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(AppTheme.radiusRound),
-                      border: Border.all(color: context.border),
+                      border: Border.all(color: category.color.withValues(alpha: 0.2)),
                     ),
                     child: Text(
                       category.id == 'daily_phrases' || category.id == 'phrases'
@@ -84,11 +84,11 @@ class CategoryCard extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
               Text(
                 isEs ? category.nameEs : category.name,
                 style: TextStyle(
-                  fontSize: 15,
+                  fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: context.textPrimary,
                   letterSpacing: -0.2,
@@ -96,18 +96,7 @@ class CategoryCard extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 2),
-              Text(
-                isEs ? category.name : category.nameEs,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: context.textSecondary,
-                  fontWeight: FontWeight.w400,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

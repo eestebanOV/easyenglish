@@ -276,6 +276,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
   void _openCardModal(Flashcard card) {
     bool isFlipped = false;
     final settings = context.read<SettingsProvider>();
+    final isEs = settings.languageCode == 'es';
     final isPinned = settings.itemNotificationConfig?.cardId == card.id &&
         (settings.itemNotificationConfig?.isEnabled ?? false);
 
@@ -313,7 +314,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            widget.category.nameEs,
+                            isEs ? widget.category.nameEs : widget.category.name,
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -422,6 +423,10 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
     return Scaffold(
       backgroundColor: context.bg,
       appBar: AppBar(
+        backgroundColor: context.bg,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         title: Text(isEs ? widget.category.nameEs : widget.category.name),
         actions: [
           IconButton(
@@ -432,7 +437,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                 MaterialPageRoute(
                   builder: (_) => FlashcardSessionScreen(
                     categoryId: widget.category.id,
-                    title: widget.category.nameEs,
+                    title: isEs ? widget.category.nameEs : widget.category.name,
                   ),
                 ),
               );
@@ -446,10 +451,10 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             decoration: BoxDecoration(
-              color: widget.category.color.withValues(alpha: context.isDark ? 0.16 : 0.08),
+              color: widget.category.color.withValues(alpha: context.isDark ? 0.24 : 0.16),
               border: Border(
                 bottom: BorderSide(
-                  color: widget.category.color.withValues(alpha: context.isDark ? 0.3 : 0.18),
+                  color: widget.category.color.withValues(alpha: context.isDark ? 0.35 : 0.22),
                 ),
               ),
             ),
@@ -636,12 +641,12 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: widget.category.color.withValues(alpha: context.isDark ? 0.16 : 0.08),
+            color: widget.category.color.withValues(alpha: context.isDark ? 0.24 : 0.16),
             borderRadius: BorderRadius.circular(AppTheme.radiusLg),
             border: Border.all(
               color: isLearned
                   ? AppTheme.accent.withValues(alpha: 0.5)
-                  : widget.category.color.withValues(alpha: context.isDark ? 0.35 : 0.2),
+                  : widget.category.color.withValues(alpha: context.isDark ? 0.45 : 0.28),
               width: 1.2,
             ),
             boxShadow: context.cardShadow,
@@ -656,19 +661,19 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                      color: AppTheme.accentAmber.withValues(alpha: 0.15),
+                      color: widget.category.color.withValues(alpha: context.isDark ? 0.30 : 0.20),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: AppTheme.accentAmber.withValues(alpha: 0.3),
+                        color: widget.category.color.withValues(alpha: 0.4),
                       ),
                     ),
                     child: Center(
                       child: Text(
                         '${index + 1}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
-                          color: AppTheme.accentAmber,
+                          color: context.isDark ? Colors.white : widget.category.color,
                         ),
                       ),
                     ),
@@ -699,9 +704,9 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                   horizontal: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: context.cardSecondary,
+                  color: widget.category.color.withValues(alpha: context.isDark ? 0.18 : 0.10),
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  border: Border.all(color: context.border),
+                  border: Border.all(color: widget.category.color.withValues(alpha: 0.25)),
                 ),
                 child: Row(
                   children: [
@@ -804,12 +809,12 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
         child: Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: widget.category.color.withValues(alpha: context.isDark ? 0.16 : 0.08),
+            color: widget.category.color.withValues(alpha: context.isDark ? 0.24 : 0.16),
             borderRadius: BorderRadius.circular(AppTheme.radiusLg),
             border: Border.all(
               color: isLearned
                   ? AppTheme.accent.withValues(alpha: 0.5)
-                  : widget.category.color.withValues(alpha: context.isDark ? 0.35 : 0.2),
+                  : widget.category.color.withValues(alpha: context.isDark ? 0.45 : 0.28),
               width: 1.2,
             ),
             boxShadow: context.cardShadow,
@@ -820,9 +825,9 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                 width: 30,
                 height: 30,
                 decoration: BoxDecoration(
-                  color: context.cardSecondary,
+                  color: widget.category.color.withValues(alpha: context.isDark ? 0.30 : 0.20),
                   shape: BoxShape.circle,
-                  border: Border.all(color: context.border),
+                  border: Border.all(color: widget.category.color.withValues(alpha: 0.35)),
                 ),
                 child: Center(
                   child: Text(
@@ -830,7 +835,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
-                      color: context.textSecondary,
+                      color: context.isDark ? Colors.white : widget.category.color,
                     ),
                   ),
                 ),

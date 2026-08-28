@@ -100,9 +100,11 @@ class AppTheme {
       cardColor: lightCard,
       dividerColor: lightBorder,
       appBarTheme: AppBarTheme(
-        backgroundColor: lightSurface,
+        backgroundColor: lightBg,
         foregroundColor: lightText,
         elevation: 0,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         centerTitle: false,
         titleTextStyle: GoogleFonts.poppins(
           fontSize: 18,
@@ -218,9 +220,11 @@ class AppTheme {
       cardColor: darkCard,
       dividerColor: darkBorder,
       appBarTheme: AppBarTheme(
-        backgroundColor: darkSurface,
+        backgroundColor: darkBg,
         foregroundColor: darkText,
         elevation: 0,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         centerTitle: false,
         titleTextStyle: GoogleFonts.poppins(
           fontSize: 18,
